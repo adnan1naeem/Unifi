@@ -3,6 +3,7 @@ import React from "react";
 import { Colors } from "../Utils/Colors";
 import Swipeout from "react-native-swipeout";
 
+
 const VouchersList = ({ validFor, code, usage, createdAt, note }) => {
     const swipeBtns = [
         {
@@ -22,9 +23,9 @@ const VouchersList = ({ validFor, code, usage, createdAt, note }) => {
     return (
         <Swipeout right={swipeBtns} autoClose={true} backgroundColor="transparent">
         <TouchableHighlight
-          underlayColor="rgba(192,192,192,1,0.6)"
-      
+          underlayColor="rgba(192,192,192,1,0.6)"     
         >
+        
           <View style={styles.VouchersList}>
             <Text style={styles.text1}>{validFor}</Text>
             <Text style={styles.text2}>{code}</Text>

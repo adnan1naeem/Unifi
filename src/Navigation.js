@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import BottomTab from "./BottomTab";
 import EditingPhoto from "./screens/EditingPhoto/EditingPhoto";
 import Login from './screens/Auth/Login'
+import CreateVoucher from "./screens/CreateVoucher/CreateVoucher";
 
 
 const Navigation = () => {
@@ -19,6 +20,8 @@ const Navigation = () => {
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="BottomTab" component={BottomTab} />
                 <Stack.Screen name="EditingPhoto" component={EditingPhoto} />
+                <Stack.Screen name="CreateVoucher" component={CreateVoucher} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );

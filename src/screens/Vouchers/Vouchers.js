@@ -5,7 +5,7 @@ import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
 import Print from '../../Components/Icons/Print';
 
-const Vouchers = () => {
+const Vouchers = ({navigation}) => {
     const vouchersList = [
         {
           id: 1,
@@ -66,7 +66,7 @@ const Vouchers = () => {
               <Print IconStyle={styles.printicon} />
             </Text>
             <Text>
-              <Plus IconStyle={styles.plusicon} />
+              <Plus onPress={()=>navigation.navigate("CreateVoucher")} IconStyle={styles.plusicon} />
             </Text>
           </View>
           <Text style={styles.voucher}>Vouchers</Text>
