@@ -3,13 +3,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import Fontisto from "react-native-vector-icons/Fontisto";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Entypo from 'react-native-vector-icons/Entypo'
 import Home from './screens/Home/Home';
 import { Colors } from "./Utils/Colors";
 import Guests from "./screens/Guests/Guests";
 import Payments from "./screens/Payments/Payments";
 import Vouchers from './screens/Vouchers/Vouchers';
 import Operators from './screens/Operators/Operators';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -67,7 +68,7 @@ const BottomTab = () => {
                 options={{
                     tabBarLabel: "Vouchers",
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="cash-multiple" color={color} size={size} />
+                        <Entypo name="ticket" color={color} size={size} />
                     ),
                 }}
                 name="Vouchers"

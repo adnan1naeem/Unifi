@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { Colors } from "../../Utils/Colors";
 import IncrementDecrement from "../../Components/IncrementDecrement";
 import { Width } from "../../Components/Dimensions";
+import CustomText from "../../Components/CustomText";
 
-const CreateVoucher = () => {
+const CreateVoucher = ({ navigation }) => {
   const [isLimitedSelected, setLimitedSelected] = useState(true);
 
   const handleLimitedPress = () => {
@@ -17,9 +18,15 @@ const CreateVoucher = () => {
   return (
     <View>
       <View style={styles.CreateVoucher}>
-        <Text style={styles.text1}>Cancel</Text>
-        <Text style={styles.text2}>Create Vouchers</Text>
-        <Text style={styles.text3}>Create</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <CustomText title={"Cancel"} textStyle={styles.text1} />
+        </TouchableOpacity>
+
+        <Text style={[styles.text1, {
+          fontSize: 18,
+          fontWeight: "600",
+        }]}>Create Vouchers</Text>
+        <Text style={styles.text1}>Create</Text>
       </View>
       <View style={styles.Amount}>
         <Text>
@@ -87,16 +94,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 2,
   },
-  text2: {
-    color: Colors.white,
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  text3: {
-    color: Colors.white,
-    fontSize: 15,
-    marginTop: 2,
-  },
+
+
   Amount: {
     marginTop: 20,
   },

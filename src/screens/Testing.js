@@ -1,14 +1,12 @@
 import { FlatList, StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Swipeout from 'react-native-swipeout';
-import { Colors } from '../../Utils/Colors';
-import CustomText from '../../Components/CustomText'
-import { Width, height } from '../../Components/Dimensions';
-import Octicons_Icons from '../../Components/Icons/Octicons_Icons';
-import AntDesign_icon from '../../Components/Icons/AntDesign_icon';
+import { Colors } from '../Utils/Colors';
+import { Width } from '../Components/Dimensions';
+
+
 
 const Guests = () => {
-
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [showActivityIndicator, setShowActivityIndicator] = useState(true);
@@ -16,7 +14,7 @@ const Guests = () => {
 
     const handleOpen = () => {
         setModalVisible(true);
-        setShowActivityIndicator(true);
+        setShowActivityIndicator(true)
         setTimeout(() => {
             setShowActivityIndicator(false);
             setShowHiText(true);
@@ -24,13 +22,13 @@ const Guests = () => {
                 setModalVisible(false);
                 setShowHiText(false);
             }, 2000);
-        }, 3000);
+        }, 5000);
     };
 
     const swipeoutBtns = [
         {
             text: 'Extend',
-            onPress: handleOpen,
+            onPress: () => console.log('Button 1 pressed'),
             backgroundColor: Colors.primary,
         },
         {
@@ -105,52 +103,19 @@ const Guests = () => {
 
     return (
         <View style={styles.container}>
-            {isHeaderVisible ?
-                <View style={[styles.HeaderContainer, { height: 120, }]}>
-                    <TouchableOpacity>
-                        <CustomText title={"24 hours"} textStyle={{ marginTop: 50, textAlign: 'right' }} />
-                    </TouchableOpacity>
-                    <CustomText title={"Guests"} textStyle={styles.HeaderTitle} />
-                </View> :
-                <View style={styles.ScrolContainer}>
-                    <CustomText title={""} />
-                    <CustomText title={"Guests"} textStyle={styles.ScrolGuests} />
-                    <TouchableOpacity>
-                        <CustomText title={"24 hours"} textStyle={{ fontSize: 20 }} />
-                    </TouchableOpacity>
-                </View>
-            }
 
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
-                <FlatList
-                    data={data}
-                    contentContainerStyle={{ marginTop: 50, }}
-                    renderItem={({ item }) =>
-                        <Swipeout right={swipeoutBtns} autoClose={true}>
-                            <View style={styles.itemContainer}>
-                                <View style={styles.itemContent}>
-                                    <View style={styles.itemHeader}>
-                                        <Text style={styles.title}>{item?.title}</Text>
-                                        <Text style={styles.low}>
-                                            {item?.low}{' '}
-                                            <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
-                                            <Text style={styles.lowText}>{' '}/{' '}</Text>
-                                            < Text style={[styles.low, { color: Colors.green }]}>
-                                                {item?.low}{' '}
-                                                <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
-                                            </Text>
-                                        </Text>
-                                    </View>
-                                    <View style={styles.itemDetails}>
-                                        <Text style={styles.voucher}>{item?.voucher}</Text>
-                                        <Text style={styles.valid}>{item?.Valid}</Text>
-                                    </View>
-                                </View>
+                <Swipeout right={swipeoutBtns} autoClose={true}>
+                    <View style={{ marginTop: 200 }}>
+                        <View style={styles.itemContent}>
+
+                            <View style={styles.itemDetails}>
+                                <Text style={styles.voucher}>sadfader</Text>
+
                             </View>
-                        </Swipeout>
-                    }
-                    keyExtractor={item => item.id.toString()}
-                />
+                        </View>
+                    </View>
+                </Swipeout>
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -160,14 +125,15 @@ const Guests = () => {
                     <View style={styles.modalContainer}>
                         <View style={styles.modalContent}>
                             {showActivityIndicator && (
-                                <ActivityIndicator size={'large'} style={{ color: Colors.light_Black }} />
+                                <ActivityIndicator size="large" color={Colors.primary} />
                             )}
                             {showHiText && (
-                                <AntDesign_icon name='check' IconStyle={{ color: Colors.light_Black, fontSize: 50, fontWeight: 'bold' }} />
+                                <Text>Hi</Text>
                             )}
                         </View>
                     </View>
                 </Modal>
+
                 <View style={{ height: 240 }} />
             </ScrollView>
         </View>
@@ -177,9 +143,6 @@ const Guests = () => {
 export default Guests
 
 const styles = StyleSheet.create({
-
-
-
 
 
     modalContainer: {
@@ -194,11 +157,16 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 10,
         alignItems: 'center',
-        width: Width / 2.5,
+        width: Width / 2,
         alignSelf: 'center',
+        marginTop: 200,
 
     },
-    ////
+
+
+    // ////
+
+
     HeaderContainer: {
         backgroundColor: Colors.primary,
         paddingHorizontal: 20
