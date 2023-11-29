@@ -6,6 +6,7 @@ import EditingPhoto from "./screens/EditingPhoto/EditingPhoto";
 import Login from './screens/Auth/Login'
 import CreateVoucher from "./screens/CreateVoucher/CreateVoucher";
 import Testing from './screens/Testing'
+import PrintBatch from "./screens/PrintBatch/PrintBatch";
 
 
 const Navigation = () => {
@@ -23,6 +24,7 @@ const Navigation = () => {
                 <Stack.Screen name="BottomTab" component={BottomTab} />
                 <Stack.Screen name="EditingPhoto" component={EditingPhoto} />
                 <Stack.Screen name="CreateVoucher" component={CreateVoucher} />
+                <Stack.Screen name="PrintBatch" component={PrintBatch} />
 
             </Stack.Navigator>
         </NavigationContainer>

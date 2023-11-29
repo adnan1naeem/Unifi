@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity ,ScrollView} from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../Utils/Colors";
 import IncrementDecrement from "../../Components/IncrementDecrement";
@@ -6,6 +6,7 @@ import { Width } from "../../Components/Dimensions";
 import CustomText from "../../Components/CustomText";
 import InputField from "../../Components/InputField";
 import SwitchCase from "../../Components/SwitchCase";
+import InputFieldNotes from "../../Components/InputFieldNotes";
 
 const CreateVoucher = ({ navigation }) => {
   const [isLimitedSelected, setLimitedSelected] = useState(true);
@@ -31,7 +32,7 @@ const CreateVoucher = ({ navigation }) => {
     setLimitedSelected(false);
   };
   return (
-    <View>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.CreateVoucher}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <CustomText title={"Cancel"} textStyle={styles.text1} />
@@ -60,7 +61,7 @@ const CreateVoucher = ({ navigation }) => {
               <Text
                 style={[
                   styles.optionText,
-                  isLimitedSelected ? styles.whiteText : styles.blackText,
+                  isLimitedSelected ? styles.whiteText : styles.blackText
                 ]}
               >
                 Limited use
@@ -102,15 +103,18 @@ const CreateVoucher = ({ navigation }) => {
       {isByteOn && <InputField text="Bandwidth Limit(kbps)" />}
       </View>
       <View style={styles.toggleButton}>
-      {isSwitchOn && <InputField text="Note" />}
+       <InputFieldNotes text="Note"/>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 export default CreateVoucher;
 
 const styles = StyleSheet.create({
+    scrollViewContent: {
+        flexGrow: 1,
+      },
   CreateVoucher: {
     width: Width,
     backgroundColor: Colors.primary,
@@ -146,7 +150,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     borderWidth: 1,
     borderRadius: 10,
-    gap: 30,
+
     alignItems: "center",
     justifyContent: "center",
   },
@@ -165,6 +169,8 @@ const styles = StyleSheet.create({
   },
   optionText: {
     color: Colors.primary,
+    paddingLeft: 38,
+    paddingRight: 38
   },
   whiteText: {
     color: Colors.white,

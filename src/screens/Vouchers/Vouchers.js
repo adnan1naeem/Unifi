@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,TouchableHighlight,FlatList } from 'react-native'
+import { StyleSheet, Text, View,FlatList } from 'react-native'
 import React from 'react'
 import VouchersList from '../../Components/VouchersList';
 import { Colors } from "../../Utils/Colors";
@@ -63,7 +63,7 @@ const Vouchers = ({navigation}) => {
         <View style={styles.headervouchers}>
           <View style={styles.printadd}>
             <Text>
-              <Print IconStyle={styles.printicon} />
+              <Print IconStyle={styles.printicon} onPress={()=>navigation.navigate("PrintBatch")} />
             </Text>
             <Text>
               <Plus onPress={()=>navigation.navigate("CreateVoucher")} IconStyle={styles.plusicon} />
