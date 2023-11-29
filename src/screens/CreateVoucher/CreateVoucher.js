@@ -4,12 +4,27 @@ import { Colors } from "../../Utils/Colors";
 import IncrementDecrement from "../../Components/IncrementDecrement";
 import { Width } from "../../Components/Dimensions";
 import CustomText from "../../Components/CustomText";
+import InputField from "../../Components/InputField";
+import SwitchCase from "../../Components/SwitchCase";
 
 const CreateVoucher = ({ navigation }) => {
   const [isLimitedSelected, setLimitedSelected] = useState(true);
+  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [isBandWidthOn, setIsBandWidthOn] = useState(false);
+  const [isByteOn, setIsByteOn] = useState(false);
 
-  const handleLimitedPress = () => {
-    setLimitedSelected(true);
+  const handleSwitchChange = (value) => {
+    setIsSwitchOn(value);
+  };
+  const handleBandwidthLimit = (value) => {
+    setIsBandWidthOn(value);
+  };
+
+  const handleLimitedPress = (value) => {
+    setLimitedSelected(value);
+  };
+  const handleBytePress = (value) => {
+    setIsByteOn(value);
   };
 
   const handleUnlimitedPress = () => {
@@ -31,7 +46,7 @@ const CreateVoucher = ({ navigation }) => {
       <View style={styles.Amount}>
         <Text>
           {" "}
-          <IncrementDecrement />
+          <IncrementDecrement Amount="Amount" />
         </Text>
         <View style={styles.usage}>
           <View style={styles.limited}>
@@ -68,8 +83,26 @@ const CreateVoucher = ({ navigation }) => {
                 Unlimited use
               </Text>
             </TouchableOpacity>
+            
           </View>
+  
         </View>
+      </View>  
+      {isLimitedSelected && <IncrementDecrement Amount="Usage" />}
+      <View style={styles.toggleButton}>
+      <SwitchCase title="Limited Download Bandwidth" onValueChange={handleSwitchChange} textColor='black' />
+      {isSwitchOn && <InputField text="Bandwidth Limit(kbps)" />}
+      </View>
+      <View style={styles.toggleButton}>
+      <SwitchCase title="Limited Upload Bandwidth" onValueChange={handleBandwidthLimit} textColor='black' />
+      {isBandWidthOn && <InputField text="Bandwidth Limit(kbps)" />}
+      </View>
+      <View style={styles.toggleButton}>
+      <SwitchCase title="Byte Quta" onValueChange={handleBytePress} textColor='black' />
+      {isByteOn && <InputField text="Bandwidth Limit(kbps)" />}
+      </View>
+      <View style={styles.toggleButton}>
+      {isSwitchOn && <InputField text="Note" />}
       </View>
     </View>
   );
@@ -128,7 +161,7 @@ const styles = StyleSheet.create({
   },
   selected: {
     backgroundColor: Colors.primary,
-    color: Colors.white,
+
   },
   optionText: {
     color: Colors.primary,
@@ -139,4 +172,9 @@ const styles = StyleSheet.create({
   blackText: {
     color: Colors.primary,
   },
+  toggleButton:{
+    marginTop:55,
+    borderTopColor: "#bfbfbf",
+    borderTopWidth: 0.5,
+  }
 });

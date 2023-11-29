@@ -11,7 +11,7 @@ import { Width } from "./Dimensions";
 import Plus from "./Icons/Plus";
 import Minus from "./Icons/Minus";
 
-const IncrementDecrement = () => {
+const IncrementDecrement = ({Amount}) => {
   const [inputValue, setInputValue] = useState(1);
 
   const handleIncrement = () => {
@@ -31,7 +31,7 @@ const IncrementDecrement = () => {
 
   return (
     <View style={styles.IncrementDecrement}>
-      <Text style={styles.text}>Amount</Text>
+      <Text style={styles.text}>{Amount}</Text>
       <View style={styles.buttonsInput}>
         <TextInput
           style={styles.input}
@@ -66,12 +66,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 22,
     paddingRight: 20,
-    
-    
   },
   text: {
     fontSize: 18,
-    paddingTop: 33,
+    paddingTop: 30,
   },
   input: {
 
