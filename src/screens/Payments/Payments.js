@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Photo = () => {
+const Payments = () => {
     return (
         <View>
-            <Text>Photo</Text>
+            <Text style={{}}>Payments</Text>
         </View>
     )
 }
 
-export default Photo
+export default Payments
 
 const styles = StyleSheet.create({})
