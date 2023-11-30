@@ -11,40 +11,32 @@ import { Colors } from "../../Utils/Colors";
 import { Width } from "../../Components/Dimensions";
 import List from "../../Components/List";
 
-const PrintBatch = ({navigation}) => {
+const PrintBatch = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.CreateVoucher}>
-        <TouchableOpacity  onPress={() => navigation.goBack()}>
-        <Text
-          style={[
-            styles.text1,
-            
-          ]}
-        >
-         Cancel
-        </Text>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text
+            style={styles.text1}>Cancel </Text>
         </TouchableOpacity>
-
         <Text
           style={[
             styles.text1,
             {
               fontSize: 18,
               fontWeight: "600",
-           
             },
           ]}
         >
           Print Batch
         </Text>
       </View>
-      <View style={{marginTop:55}}></View>
-          <List text="23 Nov 2023 at 2:10 PM"/>
-          <List text="23 Nov 2023 at 2:10 PM"/>
-          <List text="23 Nov 2023 at 2:10 PM"/>
-          <List text="23 Nov 2023 at 2:10 PM"/>
-          <List text="23 Nov 2023 at 2:10 PM"/>
+      <View style={{ marginTop: 55 }}></View>
+      <List text="23 Nov 2023 at 2:10 PM" />
+      <List text="23 Nov 2023 at 2:10 PM" />
+      <List text="23 Nov 2023 at 2:10 PM" />
+      <List text="23 Nov 2023 at 2:10 PM" />
+      <List text="23 Nov 2023 at 2:10 PM" />
     </ScrollView>
   );
 };
@@ -58,13 +50,11 @@ const styles = StyleSheet.create({
   CreateVoucher: {
     width: Width,
     backgroundColor: Colors.primary,
-    paddingTop: "15%",
+    paddingTop: "5%",
     paddingBottom: "5%",
     display: "flex",
     flexDirection: "row",
     gap: 90,
-    
-
     paddingLeft: 15,
     paddingRight: 15,
   },

@@ -3,10 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import BottomTab from "./BottomTab";
 import EditingPhoto from "./screens/EditingPhoto/EditingPhoto";
-import Login from './screens/Auth/Login'
 import CreateVoucher from "./screens/CreateVoucher/CreateVoucher";
-import Testing from './screens/Testing'
 import PrintBatch from "./screens/PrintBatch/PrintBatch";
+import Login from "./screens/Login/Login";
+import Splash from "./screens/Splash/Splash";
 
 
 const Navigation = () => {
@@ -17,9 +17,9 @@ const Navigation = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="BottomTab"
+                initialRouteName="Splash"
             >
-                <Stack.Screen name="Testing" component={Testing} />
+                <Stack.Screen name="Splash" component={Splash} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="BottomTab" component={BottomTab} />
                 <Stack.Screen name="EditingPhoto" component={EditingPhoto} />

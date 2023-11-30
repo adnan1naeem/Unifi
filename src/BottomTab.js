@@ -10,6 +10,7 @@ import Guests from "./screens/Guests/Guests";
 import Payments from "./screens/Payments/Payments";
 import Vouchers from './screens/Vouchers/Vouchers';
 import Operators from './screens/Operators/Operators';
+import { Image } from "react-native";
 
 
 const Tab = createBottomTabNavigator();
@@ -23,12 +24,13 @@ const BottomTab = () => {
                 tabBarInactiveTintColor: Colors.blur,
                 tabBarActiveTintColor: Colors.white,
                 tabBarStyle: {
-                    height: 90,
+                    height: 60,
                     paddingHorizontal: 5,
-                    paddingTop: 0,
+                    paddingTop: 5,
                     backgroundColor: Colors.primary,
                     position: 'absolute',
                     borderTopWidth: 0,
+                    paddingBottom: 10
                 },
 
             })}
@@ -47,7 +49,7 @@ const BottomTab = () => {
                 options={{
                     tabBarLabel: "Guests",
                     tabBarIcon: ({ color, size }) => (
-                        <FontAwesome5 name="user-friends" color={color} size={size} />
+                        <Image source={require('../assets/Guests.png')} tintColor={color} size={size} style={{ height: 40, width: 40, resizeMode: 'contain' }} />
                     ),
                 }}
                 name="Guests"
@@ -58,7 +60,7 @@ const BottomTab = () => {
                 options={{
                     tabBarLabel: "Payments",
                     tabBarIcon: ({ color, size }) => (
-                        <Fontisto name="dollar" color={color} size={size} />
+                        <Image source={require('../assets/Doller.png')} tintColor={color} size={size} style={{ height: 40, width: 40, resizeMode: 'contain' }} />
                     ),
                 }}
                 name="Payments"
@@ -68,7 +70,7 @@ const BottomTab = () => {
                 options={{
                     tabBarLabel: "Vouchers",
                     tabBarIcon: ({ color, size }) => (
-                        <Entypo name="ticket" color={color} size={size} />
+                        <Image source={require('../assets/payments.png')} tintColor={color} size={size} style={{ height: 30, width: 30, resizeMode: 'contain' }} />
                     ),
                 }}
                 name="Vouchers"
@@ -78,14 +80,11 @@ const BottomTab = () => {
                 options={{
                     tabBarLabel: "Operators",
                     tabBarIcon: ({ color, size }) => (
-                        <FontAwesome5 name="user-tie" color={color} size={size} />
-                    ),
+                        <Image source={require('../assets/Profile.png')} tintColor={color} style={{ height: 30, width: 30, resizeMode: 'contain' }} />),
                 }}
                 name="Operators"
                 component={Operators}
             />
-
-
         </Tab.Navigator>
     );
 };

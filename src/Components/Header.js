@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Platform } from 'react-native'
 import React from 'react'
 import { Colors } from '../Utils/Colors'
 import CustomText from './CustomText'
@@ -24,10 +24,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         flex: 1,
-        paddingTop: 50,
+        paddingTop: Platform.OS === 'ios' ? 50 : 25,
         backgroundColor: Colors.primary,
         paddingHorizontal: 20,
     },
-    logo: { height: 50, width: 50, tintColor: Colors.white },
+    logo: { height: 50, width: 80, tintColor: Colors.white, marginLeft: 25 },
     login: { alignItems: 'center', alignSelf: 'center' }
 })

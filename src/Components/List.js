@@ -3,12 +3,12 @@ import React, { useState } from "react";
 import { Width } from "./Dimensions";
 import { Colors } from "../Utils/Colors";
 
-const List = ({text}) => {
-  
+const List = ({ text }) => {
+
 
   return (
     <View style={styles.InputField}>
-      <Text style={styles.text}>{text}</Text> 
+      <Text style={styles.text}>{text}</Text>
     </View>
   );
 };
@@ -21,14 +21,13 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     backgroundColor: Colors.white,
-   
     paddingHorizontal: 18,
     justifyContent: "space-between",
     paddingVertical: 15,
     borderTopColor: "#bfbfbf",
     borderTopWidth: 0.5,
 
-    
+
   },
   text: {
     fontSize: 18,

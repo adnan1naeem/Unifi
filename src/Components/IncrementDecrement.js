@@ -11,7 +11,7 @@ import { Width } from "./Dimensions";
 import Plus from "./Icons/Plus";
 import Minus from "./Icons/Minus";
 
-const IncrementDecrement = ({Amount}) => {
+const IncrementDecrement = ({ Amount }) => {
   const [inputValue, setInputValue] = useState(1);
 
   const handleIncrement = () => {
@@ -22,7 +22,6 @@ const IncrementDecrement = ({Amount}) => {
     setInputValue((prevValue) => Math.max(prevValue - 1, 1));
   };
   const handleInputChange = text => {
-    // Handle input change, you can perform additional validation if needed
     const numericValue = parseInt(text, 10);
     if (!isNaN(numericValue)) {
       setInputValue(Math.max(numericValue, 1));
@@ -39,13 +38,11 @@ const IncrementDecrement = ({Amount}) => {
           keyboardType="numeric"
           onChangeText={handleInputChange}
           editable={true}
-            
+
         />
         <View style={styles.buttons}>
           <Minus IconStyle={styles.Minus} onPress={handleDecrement} />
-
-          <View style={styles.line}></View>
-
+          <View style={styles.line} />
           <Plus IconStyle={styles.Minus} onPress={handleIncrement} />
         </View>
       </View>
