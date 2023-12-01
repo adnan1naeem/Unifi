@@ -1,4 +1,4 @@
-import { Image, View } from 'react-native'
+import { Image, View, Text } from 'react-native'
 import React, { useEffect } from 'react'
 import { styles } from './Styles'
 
@@ -13,7 +13,8 @@ const Splash = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Image source={require("../../../assets/unifi.png")} style={styles.logo} />
+            <Image source={require("../../../assets/frglogo.png")}
+                style={styles.logo} />
         </View>
     )
 }

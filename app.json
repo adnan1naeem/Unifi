@@ -11,6 +11,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/b420aa5f-209a-421d-8a5c-50650760ad3c"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -34,9 +40,6 @@
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/b420aa5f-209a-421d-8a5c-50650760ad3c"
     }
   }
 }

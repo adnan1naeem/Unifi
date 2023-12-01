@@ -1,27 +1,59 @@
-import { ScrollView, View, TextInput, StyleSheet } from 'react-native'
-import React from 'react'
+import { ScrollView, View, TextInput, Alert } from 'react-native'
+import React, { useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import Header from '../../Components/Header'
 import SwitchCase from '../../Components/SwitchCase'
 import { styles } from './Styles'
+import axios from 'axios'
+
+
 
 const Login = ({ navigation }) => {
-    const [isByteOn, setIsByteOn] = React.useState(false);
+    const [isByteOn, setIsByteOn] = useState(false);
+    const [adminUsername, setAdminUsername] = useState('');
+    const [siteId, setSiteId] = useState('');
 
     const handleBytePress = (value) => {
         setIsByteOn(value);
     };
 
+    const handleLogin = () => {
+        const loginData = {
+            username: "upWork0867845",
+            password: "upWork0867845",
+        };
+        axios.post('https://frg-lab.myvnc.com:9443/api/auth/login', loginData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (response?.data) {
+                    Alert.alert('Login Successful');
+                }
+            })
+            .catch(error => {
+                console.log("Catch error :: ", error);
+            });
+    };
+
+
+
+
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
-            <Header navigation={navigation} onPress={() => navigation.navigate("BottomTab")} />
+            <Header navigation={navigation}
+                // onPress={handleLogin}
+                onPress={() => navigation.navigate('BottomTab')}
+            />
             <View style={styles.innerHeading}>
                 <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
                 <CustomText title={"Fill"} textStyle={[styles.controllerText, { color: Colors.primary }]} />
             </View>
             <View style={styles.inputContainer}>
                 <TextInput
+                    editable={false}
                     selectionColor={Colors.primary}
                     placeholder='frg.myvnc.com'
                     placeholderTextColor={Colors.textcolor}
@@ -30,6 +62,7 @@ const Login = ({ navigation }) => {
                 <TextInput
                     selectionColor={Colors.primary}
                     placeholder='8443'
+                    onChangeText={(i) => setSiteId(i)}
                     placeholderTextColor={Colors.textcolor}
                     style={styles.inptFirst}
                 />
@@ -38,6 +71,7 @@ const Login = ({ navigation }) => {
                 <View style={styles.inneradminContainer}>
                     <TextInput
                         placeholder='Admin'
+                        onChangeText={(i) => setAdminUsername(i)}
                         placeholderTextColor={Colors.textcolor}
                         style={styles.inputThird} />
                 </View>

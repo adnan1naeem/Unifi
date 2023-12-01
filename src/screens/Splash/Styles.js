@@ -10,6 +10,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    logo: { height: 130, width: 130, tintColor: Colors.white }
+    logo: { height: 130, width: Width / 1.3, resizeMode: 'contain' }
 
 });
