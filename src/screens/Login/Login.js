@@ -1,51 +1,59 @@
 import { ScrollView, View, TextInput, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import Header from '../../Components/Header'
 import SwitchCase from '../../Components/SwitchCase'
 import { styles } from './Styles'
 import axios from 'axios'
-
-
+import { prefix_url } from '../../Utils/Constants'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = ({ navigation }) => {
     const [isByteOn, setIsByteOn] = useState(false);
     const [adminUsername, setAdminUsername] = useState('');
     const [siteId, setSiteId] = useState('');
+    const [siteName, setsiteName] = useState('');
 
     const handleBytePress = (value) => {
         setIsByteOn(value);
     };
+    useEffect(() => {
+        (async () => {
+            let selectedSite = await AsyncStorage.getItem("SITE");
+            setsiteName(selectedSite)
+        })();
+    }, []);
+
 
     const handleLogin = () => {
         const loginData = {
-            username: "upWork0867845",
-            password: "upWork0867845",
+            username: adminUsername || "upWork0867845",
+            password: siteId || "upWork0867845",
         };
-        axios.post('https://frg-lab.myvnc.com:9443/api/auth/login', loginData, {
+        axios.post(`${prefix_url}login`, loginData, {
             headers: {
                 'Content-Type': 'application/json',
             },
         })
-            .then(response => {
-                if (response?.data) {
-                    Alert.alert('Login Successful');
+            .then(async (response) => {
+                if (response?.data?.deviceToken) {
+                    console.log("Token:: ", response?.data?.deviceToken);
+                    await AsyncStorage.setItem('USER', response?.data?.deviceToken);
+                    navigation.navigate("Sites")
                 }
             })
             .catch(error => {
-                console.log("Catch error :: ", error);
+                console.log("error :: ", error);
+                Alert.alert(JSON.stringify(error?.message))
             });
     };
-
-
-
 
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
             <Header navigation={navigation}
-                // onPress={handleLogin}
-                onPress={() => navigation.navigate('BottomTab')}
+                onPress={handleLogin}
+            // onPress={() => navigation.navigate('BottomTab')}
             />
             <View style={styles.innerHeading}>
                 <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
@@ -78,7 +86,7 @@ const Login = ({ navigation }) => {
             </View>
             <View style={styles.siteContainer}>
                 <CustomText title={"SITE"} textStyle={styles.siteText} />
-                <TextInput placeholder='g698a69h' style={styles.siteInput} />
+                <TextInput editable={false} placeholder={siteName} style={styles.siteInput} />
             </View>
             <SwitchCase title={"Verify SSL Certificates"} onValueChange={handleBytePress} />
             <CustomText textStyle={styles.infoText}

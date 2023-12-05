@@ -11,6 +11,7 @@
     "update": "eas update --branch production"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
@@ -23,6 +24,7 @@
     "expo-permissions": "~14.2.1",
     "expo-status-bar": "~1.6.0",
     "expo-updates": "~0.18.17",
+    "moment": "^2.29.4",
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-gesture-handler": "~2.12.0",

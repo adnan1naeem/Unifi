@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
         marginTop: 10,
-        borderWidth: 0.2,
+
         borderColor: Colors.heading
     },
     infoText: {

@@ -9,7 +9,9 @@ export const styles = StyleSheet.create({
         height: Platform.OS === 'ios' ? 120 : 100,
         paddingHorizontal: 20
     },
-    logout: { paddingTop: Platform.OS === 'ios' ? 50 : 25, },
+    logout: {
+        paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    },
     HeaderTitle: {
         paddingTop: 5,
         fontWeight: 'bold',
@@ -28,5 +30,6 @@ export const styles = StyleSheet.create({
         paddingVertical: 10,
         fontSize: 25,
         fontWeight: 'bold'
-    }
+    },
+
 });

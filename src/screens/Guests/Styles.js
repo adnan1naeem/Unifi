@@ -79,13 +79,14 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     voucher: {
-        fontSize: 13,
+        fontSize: 12,
         width: '45%',
         color: Colors.primary,
     },
     valid: {
-        fontSize: 12,
-        width: '57%',
+        fontSize: 9,
+        width: '50%',
         color: Colors.light_Black,
+        textAlign: 'right',
     },
 })

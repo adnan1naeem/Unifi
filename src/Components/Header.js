@@ -28,6 +28,14 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primary,
         paddingHorizontal: 20,
     },
-    logo: { height: 50, width: 80, tintColor: Colors.white, marginLeft: 25 },
-    login: { alignItems: 'center', alignSelf: 'center' }
+    logo: {
+        height: 50,
+        width: 80,
+        tintColor: Colors.white,
+        marginLeft: 25
+    },
+    login: {
+        alignItems: 'center',
+        alignSelf: 'center'
+    }
 })

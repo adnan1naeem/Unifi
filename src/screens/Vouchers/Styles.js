@@ -31,8 +31,25 @@ export const styles = StyleSheet.create({
     },
     VouchersListMap: {
         backgroundColor: Colors.white,
-        marginTop: 35,
+        // marginTop: 35,
         marginBottom: 145
+    },
+    BarAxis: {
+        position: 'absolute',
+        bottom: 10,
+        left: 45
+    },
+    DetailsContainer: {
+        color: Colors.black,
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    barContainer: {
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop: '20%',
+        width: '85%'
     },
     VouchersList: {
         display: 'flex',
@@ -66,7 +83,6 @@ export const styles = StyleSheet.create({
         color: Colors.vouchers,
         marginTop: 10,
         fontSize: 12,
-
     },
     ScrolContainer: {
         backgroundColor: Colors.primary,
@@ -75,6 +91,35 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingBottom: 10
+    },
+    containerTab: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+        marginVertical: 20
+    },
+    innerContainer: {
+        paddingVertical: 7,
+        backgroundColor: Colors.white,
+        width: Width / 1.5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderRadius: 8,
+        overflow: 'hidden',
+        paddingHorizontal: 5
+    },
+    unselectedTab: {
+        textAlign: 'center',
+        paddingVertical: 5,
+    },
+    selectedContainer: {
+        width: '48%',
+        backgroundColor: Colors.primary,
+        borderRadius: 5
+    },
+    selectedText: {
+        textAlign: 'center',
+        paddingVertical: 5,
+        color: Colors.white
     },
     scrolTitle: {
         fontSize: 22,
