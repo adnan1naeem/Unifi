@@ -20,49 +20,7 @@ const Vouchers = ({ navigation }) => {
   const [tabView, settabView] = useState('Vouchers')
   const [voucher, setVoucher] = useState()
 
-  const vouchersList = [
-    {
-      id: 1,
-      validFor: "Valid for 30 days",
-      code: "42200-47129",
-      usage: "Valid for one-time use",
-      createdAt: "Created 26 Oct 2023 at 8:58 PM",
-      note: "Note: Decline 500 vouchers, 30 days, 26 Oct 2023 batch",
-    },
-    {
-      id: 2,
-      validFor: "Valid for 30 days",
-      code: "42200-47129",
-      usage: "Valid for one-time use",
-      createdAt: "Created 26 Oct 2023 at 8:58 PM",
-      note: "Note: Decline 500 vouchers, 30 days, 26 Oct 2023 batch",
-    },
-    {
-      id: 3,
-      validFor: "Valid for 30 days",
-      code: "42200-47129",
-      usage: "Valid for one-time use",
-      createdAt: "Created 26 Oct 2023 at 8:58 PM",
-      note: "Note: Decline 500 vouchers, 30 days, 26 Oct 2023 batch",
-    },
-    {
-      id: 4,
-      validFor: "Valid for 30 days",
-      code: "42200-47129",
-      usage: "Valid for one-time use",
-      createdAt: "Created 26 Oct 2023 at 8:58 PM",
-      note: "Note: Decline 500 vouchers, 30 days, 26 Oct 2023 batch",
-    },
-    {
-      id: 5,
-      validFor: "Valid for 30 days",
-      code: "42200-47129",
-      usage: "Valid for one-time use",
-      createdAt: "Created 26 Oct 2023 at 8:58 PM",
-      note: "Note: Decline 500 vouchers, 30 days, 26 Oct 2023 batch",
-    },
 
-  ];
 
   const swipeBtns = [
     {
@@ -127,7 +85,6 @@ const Vouchers = ({ navigation }) => {
 
   useEffect(() => {
     fetchData();
-
   }, [filteredDataLengths]);
 
 
@@ -139,7 +96,6 @@ const Vouchers = ({ navigation }) => {
     })
       .then(async (response) => {
         if (response?.data) {
-          // console.log(response?.data?.data);
           setVoucher(response?.data?.data)
         }
       })
@@ -153,8 +109,6 @@ const Vouchers = ({ navigation }) => {
     return date;
   };
 
-
-
   const renderVoucherItem = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
       <Swipeout right={swipeBtns} autoClose={true} backgroundColor="transparent">
@@ -167,7 +121,6 @@ const Vouchers = ({ navigation }) => {
         </View>
       </Swipeout>
     </TouchableOpacity>
-
   );
 
 

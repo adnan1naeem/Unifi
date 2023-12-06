@@ -1,16 +1,17 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Platform } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Platform, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { Colors } from '../Utils/Colors'
 import CustomText from './CustomText'
 
-const Header = ({ onPress }) => {
+const Header = ({ onPress, loading, Cancel }) => {
     return (
-
         <View style={styles.HeaderContainer}>
-            <Text />
+            <TouchableOpacity onPress={Cancel}>
+                <CustomText title={loading ? "Canecl" : ''} textStyle={{ ...styles.login, paddingTop: 15 }} />
+            </TouchableOpacity>
             <Image source={require('../../assets/unifi.png')} resizeMode='stretch' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
-                <CustomText title="Login" />
+                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : "Login"} />
             </TouchableOpacity>
         </View>
 

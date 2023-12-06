@@ -10,7 +10,7 @@ const Splash = ({ navigation }) => {
             const user = await AsyncStorage.getItem('USER');
             const subscription = await AsyncStorage.getItem('SUBSCRIPTION');
             if (user) {
-                navigation.navigate('BottomTab');
+                navigation.replace('BottomTab');
             } else {
                 navigation.replace('Login');
             }

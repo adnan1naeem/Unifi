@@ -14,6 +14,9 @@ const Login = ({ navigation }) => {
     const [adminUsername, setAdminUsername] = useState('');
     const [siteId, setSiteId] = useState('');
     const [siteName, setsiteName] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [cancelLogin, setCancelLogin] = useState(false);
+
 
     const handleBytePress = (value) => {
         setIsByteOn(value);
@@ -27,34 +30,57 @@ const Login = ({ navigation }) => {
 
 
     const handleLogin = () => {
+        setLoading(true);
+        setCancelLogin(false);
+
         const loginData = {
-            username: adminUsername || "upWork0867845",
-            password: siteId || "upWork0867845",
+            username: adminUsername || 'upWork0867845',
+            password: siteId || 'upWork0867845',
         };
+
         axios.post(`${prefix_url}login`, loginData, {
             headers: {
                 'Content-Type': 'application/json',
             },
         })
             .then(async (response) => {
-                if (response?.data?.deviceToken) {
-                    console.log("Token:: ", response?.data?.deviceToken);
+                if (!cancelLogin && response?.data?.deviceToken) {
+                    // console.log('Token:: ', response?.data?.deviceToken);
                     await AsyncStorage.setItem('USER', response?.data?.deviceToken);
-                    navigation.navigate("Sites")
+                    navigation.navigate('Sites');
                 }
+                setLoading(false);
             })
             .catch(error => {
-                console.log("error :: ", error);
-                Alert.alert(JSON.stringify(error?.message))
+                if (!cancelLogin) {
+                    console.log('error :: ', error);
+                    Alert.alert(JSON.stringify(error?.message));
+                }
+                setLoading(false);
             });
     };
 
+    const handleCancelLogin = async () => {
+        setCancelLogin(true);
+        setLoading(false);
+        await AsyncStorage.removeItem('USER');
+
+    };
+    // const SignOut = async () => {
+    //     try {
+    //         await AsyncStorage.removeItem('USER');
+    //         navigation.reset({
+    //             index: 0,
+    //             routes: [{ name: 'Login' }],
+    //         });
+    //     } catch (error) {
+    //         console.error('Error signing out:', error);
+    //     }
+    // };
+
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
-            <Header navigation={navigation}
-                onPress={handleLogin}
-            // onPress={() => navigation.navigate('BottomTab')}
-            />
+            <Header navigation={navigation} loading={loading} Cancel={handleCancelLogin} onPress={handleLogin} />
             <View style={styles.innerHeading}>
                 <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
                 <CustomText title={"Fill"} textStyle={[styles.controllerText, { color: Colors.primary }]} />

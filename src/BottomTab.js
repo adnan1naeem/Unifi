@@ -18,7 +18,6 @@ const Tab = createBottomTabNavigator();
 const BottomTab = () => {
     return (
         <Tab.Navigator
-
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarInactiveTintColor: Colors.blur,
@@ -55,7 +54,6 @@ const BottomTab = () => {
                 name="Guests"
                 component={Guests}
             />
-
             <Tab.Screen
                 options={{
                     tabBarLabel: "Payments",

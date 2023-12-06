@@ -1,12 +1,13 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, } from 'react-native'
+import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import CustomText from '../../Components/CustomText'
 import { prefix_url } from '../../Utils/Constants'
 import axios from 'axios'
-import { Width } from '../../Components/Dimensions'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { styles } from './Styles'
+
 
 
 const Sites = ({ navigation }) => {
@@ -40,17 +41,19 @@ const Sites = ({ navigation }) => {
     };
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => handlesubmit(item)} style={{ backgroundColor: Colors.white, flexDirection: 'row', justifyContent: 'space-between', borderRadius: 8, paddingVertical: 15, paddingHorizontal: 20 }}>
-            <Text>Name: {item?.name}</Text>
-            <Text>role: {item?.role}</Text>
-        </TouchableOpacity>
+        <View style={{ marginHorizontal: 15 }}>
+            <CustomText title={"Sites Name"} textStyle={styles.titleheading} />
+            <TouchableOpacity onPress={() => handlesubmit(item)} style={styles.sitelist}>
+                <Text>{item?.name}</Text>
+            </TouchableOpacity>
+        </View>
     );
 
     const renderFooter = () => (
-        <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
 
-                <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+        <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+            <View style={{ marginHorizontal: 15 }}>
                 <View style={styles.toggleContainer}>
                     <View style={styles.text_container}>
                         <Text style={styles.Text_heading}>Weekly</Text>
@@ -102,20 +105,20 @@ const Sites = ({ navigation }) => {
 
     return (
         <View>
-            <View style={{ backgroundColor: Colors.primary, height: 100, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15, alignItems: 'center', paddingTop: Platform.OS === 'ios' ? '15%' : '5%' }}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <SimpleLineIcons name="arrow-left" style={{ color: Colors.white, fontSize: 15, fontWeight: 'bold' }} />
+            <View style={styles.ContainerSite}>
+                <TouchableOpacity style={{ padding: 10, }} onPress={() => navigation.goBack()}>
+                    <SimpleLineIcons name="arrow-left" style={styles.backButton} />
                 </TouchableOpacity>
-                <Image source={require('../../../assets/unifi.png')} style={{ height: 50, width: 50, resizeMode: 'contain', tintColor: Colors.white }} />
+                <Image source={require('../../../assets/unifi.png')} style={styles.HeaderIcon} />
                 <CustomText />
             </View>
 
-            <CustomText title={"Sites List"} textStyle={{ color: Colors.black, fontWeight: 'bold', textAlign: 'center', fontSize: 30, paddingTop: 25 }} />
+            <CustomText title={"Sites List"} textStyle={styles.sitesListtext} />
             <View style={{ marginTop: '15%' }}>
                 <FlatList
                     data={sites}
                     contentContainerStyle={{
-                        marginHorizontal: 15
+
                     }}
                     renderItem={renderItem}
                     ListFooterComponent={renderFooter}
@@ -129,51 +132,3 @@ const Sites = ({ navigation }) => {
 
 export default Sites
 
-const styles = StyleSheet.create({
-    modalContainer: {
-
-    },
-    modalContent: {
-        width: Width,
-        paddingBottom: 25,
-        borderRadius: 10,
-
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        color: Colors.black,
-        paddingVertical: 25,
-        textAlign: 'center',
-
-    },
-    text_container: { width: "75%" },
-    Text_heading: {
-        fontSize: 18,
-        fontWeight: "700",
-        color: Colors.black
-    },
-    Text_description: {
-        fontSize: 12,
-        fontWeight: "500",
-        color: Colors.black
-    },
-    toggleContainer: {
-        paddingVertical: 20,
-        borderWidth: 0.5,
-        borderColor: Colors.white,
-        width: "92%",
-        borderRadius: 10,
-        paddingHorizontal: 20,
-        backgroundColor: Colors.white,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 10,
-    },
-    closeButton: {
-        padding: 10,
-        alignSelf: "flex-end",
-        color: Colors.boldBlue,
-    },
-})
