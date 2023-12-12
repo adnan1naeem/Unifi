@@ -9,7 +9,7 @@ const Header = ({ onPress, loading, Cancel }) => {
             <TouchableOpacity onPress={Cancel}>
                 <CustomText title={loading ? "Canecl" : ''} textStyle={{ ...styles.login, paddingTop: 15 }} />
             </TouchableOpacity>
-            <Image source={require('../../assets/unifi.png')} resizeMode='stretch' style={styles.logo} />
+            <Image source={require('../../assets/frglogo.png')} resizeMode='containe' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
                 <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : "Login"} />
             </TouchableOpacity>
@@ -31,9 +31,10 @@ const styles = StyleSheet.create({
     },
     logo: {
         height: 50,
-        width: 80,
-        tintColor: Colors.white,
-        marginLeft: 25
+        width: 200,
+        // tintColor: Colors.white,
+        marginLeft: 25,
+        paddingBottom: 10
     },
     login: {
         alignItems: 'center',

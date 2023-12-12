@@ -49,7 +49,7 @@ export const styles = StyleSheet.create({
     },
     ContainerSite: {
         backgroundColor: Colors.primary,
-        height: 100,
+        height: Platform.OS === 'ios' ? 100 : 90,
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 15,
@@ -84,8 +84,10 @@ export const styles = StyleSheet.create({
     },
     HeaderIcon: {
         height: 50,
-        width: 50,
+        width: 190,
+        // tintColor: Colors.white,
+        // marginLeft: 25,
+        paddingBottom: 5,
         resizeMode: 'contain',
-        tintColor: Colors.white
     }
 });

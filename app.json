@@ -1,52 +1,39 @@
 {
   "expo": {
-    "name": "Unifi",
-    "slug": "Unifi",
+    "name": "Unifi Hotspot Manager",
+    "slug": "Unifi_native",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "updates": {
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/b420aa5f-209a-421d-8a5c-50650760ad3c"
+      "url": "https://u.expo.dev/27756e8b-a80e-4206-a5cb-1df4ce0f0932"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.unifimanager.hotspot"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hsaleem.Unifi"
+      "package": "com.unifimanager.hotspot"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "b420aa5f-209a-421d-8a5c-50650760ad3c"
+        "projectId": "27756e8b-a80e-4206-a5cb-1df4ce0f0932"
       }
     },
-    "plugins": [
-      [
-        "@stripe/stripe-react-native",
-        {
-          "merchantIdentifier": "YOUR_MERCHANT_IDENTIFIER",
-          "enableGooglePay": true
-        }
-      ]
-    ],
-    "runtimeVersion": "exposdk:49.0.15"
+    "runtimeVersion": "1.0.0"
   }
 }

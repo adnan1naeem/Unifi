@@ -32,10 +32,11 @@ const Login = ({ navigation }) => {
     const handleLogin = () => {
         setLoading(true);
         setCancelLogin(false);
+        console.log(adminUsername);
 
         const loginData = {
-            username: adminUsername || 'upWork0867845',
-            password: siteId || 'upWork0867845',
+            username: adminUsername || "upWork0867845",
+            password: siteId || "upWork0867845",
         };
 
         axios.post(`${prefix_url}login`, loginData, {
@@ -66,17 +67,6 @@ const Login = ({ navigation }) => {
         await AsyncStorage.removeItem('USER');
 
     };
-    // const SignOut = async () => {
-    //     try {
-    //         await AsyncStorage.removeItem('USER');
-    //         navigation.reset({
-    //             index: 0,
-    //             routes: [{ name: 'Login' }],
-    //         });
-    //     } catch (error) {
-    //         console.error('Error signing out:', error);
-    //     }
-    // };
 
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
@@ -95,8 +85,9 @@ const Login = ({ navigation }) => {
 
                 <TextInput
                     selectionColor={Colors.primary}
-                    placeholder='8443'
-                    onChangeText={(i) => setSiteId(i)}
+                    value={siteId}
+                    placeholder='Enter password'
+                    onChangeText={(text) => setSiteId(text)}
                     placeholderTextColor={Colors.textcolor}
                     style={styles.inptFirst}
                 />
@@ -104,8 +95,9 @@ const Login = ({ navigation }) => {
             <View style={styles.adminContainer} >
                 <View style={styles.inneradminContainer}>
                     <TextInput
-                        placeholder='Admin'
-                        onChangeText={(i) => setAdminUsername(i)}
+                        placeholder='Enter Admin'
+                        value={adminUsername}
+                        onChangeText={(text) => setAdminUsername(text)}
                         placeholderTextColor={Colors.textcolor}
                         style={styles.inputThird} />
                 </View>

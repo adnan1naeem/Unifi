@@ -1,4 +1,4 @@
-import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, } from 'react-native'
+import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
@@ -7,14 +7,39 @@ import { prefix_url } from '../../Utils/Constants'
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { styles } from './Styles'
-
-
+import Purchases from 'react-native-purchases'
 
 const Sites = ({ navigation }) => {
-    const [weekly, setWeekly] = useState(false);
     const [monthly, setMonthly] = useState(false);
     const [yearly, setYearly] = useState(false);
     const [sites, setSites] = useState()
+    const [loading, setLoading] = useState(true);
+    const [availablePakages, setAvailablePakages] = useState([])
+
+    const APIKeys = {
+        apple: "appl_AUcEDGAcJBfMRWMmHnJnhobpfyP",
+        google: "goog_FLqtqQZScGyoPgTPJSCqGeAlhAg",
+    };
+
+    useEffect(() => {
+        (async () => {
+            try {
+                if (Platform.OS == "android") {
+                    Purchases.configure({ apiKey: APIKeys.google });
+                } else {
+                    Purchases.configure({ apiKey: APIKeys.apple });
+                }
+                const offerings = await Purchases.getOfferings();
+                if (offerings?.current !== null && offerings?.current?.availablePackages?.length !== 0) {
+                    setLoading(false);
+                    setAvailablePakages(offerings?.current?.availablePackages);
+                }
+            }
+            catch (error) {
+                alert("error \n" + JSON.stringify(error));
+            }
+        })();
+    }, []);
 
     useEffect(() => {
         handleSites()
@@ -40,6 +65,61 @@ const Sites = ({ navigation }) => {
         navigation.navigate("BottomTab")
     };
 
+
+    const handleSwitchChange = (index, item) => {
+        if (index === 0) {
+            if (!monthly) {
+                showAlert("Monthly", item);
+            }
+            setMonthly(!monthly);
+            setYearly(false);
+        } else {
+            if (!yearly) {
+                showAlert("Yearly", item);
+            }
+            setMonthly(false);
+            setYearly(!yearly);
+        }
+    };
+
+    const showAlert = (value, item) => {
+        Alert.alert(
+            'Confirmation',
+            `Are you sure you want to proceed in ${value} subscription with ${item?.product?.priceString}?`,
+            [
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+                {
+                    text: 'Okay',
+                    onPress: async () => {
+
+                        // try {
+                        const data = await Purchases?.purchasePackage(item);
+
+                        //     if (typeof customerInfo.entitlements.active.my_entitlement_identifier !== "undefined") {
+                        //         // Unlock that great "pro" content
+                        //     }
+                        // } catch (e) {
+                        //     if (!e.userCancelled) {
+                        //         showError(e);
+                        //     }
+                        // }
+                        alert(JSON.stringify(data?.customerInfo));
+
+                        // alert(JSON.stringify(item?.product?.subscriptionOptions[0]?.productId));
+
+                        alert('Will subscribe in future...')
+                    },
+                },
+            ],
+            { cancelable: false }
+        );
+    };
+
+
     const renderItem = ({ item }) => (
         <View style={{ marginHorizontal: 15 }}>
             <CustomText title={"Sites Name"} textStyle={styles.titleheading} />
@@ -50,58 +130,42 @@ const Sites = ({ navigation }) => {
     );
 
     const renderFooter = () => (
-
         <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
-            <View style={{ marginHorizontal: 15 }}>
-                <View style={styles.toggleContainer}>
-                    <View style={styles.text_container}>
-                        <Text style={styles.Text_heading}>Weekly</Text>
-                        <Text style={styles.Text_description}>
-                            {"Where you can Avail the limited restricted thing\n"}
-                        </Text>
+            {availablePakages?.map((item, index) => (
+                <View key={index} style={{ marginHorizontal: 15 }}>
+                    <View style={styles.toggleContainer}>
+                        <View style={styles.text_container}>
+                            {index === 0 ? (
+                                <Text style={styles.Text_heading}>Monthly</Text>
+                            ) : (
+                                <Text style={styles.Text_heading}>Yearly</Text>
+                            )}
+                            <Text style={styles.Text_description}>
+                                {item?.product?.description}
+                            </Text>
+                        </View>
+                        <Switch
+                            trackColor={{
+                                false: Colors.light_Black,
+                                true: Colors.primary,
+                            }}
+                            thumbColor={index === 0 ? (monthly ? Colors.white : Colors.white) : (yearly ? Colors.white : Colors.white)}
+                            value={index === 0 ? monthly : yearly}
+                            ios_backgroundColor={'white'}
+                            onValueChange={() => handleSwitchChange(index, item)}
+                        />
                     </View>
-                    <Switch
-                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-                        thumbColor={weekly ? Colors.white : Colors.white}
-                        value={weekly}
-                        onValueChange={() => setWeekly(!weekly)}
-                    />
                 </View>
-                <View style={styles.toggleContainer}>
-                    <View style={styles.text_container}>
-                        <Text style={styles.Text_heading}>Monthly</Text>
-                        <Text style={styles.Text_description}>
-                            {"Where you can Avail the limited restricted thing\n"}
-                        </Text>
-                    </View>
-                    <Switch
-                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-                        thumbColor={monthly ? Colors.white : Colors.white}
-                        value={monthly}
-                        ios_backgroundColor={"white"}
-                        onValueChange={() => setMonthly(!monthly)}
-                    />
-                </View>
-                <View style={styles.toggleContainer}>
-                    <View style={styles.text_container}>
-                        <Text style={styles.Text_heading}>Yearly</Text>
-                        <Text style={styles.Text_description}>
-                            {"Where you can Avail the limited restricted thing\n"}
-                        </Text>
-                    </View>
-                    <Switch
-                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-                        thumbColor={yearly ? Colors.white : Colors.white}
-                        value={yearly}
-
-                        onValueChange={() => setYearly(!yearly)}
-                    />
-                </View>
-            </View>
+            ))}
         </View>
-    );
 
+    );
+    if (loading) {
+        return (
+            <ActivityIndicator color={'red'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
+        );
+    }
 
     return (
         <View>
@@ -109,7 +173,7 @@ const Sites = ({ navigation }) => {
                 <TouchableOpacity style={{ padding: 10, }} onPress={() => navigation.goBack()}>
                     <SimpleLineIcons name="arrow-left" style={styles.backButton} />
                 </TouchableOpacity>
-                <Image source={require('../../../assets/unifi.png')} style={styles.HeaderIcon} />
+                <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
                 <CustomText />
             </View>
 
@@ -131,4 +195,5 @@ const Sites = ({ navigation }) => {
 }
 
 export default Sites
+
 
