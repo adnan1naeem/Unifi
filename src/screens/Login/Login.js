@@ -35,8 +35,8 @@ const Login = ({ navigation }) => {
         console.log(adminUsername);
 
         const loginData = {
-            username: adminUsername || "upWork0867845",
-            password: siteId || "upWork0867845",
+            username: adminUsername,
+            password: siteId,
         };
 
         axios.post(`${prefix_url}login`, loginData, {
@@ -48,7 +48,8 @@ const Login = ({ navigation }) => {
                 if (!cancelLogin && response?.data?.deviceToken) {
                     // console.log('Token:: ', response?.data?.deviceToken);
                     await AsyncStorage.setItem('USER', response?.data?.deviceToken);
-                    navigation.navigate('Sites');
+                    // navigation.navigate('Sites'); 
+                    navigation.navigate('BottomTab')
                 }
                 setLoading(false);
             })

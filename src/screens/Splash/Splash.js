@@ -25,7 +25,7 @@ const Splash = ({ navigation }) => {
                 if (Object?.entries(customerInfo?.entitlements?.active)?.length > 0) {
                     navigation.replace('BottomTab');
                 } else {
-                    navigation.replace('Sites');
+                    navigation.replace('BottomTab');
                 }
             } else {
                 navigation.replace('Login');
@@ -49,4 +49,3 @@ const Splash = ({ navigation }) => {
     )
 }
 export default Splash
-
