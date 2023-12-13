@@ -1,14 +1,14 @@
-import { CardField, useStripe } from '@stripe/stripe-react-native';
+// import { CardField, useStripe } from '@stripe/stripe-react-native';
 
 
 let stripePromise;
 const getStripe = () => {
-    const { confirmPayment } = useStripe();
-    if (!stripePromise) {
-        stripePromise = loadStripe(
-            "pk_test_51O7fHtDVGeSuUbZZo6K3OlSGWrGslFYx6pSUT2JIojG3CMdzmJA3xEKCMNHVKTwjrYBEoG9mU01VBWNbHWy0iuJq00L444d4XQ"
-        );
-    }
+    // const { confirmPayment } = useStripe();
+    // if (!stripePromise) {
+    //     stripePromise = loadStripe(
+    //         "pk_test_51O7fHtDVGeSuUbZZo6K3OlSGWrGslFYx6pSUT2JIojG3CMdzmJA3xEKCMNHVKTwjrYBEoG9mU01VBWNbHWy0iuJq00L444d4XQ"
+    //     );
+    // }
     return stripePromise;
 };
 
