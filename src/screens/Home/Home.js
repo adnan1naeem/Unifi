@@ -61,8 +61,6 @@ const Home = ({ navigation }) => {
                 />
                 <Bar_Chart
                     data={Graph_data_Home}
-                    customLabels={X_axis_Labels_Home}
-                    X_Axis_Container={X_Axis.X_axis_Container}
                     spacing={28}
                     initialSpacing={12}
                     width_Container={'88%'}

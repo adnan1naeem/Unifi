@@ -17,7 +17,11 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [tabView, settabView] = useState('Vouchers')
-  const [voucher, setVoucher] = useState()
+  const [voucher, setVoucher] = useState([])
+  const [startDateIs, setStartDateIs] = useState(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const [endDateIs, setEndDateIs] = useState(new Date());
+  const [show, setShow] = useState(false);
+  const [startDateModal, setStartDateModal] = useState(false);
 
   const swipeBtns = [
     {
@@ -43,7 +47,7 @@ const Vouchers = ({ navigation }) => {
     }, [])
   );
 
-  const [filteredDataLengths, setFilteredDataLengths] = useState({});
+  const [filteredDataLengths, setFilteredDataLengths] = useState([]);
 
   const filterDataForTimeRange = async (startDate, endDate) => {
     const start = new Date(startDate);
@@ -53,18 +57,20 @@ const Vouchers = ({ navigation }) => {
 
     const filteredData = voucher?.filter(item => {
       const createTime = new Date(item?.create_time * 1000);
-      return createTime <= start && createTime <= end;
+      return createTime >= start && createTime <= end;
     });
-    let value = { value: filteredData?.length, date: moment(startDate).format("MM/DD") };
+    let value = { value: filteredData?.length, label: moment(startDate).format("MM/DD") };
     return value;
   };
 
   const fetchData = async () => {
-    let lastDate = new Date();
+    let lastDate = new Date(endDateIs);
+    let startDateNew = new Date(startDateIs);
+    let diff = lastDate?.getDate() - startDateNew.getDate();
 
     let resultArray = [];
-    for (let i = 0; i < 7; i++) {
-      let startDate = new Date();
+    for (let i = 0; i <= diff; i++) {
+      let startDate = new Date(startDateNew);
       let dateIs = startDate.setDate(startDate.getDate() + i);
       let data = await filterDataForTimeRange(dateIs, lastDate);
       resultArray.push(data);
@@ -74,8 +80,10 @@ const Vouchers = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [voucher]);
+    if (voucher?.length > 0 && startDateIs !== null && endDateIs !== null) {
+      fetchData();
+    }
+  }, [startDateIs, endDateIs, voucher]);
 
 
   const handleSites = () => {
@@ -113,38 +121,24 @@ const Vouchers = ({ navigation }) => {
     </TouchableOpacity>
   );
 
-  const [startDateIs, setStartDateIs] = useState(new Date(1598051730000));
-  const [endDateIs, setEndDateIs] = useState(new Date(1598051730000));
-  const [date, setDate] = useState(new Date(1598051730000));
-  const [show, setShow] = useState(false);
-  const [showEndDate, setDhowEndDate] = useState(false);
-
-  useEffect(() => {
-    setStartDateIs(moment(startDateIs).format("MM/DD/YYYY"));
-    setEndDateIs(moment(endDateIs).format("MM/DD/YYYY"));
-  }, [])
-  showEndDate
-
-  const onChange = (selectedDate) => {
-    const currentDate = selectedDate;
+  const onChange = (event, selectedDate) => {
     setShow(false);
-    setStartDateIs(currentDate);
-  };
+    if (startDateModal) {
+      setStartDateIs(selectedDate);
+    } else {
+      setEndDateIs(selectedDate);
 
-  const onChangeEndDate = (selectedDate) => {
-    const currentDate = selectedDate;
-    setDhowEndDate(false);
-    setEndDateIs(currentDate);
+    }
   };
 
   const showDatepicker = (value) => {
     if (value === "start") {
-      setShow(true);
+      setStartDateModal(true);
     } else {
-      setDhowEndDate(true);
+      setStartDateModal(false);
     }
+    setShow(true);
   };
-
 
   return (
     <View>
@@ -195,34 +189,22 @@ const Vouchers = ({ navigation }) => {
               <Button onPress={() => showDatepicker('end')} title="End Date!" />
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-              <Text>StartDate: {startDateIs.toLocaleString()}</Text>
-              <Text>EndDate: {endDateIs.toLocaleString()}</Text>
+              <Text>StartDate: {moment(startDateIs).format("MM/DD/YYYY")}</Text>
+              <Text>EndDate: {moment(endDateIs).format("MM/DD/YYYY")}</Text>
             </View>
             {show &&
               <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
+                testID="datePicker"
+                value={new Date()}
                 mode={"date"}
-                is24Hour={true}
                 onChange={onChange}
-              />
-            }
-            {showEndDate &&
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={"date"}
-                is24Hour={true}
-                onChange={onChangeEndDate}
               />
             }
             <View style={styles.barContainer}>
               <Bar_Chart
                 data={filteredDataLengths}
-                customLabels={X_axis_Labels_Vouchers}
-                X_Axis_Container={styles.BarAxis}
-                axis={{ fontSize: 9, color: Colors.black, }}
                 spacing={20}
+                width_Container={'100%'}
                 initialSpacing={5}
               />
             </View>
