@@ -9,6 +9,14 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
 
     },
+    mainFlatContainer: {
+
+    },
+    ForwordArrow: {
+        alignSelf: 'center',
+        fontSize: 25,
+        color: Colors.black,
+    },
     modalTitle: {
         fontSize: 18,
         fontWeight: "bold",
@@ -69,11 +77,12 @@ export const styles = StyleSheet.create({
     },
     sitelist: {
         backgroundColor: Colors.white,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         borderRadius: 8,
         paddingVertical: 15,
-        paddingHorizontal: 20
+        flexDirection: "row",
+        justifyContent: 'space-between',
+        marginVertical: 7,
+        paddingHorizontal: 25
     },
     sitesListtext: {
         color: Colors.black,

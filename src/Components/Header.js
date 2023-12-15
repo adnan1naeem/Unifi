@@ -3,11 +3,11 @@ import React from 'react'
 import { Colors } from '../Utils/Colors'
 import CustomText from './CustomText'
 
-const Header = ({ onPress, loading, Cancel }) => {
+const Header = ({ onPress, loading }) => {
     return (
         <View style={styles.HeaderContainer}>
-            <TouchableOpacity onPress={Cancel}>
-                <CustomText title={loading ? "Canecl" : ''} textStyle={{ ...styles.login, paddingTop: 15 }} />
+            <TouchableOpacity>
+                <CustomText title={''} textStyle={{ ...styles.login, paddingTop: 15 }} />
             </TouchableOpacity>
             <Image source={require('../../assets/frglogo.png')} resizeMode='containe' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
@@ -31,10 +31,9 @@ const styles = StyleSheet.create({
     },
     logo: {
         height: 50,
-        width: 200,
-        // tintColor: Colors.white,
+        width: 180,
         marginLeft: 25,
-        paddingBottom: 10
+        marginBottom: 5
     },
     login: {
         alignItems: 'center',

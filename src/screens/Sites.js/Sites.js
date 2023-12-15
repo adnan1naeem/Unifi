@@ -5,6 +5,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import CustomText from '../../Components/CustomText'
 import { prefix_url } from '../../Utils/Constants'
 import axios from 'axios'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { styles } from './Styles'
 import Purchases from 'react-native-purchases'
@@ -52,7 +53,7 @@ const Sites = ({ navigation }) => {
             }
         }).then(async (response) => {
             if (response?.data) {
-                setSites(response?.data?.data)
+                setSites(response?.data?.data);
             }
         }).catch(error => {
             console.log("Catch error :: ", error);
@@ -62,9 +63,8 @@ const Sites = ({ navigation }) => {
     const handlesubmit = async (item) => {
         await AsyncStorage.setItem("SUBSCRIPTION", 'YES');
         await AsyncStorage.setItem('SITE', item?.name);
-        navigation.navigate("BottomTab")
+        navigation.replace("BottomTab")
     };
-
 
     const handleSwitchChange = (index, item) => {
         if (index === 0) {
@@ -122,45 +122,87 @@ const Sites = ({ navigation }) => {
 
     const renderItem = ({ item }) => (
         <View style={{ marginHorizontal: 15 }}>
-            <CustomText title={"Sites Name"} textStyle={styles.titleheading} />
+
             <TouchableOpacity onPress={() => handlesubmit(item)} style={styles.sitelist}>
-                <Text>{item?.name}</Text>
+                <CustomText title={item?.name} textStyle={{ color: Colors.black }} />
+                <MaterialCommunityIcons name="arrow-right" style={styles.ForwordArrow} />
             </TouchableOpacity>
+
         </View>
     );
+
+    // const renderFooter = () => (
+    //     <View style={styles.modalContent}>
+    //         <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+    //         {availablePakages?.map((item, index) => (
+    //             <View key={index} style={{ marginHorizontal: 15 }}>
+    //                 <View style={styles.toggleContainer}>
+    //                     <View style={styles.text_container}>
+    //                         {index === 0 ? (
+    //                             <Text style={styles.Text_heading}>Monthly</Text>
+    //                         ) : (
+    //                             <Text style={styles.Text_heading}>Yearly</Text>
+    //                         )}
+    //                         <Text style={styles.Text_description}>
+    //                             {item?.product?.description}
+    //                         </Text>
+    //                     </View>
+    //                     <Switch
+    //                         trackColor={{
+    //                             false: Colors.light_Black,
+    //                             true: Colors.primary,
+    //                         }}
+    //                         thumbColor={index === 0 ? (monthly ? Colors.white : Colors.white) : (yearly ? Colors.white : Colors.white)}
+    //                         value={index === 0 ? monthly : yearly}
+    //                         ios_backgroundColor={'white'}
+    //                         onValueChange={() => handleSwitchChange(index, item)}
+    //                     />
+    //                 </View>
+    //             </View>
+    //         ))}
+    //     </View>
+
+    // );
 
     const renderFooter = () => (
-        <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
-            {availablePakages?.map((item, index) => (
-                <View key={index} style={{ marginHorizontal: 15 }}>
-                    <View style={styles.toggleContainer}>
-                        <View style={styles.text_container}>
-                            {index === 0 ? (
-                                <Text style={styles.Text_heading}>Monthly</Text>
-                            ) : (
-                                <Text style={styles.Text_heading}>Yearly</Text>
-                            )}
-                            <Text style={styles.Text_description}>
-                                {item?.product?.description}
-                            </Text>
-                        </View>
-                        <Switch
-                            trackColor={{
-                                false: Colors.light_Black,
-                                true: Colors.primary,
-                            }}
-                            thumbColor={index === 0 ? (monthly ? Colors.white : Colors.white) : (yearly ? Colors.white : Colors.white)}
-                            value={index === 0 ? monthly : yearly}
-                            ios_backgroundColor={'white'}
-                            onValueChange={() => handleSwitchChange(index, item)}
-                        />
-                    </View>
-                </View>
-            ))}
-        </View>
+        <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
 
+                <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+
+                <View style={styles.toggleContainer}>
+                    <View style={styles.text_container}>
+                        <Text style={styles.Text_heading}>Monthly</Text>
+                        <Text style={styles.Text_description}>
+                            {"Where you can Avail the limited restricted thing\n"}
+                        </Text>
+                    </View>
+                    <Switch
+                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
+                        thumbColor={monthly ? Colors.white : Colors.white}
+                        value={monthly}
+                        ios_backgroundColor={"white"}
+                        onValueChange={() => setMonthly(!monthly)}
+                    />
+                </View>
+                <View style={styles.toggleContainer}>
+                    <View style={styles.text_container}>
+                        <Text style={styles.Text_heading}>Yearly</Text>
+                        <Text style={styles.Text_description}>
+                            {"Where you can Avail the limited restricted thing\n"}
+                        </Text>
+                    </View>
+                    <Switch
+                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
+                        thumbColor={yearly ? Colors.white : Colors.white}
+                        value={yearly}
+                        onValueChange={() => setYearly(!yearly)}
+                    />
+                </View>
+            </View>
+        </View>
     );
+
     if (loading) {
         return (
             <ActivityIndicator color={'red'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
@@ -170,7 +212,7 @@ const Sites = ({ navigation }) => {
     return (
         <View>
             <View style={styles.ContainerSite}>
-                <TouchableOpacity style={{ padding: 10, }} onPress={() => navigation.goBack()}>
+                <TouchableOpacity style={{ padding: 10, }} onPress={() => navigation.goBack() || navigation.replace("Login")}>
                     <SimpleLineIcons name="arrow-left" style={styles.backButton} />
                 </TouchableOpacity>
                 <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
@@ -179,11 +221,10 @@ const Sites = ({ navigation }) => {
 
             <CustomText title={"Sites List"} textStyle={styles.sitesListtext} />
             <View style={{ marginTop: '15%' }}>
+                <CustomText title={"Sites Name"} textStyle={styles.titleheading} />
+
                 <FlatList
                     data={sites}
-                    contentContainerStyle={{
-
-                    }}
                     renderItem={renderItem}
                     ListFooterComponent={renderFooter}
                     keyExtractor={(item) => item?._id}

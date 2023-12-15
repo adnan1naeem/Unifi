@@ -2,7 +2,7 @@
   "expo": {
     "name": "Unifi Hotspot Manager",
     "slug": "Unifi_native",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -10,7 +10,7 @@
       "enabled": true,
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/27756e8b-a80e-4206-a5cb-1df4ce0f0932"
+      "url": "https://u.expo.dev/fe2fa23e-7d3c-4c8b-878e-a16e47cd28c2"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -18,7 +18,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.frg-technology.unifihotspotmanager",
-      "buildNumber": "1.0.1"
+      "buildNumber": "1.0.2"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,11 +30,11 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "runtimeVersion": "1.0.0",
     "extra": {
       "eas": {
-        "projectId": "27756e8b-a80e-4206-a5cb-1df4ce0f0932"
+        "projectId": "fe2fa23e-7d3c-4c8b-878e-a16e47cd28c2"
       }
-    },
-    "runtimeVersion": "1.0.0"
+    }
   }
 }

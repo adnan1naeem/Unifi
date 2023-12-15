@@ -15,7 +15,6 @@ const Login = ({ navigation }) => {
     const [siteId, setSiteId] = useState('');
     const [siteName, setsiteName] = useState('');
     const [loading, setLoading] = useState(false);
-    const [cancelLogin, setCancelLogin] = useState(false);
 
 
     const handleBytePress = (value) => {
@@ -29,53 +28,45 @@ const Login = ({ navigation }) => {
     }, []);
 
 
-    const handleLogin = () => {
-        setLoading(true);
-        if (!adminUsername || !siteId) {
-            alert("Please add Admin Name and Password")
-            setLoading(false);
-        } else {
-            setCancelLogin(false);
+    const handleLogin = async () => {
+        try {
+            setLoading(true);
+            if (!adminUsername || !siteId) {
+                alert('Please Enter Admin Name and Password');
+                setLoading(false);
+                return;
+            }
+
             console.log(adminUsername);
             const loginData = {
                 username: adminUsername,
                 password: siteId,
             };
-            axios.post(`${prefix_url}login`, loginData, {
+
+            const response = await axios.post(`${prefix_url}login`, loginData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            })
-                .then(async (response) => {
-                    if (!cancelLogin && response?.data?.deviceToken) {
-                        // console.log('Token:: ', response?.data?.deviceToken);
-                        await AsyncStorage.setItem('USER', response?.data?.deviceToken);
-                        // navigation.navigate('Sites'); 
-                        navigation.navigate('Sites')
-                    }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    if (!cancelLogin) {
-                        console.log('error :: ', error);
-                        Alert.alert(JSON.stringify(error?.message));
-                    }
-                    setLoading(false);
-                });
+            });
+
+            if (response?.data?.deviceToken) {
+                await AsyncStorage.setItem('USER', response?.data?.deviceToken);
+                navigation.navigate('Sites');
+            }
+        } catch (error) {
+            console.log('error :: ', error);
+            Alert.alert(JSON.stringify(error?.message));
+        } finally {
+            setLoading(false);
         }
-
     };
 
-    const handleCancelLogin = async () => {
-        setCancelLogin(true);
-        setLoading(false);
-        await AsyncStorage.removeItem('USER');
 
-    };
+
 
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
-            <Header navigation={navigation} loading={loading} Cancel={handleCancelLogin} onPress={handleLogin} />
+            <Header navigation={navigation} loading={loading} onPress={handleLogin} />
             <View style={styles.innerHeading}>
                 <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
                 <CustomText title={"Fill"} textStyle={[styles.controllerText, { color: Colors.primary }]} />
