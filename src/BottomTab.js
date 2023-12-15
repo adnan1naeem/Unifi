@@ -54,7 +54,7 @@ const BottomTab = () => {
                 name="Guests"
                 component={Guests}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 options={{
                     tabBarLabel: "Payments",
                     tabBarIcon: ({ color, size }) => (
@@ -63,7 +63,7 @@ const BottomTab = () => {
                 }}
                 name="Payments"
                 component={Payments}
-            />
+            /> */}
             <Tab.Screen
                 options={{
                     tabBarLabel: "Vouchers",
@@ -74,7 +74,7 @@ const BottomTab = () => {
                 name="Vouchers"
                 component={Vouchers}
             />
-            <Tab.Screen
+            {/* <Tab.Screen
                 options={{
                     tabBarLabel: "Operators",
                     tabBarIcon: ({ color, size }) => (
@@ -82,7 +82,7 @@ const BottomTab = () => {
                 }}
                 name="Operators"
                 component={Operators}
-            />
+            /> */}
         </Tab.Navigator>
     );
 };

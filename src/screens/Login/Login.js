@@ -31,35 +31,39 @@ const Login = ({ navigation }) => {
 
     const handleLogin = () => {
         setLoading(true);
-        setCancelLogin(false);
-        console.log(adminUsername);
-
-        const loginData = {
-            username: adminUsername,
-            password: siteId,
-        };
-
-        axios.post(`${prefix_url}login`, loginData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(async (response) => {
-                if (!cancelLogin && response?.data?.deviceToken) {
-                    // console.log('Token:: ', response?.data?.deviceToken);
-                    await AsyncStorage.setItem('USER', response?.data?.deviceToken);
-                    // navigation.navigate('Sites'); 
-                    navigation.navigate('BottomTab')
-                }
-                setLoading(false);
+        if (!adminUsername || !siteId) {
+            alert("Please add Admin Name and Password")
+            setLoading(false);
+        } else {
+            setCancelLogin(false);
+            console.log(adminUsername);
+            const loginData = {
+                username: adminUsername,
+                password: siteId,
+            };
+            axios.post(`${prefix_url}login`, loginData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             })
-            .catch(error => {
-                if (!cancelLogin) {
-                    console.log('error :: ', error);
-                    Alert.alert(JSON.stringify(error?.message));
-                }
-                setLoading(false);
-            });
+                .then(async (response) => {
+                    if (!cancelLogin && response?.data?.deviceToken) {
+                        // console.log('Token:: ', response?.data?.deviceToken);
+                        await AsyncStorage.setItem('USER', response?.data?.deviceToken);
+                        // navigation.navigate('Sites'); 
+                        navigation.navigate('Sites')
+                    }
+                    setLoading(false);
+                })
+                .catch(error => {
+                    if (!cancelLogin) {
+                        console.log('error :: ', error);
+                        Alert.alert(JSON.stringify(error?.message));
+                    }
+                    setLoading(false);
+                });
+        }
+
     };
 
     const handleCancelLogin = async () => {

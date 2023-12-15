@@ -18,6 +18,13 @@ export const styles = StyleSheet.create({
         fontSize: 24,
         color: Colors.black
     },
+    siteTitle: {
+        textTransform: 'capitalize',
+        paddingTop: 5,
+        fontWeight: 'bold',
+        fontSize: 24,
+        color: Colors.black
+    },
     containerView: {
         width: Width,
         height: height / 1.4,

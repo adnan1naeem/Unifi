@@ -14,7 +14,6 @@ const Splash = ({ navigation }) => {
     useEffect(() => {
         const fetchData = async () => {
             const user = await AsyncStorage.getItem('USER');
-            const subscription = await AsyncStorage.getItem('SUBSCRIPTION');
             if (user) {
                 if (Platform.OS == "android") {
                     await Purchases.configure({ apiKey: APIKeys.google });
@@ -25,7 +24,7 @@ const Splash = ({ navigation }) => {
                 if (Object?.entries(customerInfo?.entitlements?.active)?.length > 0) {
                     navigation.replace('BottomTab');
                 } else {
-                    navigation.replace('BottomTab');
+                    navigation.replace('Sites');
                 }
             } else {
                 navigation.replace('Login');

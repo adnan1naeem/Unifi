@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity, ScrollView, Button } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
@@ -12,15 +12,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import moment from 'moment';
 import { prefix_url } from '../../Utils/Constants';
-
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [tabView, settabView] = useState('Vouchers')
   const [voucher, setVoucher] = useState()
-
-
 
   const swipeBtns = [
     {
@@ -45,47 +42,40 @@ const Vouchers = ({ navigation }) => {
       handleSites();
     }, [])
   );
+
   const [filteredDataLengths, setFilteredDataLengths] = useState({});
 
-  const filterDataForTimeRange = async (startDate, endDate, label) => {
-    const start = new Date();
-    start.setDate(start.getDate() - startDate);
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date();
-    end.setDate(end.getDate() - endDate);
-    end.setHours(23, 59, 59, 999);
+  const filterDataForTimeRange = async (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const dayAdded = end.getDate() + 7;
+    end.setDate(dayAdded);
 
     const filteredData = voucher?.filter(item => {
       const createTime = new Date(item?.create_time * 1000);
-      return createTime >= start && createTime <= end;
+      return createTime <= start && createTime <= end;
     });
-
-    return filteredData?.length;
+    let value = { value: filteredData?.length, date: moment(startDate).format("MM/DD") };
+    return value;
   };
 
   const fetchData = async () => {
-    const todayLength = await filterDataForTimeRange(0, 0, 'Today');
-    const yesterdayLength = await filterDataForTimeRange(1, 1, 'Yesterday');
-    const twoDaysAgoLength = await filterDataForTimeRange(2, 2, 'Two days ago');
-    const threeDaysAgoLength = await filterDataForTimeRange(3, 3, 'Three days ago');
-    const fourDaysAgoLength = await filterDataForTimeRange(4, 4, 'Four days ago');
-    const fiveDaysAgoLength = await filterDataForTimeRange(5, 5, 'five days ago');
+    let lastDate = new Date();
 
-    const daysResult = [
-      { value: todayLength },
-      { value: yesterdayLength },
-      { value: twoDaysAgoLength },
-      { value: threeDaysAgoLength },
-      { value: fourDaysAgoLength },
-      { value: fiveDaysAgoLength },
-    ];
-    setFilteredDataLengths(daysResult);
+    let resultArray = [];
+    for (let i = 0; i < 7; i++) {
+      let startDate = new Date();
+      let dateIs = startDate.setDate(startDate.getDate() + i);
+      let data = await filterDataForTimeRange(dateIs, lastDate);
+      resultArray.push(data);
+    }
+
+    setFilteredDataLengths(resultArray);
   };
 
   useEffect(() => {
     fetchData();
-  }, [filteredDataLengths]);
+  }, [voucher]);
 
 
   const handleSites = () => {
@@ -122,6 +112,38 @@ const Vouchers = ({ navigation }) => {
       </Swipeout>
     </TouchableOpacity>
   );
+
+  const [startDateIs, setStartDateIs] = useState(new Date(1598051730000));
+  const [endDateIs, setEndDateIs] = useState(new Date(1598051730000));
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [show, setShow] = useState(false);
+  const [showEndDate, setDhowEndDate] = useState(false);
+
+  useEffect(() => {
+    setStartDateIs(moment(startDateIs).format("MM/DD/YYYY"));
+    setEndDateIs(moment(endDateIs).format("MM/DD/YYYY"));
+  }, [])
+  showEndDate
+
+  const onChange = (selectedDate) => {
+    const currentDate = selectedDate;
+    setShow(false);
+    setStartDateIs(currentDate);
+  };
+
+  const onChangeEndDate = (selectedDate) => {
+    const currentDate = selectedDate;
+    setDhowEndDate(false);
+    setEndDateIs(currentDate);
+  };
+
+  const showDatepicker = (value) => {
+    if (value === "start") {
+      setShow(true);
+    } else {
+      setDhowEndDate(true);
+    }
+  };
 
 
   return (
@@ -166,8 +188,34 @@ const Vouchers = ({ navigation }) => {
             />
           </View>
           :
-          <>
+          <View>
             <CustomText title={"Active Vouchers"} textStyle={styles.DetailsContainer} />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <Button onPress={() => showDatepicker("start")} title="Start Date!" />
+              <Button onPress={() => showDatepicker('end')} title="End Date!" />
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+              <Text>StartDate: {startDateIs.toLocaleString()}</Text>
+              <Text>EndDate: {endDateIs.toLocaleString()}</Text>
+            </View>
+            {show &&
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={"date"}
+                is24Hour={true}
+                onChange={onChange}
+              />
+            }
+            {showEndDate &&
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode={"date"}
+                is24Hour={true}
+                onChange={onChangeEndDate}
+              />
+            }
             <View style={styles.barContainer}>
               <Bar_Chart
                 data={filteredDataLengths}
@@ -178,7 +226,7 @@ const Vouchers = ({ navigation }) => {
                 initialSpacing={5}
               />
             </View>
-          </>
+          </View>
         }
         <View style={{ height: 150 }} />
       </ScrollView>

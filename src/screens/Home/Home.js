@@ -1,5 +1,5 @@
 import { FlatList, TouchableOpacity, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import { styles } from './Styles'
@@ -10,6 +10,14 @@ import { X_Axis } from '../../Components/ComponentsStyle'
 
 
 const Home = ({ navigation }) => {
+    const [siteName, setSiteName] = useState('');
+
+    useEffect(() => {
+        (async () => {
+            let name = await AsyncStorage.getItem('SITE');
+            setSiteName(name);
+        })();
+    }, [])
 
     const SignOut = async () => {
         try {
@@ -22,6 +30,7 @@ const Home = ({ navigation }) => {
             console.error('Error signing out:', error);
         }
     };
+
     return (
         <View>
             <View style={styles.HeaderContainer}>
@@ -29,7 +38,13 @@ const Home = ({ navigation }) => {
                     <CustomText title={"Log Out"} textStyle={styles.logout} />
                 </TouchableOpacity>
 
-                <CustomText title={"HOME"} textStyle={styles.HeaderTitle} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <CustomText title={"HOME"} textStyle={styles.HeaderTitle} />
+                    <View style={{ flexDirection: 'row' }}>
+                        <CustomText title={"name: "} textStyle={styles.HeaderTitle} />
+                        <CustomText title={siteName} textStyle={styles.siteTitle} />
+                    </View>
+                </View>
             </View>
             <View style={styles.containerView}>
                 <CustomText

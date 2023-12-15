@@ -13,7 +13,7 @@ const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
     const [yearly, setYearly] = useState(false);
     const [sites, setSites] = useState()
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
 
     const APIKeys = {
@@ -36,7 +36,7 @@ const Sites = ({ navigation }) => {
                 }
             }
             catch (error) {
-                alert("error \n" + JSON.stringify(error));
+                // alert("error \n" + JSON.stringify(error));
             }
         })();
     }, []);
