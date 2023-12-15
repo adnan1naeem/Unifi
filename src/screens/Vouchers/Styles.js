@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Width } from '../../Components/Dimensions';
 import { Colors } from '../../Utils/Colors';
 
@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
         paddingVertical: '5%'
     },
     printadd: {
+        paddingTop: Platform.OS === 'ios' ? 20 : 0,
         flexDirection: "row",
         justifyContent: "flex-end",
         paddingHorizontal: 15

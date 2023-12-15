@@ -41,7 +41,7 @@ const Home = ({ navigation }) => {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <CustomText title={"HOME"} textStyle={styles.HeaderTitle} />
                     <View style={{ flexDirection: 'row' }}>
-                        <CustomText title={"name: "} textStyle={styles.HeaderTitle} />
+                        <CustomText title={"site: "} textStyle={styles.HeaderTitle} />
                         <CustomText title={siteName} textStyle={styles.siteTitle} />
                     </View>
                 </View>
