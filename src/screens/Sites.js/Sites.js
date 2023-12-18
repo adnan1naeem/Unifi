@@ -1,4 +1,4 @@
-import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, } from 'react-native'
+import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, ScrollView, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
@@ -222,18 +222,18 @@ const Sites = ({ navigation }) => {
                 <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
                 <CustomText />
             </View>
-
-            <CustomText title={"Sites List"} textStyle={styles.sitesListtext} />
-            <View style={{ marginTop: '15%' }}>
-                <CustomText title={"Sites Name"} textStyle={styles.titleheading} />
-
-                <FlatList
-                    data={sites}
-                    renderItem={renderItem}
-                    ListFooterComponent={showSubscription && renderFooter}
-                    keyExtractor={(item) => item?._id}
-                />
-            </View>
+            <ScrollView>
+                <CustomText title={"List of Sites"} textStyle={styles.sitesListtext} />
+                <View style={{ marginTop: '15%', paddingBottom: "25%" }}>
+                    <CustomText title={sites?.length === 1 ? "Site" : "Sites"} textStyle={styles.titleheading} />
+                    <FlatList
+                        data={sites}
+                        renderItem={renderItem}
+                        ListFooterComponent={showSubscription && renderFooter}
+                        keyExtractor={(item) => item?._id}
+                    />
+                </View>
+            </ScrollView>
 
         </View>
     )

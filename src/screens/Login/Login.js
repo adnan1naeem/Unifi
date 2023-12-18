@@ -61,8 +61,6 @@ const Login = ({ navigation }) => {
     };
 
 
-
-
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
             <Header navigation={navigation} loading={loading} onPress={handleLogin} />
