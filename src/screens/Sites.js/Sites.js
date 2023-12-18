@@ -15,6 +15,8 @@ const Sites = ({ navigation }) => {
     const [yearly, setYearly] = useState(false);
     const [sites, setSites] = useState()
     const [loading, setLoading] = useState(false);
+    const [disable, setDisable] = useState(false);
+    const [showSubscription, setShowSubscription] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
 
     const APIKeys = {
@@ -31,6 +33,12 @@ const Sites = ({ navigation }) => {
                     Purchases.configure({ apiKey: APIKeys.apple });
                 }
                 const offerings = await Purchases.getOfferings();
+                const customerInfo = await Purchases.getCustomerInfo();
+                if (Object?.entries(customerInfo?.entitlements?.active)?.length > 0) {
+                    setShowSubscription(false);
+                } else {
+                    setShowSubscription(true);
+                }
                 if (offerings?.current !== null && offerings?.current?.availablePackages?.length !== 0) {
                     setLoading(false);
                     setAvailablePakages(offerings?.current?.availablePackages);
@@ -61,6 +69,10 @@ const Sites = ({ navigation }) => {
     };
 
     const handlesubmit = async (item) => {
+        if (disable === false) {
+            alert("Please Choose Your plan before selecting the sites, \nThanks")
+            return
+        }
         await AsyncStorage.setItem("SUBSCRIPTION", 'YES');
         await AsyncStorage.setItem('SITE', item?.name);
         navigation.replace("BottomTab")
@@ -89,29 +101,21 @@ const Sites = ({ navigation }) => {
             [
                 {
                     text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
+                    onPress: () => {
+                        setYearly(false);
+                        setMonthly(false);
+                    },
                     style: 'cancel',
                 },
                 {
                     text: 'Okay',
                     onPress: async () => {
-
-                        // try {
-                        const data = await Purchases?.purchasePackage(item);
-
-                        //     if (typeof customerInfo.entitlements.active.my_entitlement_identifier !== "undefined") {
-                        //         // Unlock that great "pro" content
-                        //     }
-                        // } catch (e) {
-                        //     if (!e.userCancelled) {
-                        //         showError(e);
-                        //     }
-                        // }
-                        alert(JSON.stringify(data?.customerInfo));
-
-                        // alert(JSON.stringify(item?.product?.subscriptionOptions[0]?.productId));
-
-                        alert('Will subscribe in future...')
+                        await Purchases?.purchasePackage(item).then((item) => {
+                            setDisable(true);
+                        }).catch(() => {
+                            setYearly(false);
+                            setMonthly(false);
+                        });
                     },
                 },
             ],
@@ -122,7 +126,6 @@ const Sites = ({ navigation }) => {
 
     const renderItem = ({ item }) => (
         <View style={{ marginHorizontal: 15 }}>
-
             <TouchableOpacity onPress={() => handlesubmit(item)} style={styles.sitelist}>
                 <CustomText title={item?.name} textStyle={{ color: Colors.black }} />
                 <MaterialCommunityIcons name="arrow-right" style={styles.ForwordArrow} />
@@ -131,77 +134,78 @@ const Sites = ({ navigation }) => {
         </View>
     );
 
-    // const renderFooter = () => (
-    //     <View style={styles.modalContent}>
-    //         <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
-    //         {availablePakages?.map((item, index) => (
-    //             <View key={index} style={{ marginHorizontal: 15 }}>
-    //                 <View style={styles.toggleContainer}>
-    //                     <View style={styles.text_container}>
-    //                         {index === 0 ? (
-    //                             <Text style={styles.Text_heading}>Monthly</Text>
-    //                         ) : (
-    //                             <Text style={styles.Text_heading}>Yearly</Text>
-    //                         )}
-    //                         <Text style={styles.Text_description}>
-    //                             {item?.product?.description}
-    //                         </Text>
-    //                     </View>
-    //                     <Switch
-    //                         trackColor={{
-    //                             false: Colors.light_Black,
-    //                             true: Colors.primary,
-    //                         }}
-    //                         thumbColor={index === 0 ? (monthly ? Colors.white : Colors.white) : (yearly ? Colors.white : Colors.white)}
-    //                         value={index === 0 ? monthly : yearly}
-    //                         ios_backgroundColor={'white'}
-    //                         onValueChange={() => handleSwitchChange(index, item)}
-    //                     />
-    //                 </View>
-    //             </View>
-    //         ))}
-    //     </View>
-
-    // );
-
     const renderFooter = () => (
-        <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-
-                <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
-
-                <View style={styles.toggleContainer}>
-                    <View style={styles.text_container}>
-                        <Text style={styles.Text_heading}>Monthly</Text>
-                        <Text style={styles.Text_description}>
-                            {"Where you can Avail the limited restricted thing\n"}
-                        </Text>
+        <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+            {availablePakages?.map((item, index) => (
+                <View key={index} style={{ marginHorizontal: 15 }}>
+                    <View style={styles.toggleContainer}>
+                        <View style={styles.text_container}>
+                            {index === 0 ? (
+                                <Text style={styles.Text_heading}>Monthly</Text>
+                            ) : (
+                                <Text style={styles.Text_heading}>Yearly</Text>
+                            )}
+                            <Text style={styles.Text_description}>
+                                {item?.product?.description}
+                            </Text>
+                        </View>
+                        <Switch
+                            disabled={disable}
+                            trackColor={{
+                                false: Colors.light_Black,
+                                true: Colors.primary,
+                            }}
+                            thumbColor={index === 0 ? (monthly ? Colors.white : Colors.white) : (yearly ? Colors.white : Colors.white)}
+                            value={index === 0 ? monthly : yearly}
+                            ios_backgroundColor={'white'}
+                            onValueChange={() => handleSwitchChange(index, item)}
+                        />
                     </View>
-                    <Switch
-                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-                        thumbColor={monthly ? Colors.white : Colors.white}
-                        value={monthly}
-                        ios_backgroundColor={"white"}
-                        onValueChange={() => setMonthly(!monthly)}
-                    />
                 </View>
-                <View style={styles.toggleContainer}>
-                    <View style={styles.text_container}>
-                        <Text style={styles.Text_heading}>Yearly</Text>
-                        <Text style={styles.Text_description}>
-                            {"Where you can Avail the limited restricted thing\n"}
-                        </Text>
-                    </View>
-                    <Switch
-                        trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-                        thumbColor={yearly ? Colors.white : Colors.white}
-                        value={yearly}
-                        onValueChange={() => setYearly(!yearly)}
-                    />
-                </View>
-            </View>
+            ))}
         </View>
+
     );
+
+    // const renderFooter = () => (
+    //     <View style={styles.modalContainer}>
+    //         <View style={styles.modalContent}>
+
+    //             <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+
+    //             <View style={styles.toggleContainer}>
+    //                 <View style={styles.text_container}>
+    //                     <Text style={styles.Text_heading}>Monthly</Text>
+    //                     <Text style={styles.Text_description}>
+    //                         {"Where you can Avail the limited restricted thing\n"}
+    //                     </Text>
+    //                 </View>
+    //                 <Switch
+    //                     trackColor={{ false: Colors.light_Black, true: Colors.primary }}
+    //                     thumbColor={monthly ? Colors.white : Colors.white}
+    //                     value={monthly}
+    //                     ios_backgroundColor={"white"}
+    //                     onValueChange={() => setMonthly(!monthly)}
+    //                 />
+    //             </View>
+    //             <View style={styles.toggleContainer}>
+    //                 <View style={styles.text_container}>
+    //                     <Text style={styles.Text_heading}>Yearly</Text>
+    //                     <Text style={styles.Text_description}>
+    //                         {"Where you can Avail the limited restricted thing\n"}
+    //                     </Text>
+    //                 </View>
+    //                 <Switch
+    //                     trackColor={{ false: Colors.light_Black, true: Colors.primary }}
+    //                     thumbColor={yearly ? Colors.white : Colors.white}
+    //                     value={yearly}
+    //                     onValueChange={() => setYearly(!yearly)}
+    //                 />
+    //             </View>
+    //         </View>
+    //     </View>
+    // );
 
     if (loading) {
         return (
@@ -226,7 +230,7 @@ const Sites = ({ navigation }) => {
                 <FlatList
                     data={sites}
                     renderItem={renderItem}
-                    ListFooterComponent={renderFooter}
+                    ListFooterComponent={showSubscription && renderFooter}
                     keyExtractor={(item) => item?._id}
                 />
             </View>

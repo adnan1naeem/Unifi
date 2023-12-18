@@ -37,7 +37,6 @@ const Login = ({ navigation }) => {
                 return;
             }
 
-            console.log(adminUsername);
             const loginData = {
                 username: adminUsername,
                 password: siteId,
