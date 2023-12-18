@@ -13,6 +13,7 @@ const Login = ({ navigation }) => {
     const [isByteOn, setIsByteOn] = useState(false);
     const [adminUsername, setAdminUsername] = useState('');
     const [siteId, setSiteId] = useState('');
+    const [url, setUrl] = useState('frg.myvnc.com');
     const [siteName, setsiteName] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -70,9 +71,10 @@ const Login = ({ navigation }) => {
             </View>
             <View style={styles.inputContainer}>
                 <TextInput
-                    editable={false}
+                    value={url}
                     selectionColor={Colors.primary}
-                    placeholder='frg.myvnc.com'
+                    placeholder='Enter URL'
+                    onChangeText={(text)=> setUrl(text)}
                     placeholderTextColor={Colors.textcolor}
                     style={styles.inptFirst} />
 
@@ -97,7 +99,7 @@ const Login = ({ navigation }) => {
             </View>
             <View style={styles.siteContainer}>
                 <CustomText title={"SITE"} textStyle={styles.siteText} />
-                <TextInput editable={false} placeholder={siteName} style={styles.siteInput} />
+                <TextInput onChangeText={(text) => setsiteName(text)} value={siteName} placeholder={"Enter site value"} style={styles.siteInput} />
             </View>
             <SwitchCase title={"Verify SSL Certificates"} onValueChange={handleBytePress} />
             <CustomText textStyle={styles.infoText}

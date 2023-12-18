@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
     siteInput: {
         backgroundColor: Colors.white,
         fontSize: 17,
-        color: Colors.heading,
+        color: Colors.black,
         paddingHorizontal: 20,
         paddingVertical: 15,
         marginTop: 10,
