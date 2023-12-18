@@ -1,7 +1,7 @@
 module.exports = {
   name: "Unifi Hotspot Manager",
   slug: "Unifi_native",
-  version: "1.0.2",
+  version: "1.0.3",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -17,7 +17,7 @@ module.exports = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "com.frg-technology.unifihotspotmanager",
-    buildNumber: "1.0.2"
+    buildNumber: "1.0.3"
   },
   android: {
     adaptiveIcon: {
