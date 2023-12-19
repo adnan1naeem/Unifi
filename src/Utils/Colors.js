@@ -12,7 +12,6 @@ export const Colors = {
     light_Black: '#9b999c',
     purple: '#9b7edb',
     green: '#62c37d',
-    danger: '#ff3b32'
-
-
+    danger: '#ff3b32',
+    grey: "#D3D3D3"
 };

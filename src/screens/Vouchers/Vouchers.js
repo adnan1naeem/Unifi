@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, ScrollView, Button } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity, ScrollView, Button, ActivityIndicator } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
@@ -13,6 +13,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { prefix_url } from '../../Utils/Constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
@@ -21,6 +22,7 @@ const Vouchers = ({ navigation }) => {
   const [startDateIs, setStartDateIs] = useState(Date.now() - 7 * 24 * 60 * 60 * 1000);
   const [endDateIs, setEndDateIs] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [startDateModal, setStartDateModal] = useState(false);
 
   const swipeBtns = [
@@ -43,6 +45,7 @@ const Vouchers = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
+      setLoading(true);
       handleSites();
     }, [])
   );
@@ -86,20 +89,26 @@ const Vouchers = ({ navigation }) => {
   }, [startDateIs, endDateIs, voucher]);
 
 
-  const handleSites = () => {
-    axios.get(`${prefix_url}/voucher`, {
+  const handleSites = async () => {
+    const userUrl = await AsyncStorage.getItem("SITE_URL");
+    let config = {
+      method: 'post',
+      url: `${prefix_url}?url=${userUrl}/proxy/network/api/s/default/stat/voucher&method=get`,
       headers: {
         'Content-Type': 'application/json',
       },
-    })
-      .then(async (response) => {
+    };
+    axios.request(config)
+      .then((response) => {
         if (response?.data) {
           setVoucher(response?.data?.data)
         }
+        console.log(JSON.stringify(response.data));
       })
-      .catch(error => {
-        console.log("Catch error :: ", error);
+      .catch((error) => {
+        console.log(error);
       });
+    setLoading(false);
   };
 
   const formated_Time = (time) => {
@@ -174,13 +183,17 @@ const Vouchers = ({ navigation }) => {
           </View>
         </View>
         {tabView === 'Vouchers' ?
-          <View style={styles.VouchersListMap}>
-            <FlatList
-              data={voucher}
-              keyExtractor={(item) => item?.id}
-              renderItem={renderVoucherItem}
-            />
-          </View>
+          <>
+            {loading ?
+              <ActivityIndicator color={"black"} /> :
+              <View style={styles.VouchersListMap}>
+                <FlatList
+                  data={voucher}
+                  keyExtractor={(item) => item?.id}
+                  renderItem={renderVoucherItem}
+                />
+              </View>}
+          </>
           :
           <View>
             <CustomText title={"Active Vouchers"} textStyle={styles.DetailsContainer} />

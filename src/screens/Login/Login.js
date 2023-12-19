@@ -12,11 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Login = ({ navigation }) => {
     const [isByteOn, setIsByteOn] = useState(false);
     const [adminUsername, setAdminUsername] = useState('');
-    const [siteId, setSiteId] = useState('');
-    const [url, setUrl] = useState('frg.myvnc.com');
-    const [siteName, setsiteName] = useState('');
+    const [password, setPassword] = useState('');
+    const [portId, setPortId] = useState('9443');
+    const [url, setUrl] = useState('https://frg-lab.myvnc.com');
+    const [siteName, setSiteName] = useState('default');
     const [loading, setLoading] = useState(false);
-
 
     const handleBytePress = (value) => {
         setIsByteOn(value);
@@ -24,35 +24,45 @@ const Login = ({ navigation }) => {
     useEffect(() => {
         (async () => {
             let selectedSite = await AsyncStorage.getItem("SITE");
-            setsiteName(selectedSite)
+            setSiteName(selectedSite)
         })();
     }, []);
-
 
     const handleLogin = async () => {
         try {
             setLoading(true);
-            if (!adminUsername || !siteId) {
-                alert('Please Enter Admin Name and Password');
+            if (!adminUsername || !password || !url || !portId || !siteName) {
+                alert('Please enter remaining fields');
                 setLoading(false);
                 return;
             }
 
-            const loginData = {
-                username: adminUsername,
-                password: siteId,
-            };
+            await AsyncStorage.setItem("SITE_URL", `${url}:${portId}`);
 
-            const response = await axios.post(`${prefix_url}login`, loginData, {
+            let data = JSON.stringify({
+                username: adminUsername,
+                password: password
+            });
+
+            let config = {
+                method: 'post',
+                url: `${prefix_url}?url=${url}:${portId}/api/auth/login&method=post`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-            });
+                data
+            };
 
-            if (response?.data?.deviceToken) {
-                await AsyncStorage.setItem('USER', response?.data?.deviceToken);
-                navigation.navigate('Sites');
-            }
+            axios.request(config).then(async(item) => {
+                if (item?.data?.deviceToken) {
+                    await AsyncStorage.setItem('USER', item?.data?.deviceToken);
+                    navigation.navigate('Sites');
+                }
+            }).catch((error) => {
+                console.log(JSON.stringify(error, null, 2), "frf");
+            });
+            setLoading(false);
+
         } catch (error) {
             console.log('error :: ', error);
             Alert.alert(JSON.stringify(error?.message));
@@ -73,33 +83,39 @@ const Login = ({ navigation }) => {
                 <TextInput
                     value={url}
                     selectionColor={Colors.primary}
-                    placeholder='Enter URL'
-                    onChangeText={(text)=> setUrl(text)}
-                    placeholderTextColor={Colors.textcolor}
-                    style={styles.inptFirst} />
-
+                    placeholder='IP Address / URL'
+                    onChangeText={(text) => setUrl(text)}
+                    placeholderTextColor={Colors.grey}
+                    style={[styles.inptFirst, { width: "70%" }]} />
                 <TextInput
                     selectionColor={Colors.primary}
-                    value={siteId}
-                    placeholder='Enter password'
-                    onChangeText={(text) => setSiteId(text)}
-                    placeholderTextColor={Colors.textcolor}
-                    style={styles.inptFirst}
+                    value={portId}
+                    placeholder='Port'
+                    onChangeText={(text) => setPortId(text)}
+                    placeholderTextColor={Colors.grey}
+                    style={[styles.inptFirst, { width: "30%" }]}
                 />
             </View>
             <View style={styles.adminContainer} >
                 <View style={styles.inneradminContainer}>
                     <TextInput
-                        placeholder='Enter Admin'
+                        placeholder='Username'
                         value={adminUsername}
                         onChangeText={(text) => setAdminUsername(text)}
-                        placeholderTextColor={Colors.textcolor}
+                        placeholderTextColor={Colors.grey}
                         style={styles.inputThird} />
+                    <TextInput
+                        placeholder='Password'
+                        value={password}
+                        onChangeText={(text) => setPassword(text)}
+                        placeholderTextColor={Colors.grey}
+                        style={styles.inputThird} />
+
                 </View>
             </View>
             <View style={styles.siteContainer}>
                 <CustomText title={"SITE"} textStyle={styles.siteText} />
-                <TextInput onChangeText={(text) => setsiteName(text)} value={siteName} placeholder={"Enter site value"} style={styles.siteInput} />
+                <TextInput onChangeText={(text) => setSiteName(text)} placeholderTextColor={Colors.grey} value={siteName} placeholder={"Enter site value"} style={styles.siteInput} />
             </View>
             <SwitchCase title={"Verify SSL Certificates"} onValueChange={handleBytePress} />
             <CustomText textStyle={styles.infoText}

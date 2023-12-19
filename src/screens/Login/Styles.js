@@ -19,13 +19,12 @@ export const styles = StyleSheet.create({
         paddingLeft: 15,
     },
     inptFirst: {
-        width: 200,
         paddingVertical: 15,
         borderRightWidth: 0.2,
         borderBottomWidth: 0.2,
         paddingHorizontal: 10,
         color: Colors.textcolor,
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontSize: 18,
         borderColor: Colors.heading
     },
@@ -35,7 +34,7 @@ export const styles = StyleSheet.create({
     },
     inputThird: {
         paddingVertical: 15,
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontSize: 18,
         marginLeft: 8,
         borderColor: Colors.heading

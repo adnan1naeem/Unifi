@@ -45,7 +45,7 @@ const Sites = ({ navigation }) => {
                 }
             }
             catch (error) {
-                // alert("error \n" + JSON.stringify(error));
+                setDisable(true);
             }
         })();
     }, []);
@@ -54,18 +54,28 @@ const Sites = ({ navigation }) => {
         handleSites()
     }, [])
 
-    const handleSites = () => {
-        axios.get(`${prefix_url}sites`, {
+    const handleSites = async () => {
+        setLoading(true);
+        const userUrl = await AsyncStorage.getItem("SITE_URL");
+        let config = {
+            method: 'post',
+            url: `${prefix_url}?url=${userUrl}/proxy/network/api/self/sites&method=get`,
             headers: {
                 'Content-Type': 'application/json',
-            }
-        }).then(async (response) => {
-            if (response?.data) {
-                setSites(response?.data?.data);
-            }
-        }).catch(error => {
-            console.log("Catch error :: ", error);
-        })
+            },
+        };
+
+        await axios.request(config)
+            .then((response) => {
+                if (response?.data) {
+                    setSites(response?.data?.data);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        setLoading(false);
     };
 
     const handlesubmit = async (item) => {
@@ -209,7 +219,7 @@ const Sites = ({ navigation }) => {
 
     if (loading) {
         return (
-            <ActivityIndicator color={'red'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
+            <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
         );
     }
 
