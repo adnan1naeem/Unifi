@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, ScrollView, TextInput } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity, ScrollView, TextInput, ActivityIndicator } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
@@ -16,13 +16,14 @@ import Search from '../../Components/Search'
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [voucher, setVoucher] = useState([])
+  const [searchVoucher, setSearchVoucher] = useState([])
   const [loading, setLoading] = useState(true);
 
   const handleSearch = text => {
-    const filtered = voucher.filter(
-      item => item.code.includes(text)
+    const filtered = voucher?.filter(
+      item => item?.code?.includes(text)
     );
-    setVoucher(filtered)
+    setSearchVoucher(filtered)
   };
 
   const swipeBtns = [
@@ -62,6 +63,7 @@ const Vouchers = ({ navigation }) => {
     axios.request(config)
       .then((response) => {
         if (response?.data) {
+          setSearchVoucher(response?.data?.data);
           setVoucher(response?.data?.data)
         }
       })
@@ -80,7 +82,7 @@ const Vouchers = ({ navigation }) => {
       let formattedCode = '';
       for (let i = 0; i < item.length; i++) {
         if (i > 0 && i % 5 === 0) {
-          formattedCode += '_';
+          formattedCode += '-';
         }
         formattedCode += item[i];
       }
@@ -104,7 +106,7 @@ const Vouchers = ({ navigation }) => {
   );
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       {isHeaderVisible ?
         <View style={styles.headervouchers}>
           <View style={styles.printadd}>
@@ -125,14 +127,16 @@ const Vouchers = ({ navigation }) => {
           </View>
         </View>
       }
-      <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
-        <Search value={voucher} onChangeText={handleSearch} />
+      <Search value={voucher} onChangeText={handleSearch} />
+
+      <ScrollView style={{ backgroundColor: Colors.white }} onScroll={handleScroll} scrollEventThrottle={16}>
         <View style={styles.VouchersListMap}>
-          <FlatList
-            data={voucher}
-            keyExtractor={(item) => item?.id}
-            renderItem={renderVoucherItem}
-          />
+          {loading ? <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', marginTop: 50 }} /> :
+            <FlatList
+              data={searchVoucher}
+              keyExtractor={(item) => item?.id}
+              renderItem={renderVoucherItem}
+            />}
         </View>
       </ScrollView>
     </View>

@@ -4,7 +4,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../Utils/Colors';
 
 const Search = ({ value, onChangeText }) => {
-
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -23,9 +22,7 @@ const Search = ({ value, onChangeText }) => {
 export default Search
 
 const styles = StyleSheet.create({
-
     container: {
-
         paddingHorizontal: 30,
         paddingVertical: 20
     },
@@ -33,7 +30,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: Colors.primary,
+        borderColor: Colors.grey,
         borderRadius: 5,
         paddingHorizontal: 10,
     },
