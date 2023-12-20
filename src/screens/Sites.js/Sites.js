@@ -250,9 +250,9 @@ const Sites = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <ScrollView>
-                <CustomText title={"List of Sites"} textStyle={styles.sitesListtext} />
+                <CustomText title={"List of Controllers"} textStyle={styles.sitesListtext} />
                 <View style={{ marginTop: '15%', paddingBottom: "25%" }}>
-                    <CustomText title={sites?.length === 1 ? "Site" : "Sites"} textStyle={styles.titleheading} />
+                    <CustomText title={sites?.length === 1 ? "Controller" : "Controllers"} textStyle={styles.titleheading} />
                     <FlatList
                         data={sites}
                         renderItem={renderItem}

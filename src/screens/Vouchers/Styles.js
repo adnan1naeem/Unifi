@@ -32,20 +32,14 @@ export const styles = StyleSheet.create({
     },
     VouchersListMap: {
         backgroundColor: Colors.white,
-        // marginTop: 35,
-        marginBottom: 145
+        marginBottom: 145,
     },
     BarAxis: {
         position: 'absolute',
         bottom: 10,
         left: 45
     },
-    DetailsContainer: {
-        color: Colors.black,
-        fontSize: 30,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
+
     barContainer: {
         justifyContent: 'center',
         alignSelf: 'center',
@@ -134,5 +128,6 @@ export const styles = StyleSheet.create({
     },
     ScrolIconContainer: {
         flexDirection: 'row'
-    }
+    },
+
 });
