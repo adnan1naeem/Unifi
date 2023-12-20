@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Swipeout from 'react-native-swipeout';
 import { Colors } from '../../Utils/Colors';
 import CustomText from '../../Components/CustomText'
-import Octicons_Icons from '../../Components/Icons/Octicons_Icons';
 import AntDesign_icon from '../../Components/Icons/AntDesign_icon';
 import { styles } from './Styles';
 import { prefix_url } from '../../Utils/Constants';
@@ -80,16 +79,36 @@ const Guests = () => {
     };
 
     const extractFirstWord = (sentence) => {
-        const words = sentence.trim().split(' ');
-        if (words.length > 0) {
+        const words = sentence?.trim().split(' ');
+        if (words?.length > 0) {
             return words[0];
         }
         return '';
     };
     const formated_Time = (time) => {
-        const date = moment.unix(time).format('MMMM Do YYYY, h:mm:ss a');
+        const date = moment?.unix(time)?.format('MMMM Do YYYY, h:mm:ss a');
         return date;
     };
+
+
+    const renderVoucherItem = ({ item }) => (
+
+        <View style={{ marginHorizontal: 5, }}>
+            <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
+                <View style={styles.VouchersList}>
+                    <Text style={styles.macAdress}>Mac Adress: 00-10-FA-6E-38-4A</Text>
+                    <Text style={[styles.macAdress, styles.v_Number]}>0342384823</Text>
+                    <Text style={styles.macAdress}>Device Name: Mac</Text>
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.text4}>Active Date:12/21/2023</Text>
+                        <Text style={styles.text4}>Expiry Date:01/02/2024</Text>
+                    </View>
+                </View>
+            </Swipeout>
+        </View>
+
+    );
+
 
     return (
         <View style={styles.container}>
@@ -110,36 +129,9 @@ const Guests = () => {
             }
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
                 <FlatList
-                    data={guestList}
+                    data={guestList || ['0', '2', '3', '4']}
                     contentContainerStyle={{ marginTop: 50, }}
-                    renderItem={({ item }) =>
-                        <Swipeout right={swipeoutBtns} autoClose={true}>
-                            <View style={styles.itemContainer}>
-                                <View style={styles.itemContent}>
-                                    <View style={styles.itemHeader}>
-                                        <Text style={styles.title}>{extractFirstWord(item?.user_agent)}</Text>
-                                        <Text style={styles.low}>
-                                            {'Zero KB'}{' '}
-                                            <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
-                                            <Text style={styles.lowText}>{' '}/{' '}</Text>
-                                            < Text style={[styles.low, { color: Colors.green }]}>
-                                                {'Zero KB'}{' '}
-                                                <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
-                                            </Text>
-                                        </Text>
-                                    </View>
-                                    <View style={styles.itemDetails}>
-                                        <Text style={styles.voucher}>vouchers({item?.voucher_id})</Text>
-                                        {item.expired !== true ? (
-                                            <Text numberOfLines={1} style={styles.valid}>valid:{formated_Time(item?.end)}</Text>
-                                        ) : (
-                                            <Text numberOfLines={1} style={[styles.valid, { color: 'red' }]}>Expired</Text>
-                                        )}
-                                    </View>
-                                </View>
-                            </View>
-                        </Swipeout>
-                    }
+                    renderItem={renderVoucherItem}
                     keyExtractor={item => item._id}
                 />
                 <Modal
