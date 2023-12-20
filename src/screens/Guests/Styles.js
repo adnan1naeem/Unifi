@@ -89,4 +89,67 @@ export const styles = StyleSheet.create({
         color: Colors.light_Black,
         textAlign: 'right',
     },
+    VouchersList: {
+        paddingTop: 20,
+        backgroundColor: Colors.white,
+        marginHorizontal: 20,
+        borderRadius: 10
+
+
+    },
+    macAdress: {
+        color: Colors.vouchers,
+        fontSize: 14,
+        fontWeight: '400',
+        textAlign: 'center'
+    },
+    text2: {
+        fontSize: 30,
+        fontWeight: '500',
+        textAlign: 'center'
+    },
+    text4: {
+        color: Colors.vouchers,
+        fontSize: 13,
+    },
+    container: {
+        backgroundColor: Colors.print
+    },
+
+    swipeRevoke: {
+        backgroundColor: Colors.white,
+        borderRadius: 18,
+        marginVertical: 7,
+    },
+    sitelist: {
+        backgroundColor: Colors.white,
+        borderRadius: 8,
+        paddingVertical: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 25,
+    },
+    sitesListtext: {
+        color: Colors.black,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 30,
+        paddingTop: 25
+    },
+    dateContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 15
+    },
+    v_Number: {
+        fontSize: 30,
+        fontWeight: '500',
+        textAlign: 'center',
+        color: Colors.black,
+        paddingVertical: 5
+    }
+
+
 })
