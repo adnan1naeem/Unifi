@@ -116,7 +116,7 @@ const Sites = ({ navigation }) => {
             }
             setSiteLoading(false);
         }).catch((error) => {
-            if(error?.message === "Request failed with status code 429"){
+            if(error?.message === "Request failed with status code 403"){
                 alert('The provided credentials for this site are not valid!')
             }
             setSiteLoading(false);

@@ -17,7 +17,7 @@ const Navigation = () => {
                 screenOptions={{
                     headerShown: false,
                 }}
-                initialRouteName="BottomTab"
+                initialRouteName="Splash"
             >
                 <Stack.Screen name="Splash" component={Splash} />
                 <Stack.Screen name="Login" component={Login} />
