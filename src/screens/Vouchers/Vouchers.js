@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, ScrollView, } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity, ScrollView, TextInput } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
@@ -13,16 +13,12 @@ import { prefix_url } from '../../Utils/Constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Search from '../../Components/Search'
 
-
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [voucher, setVoucher] = useState([])
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-
 
   const handleSearch = text => {
-    setSearchTerm(text);
     const filtered = voucher.filter(
       item => item.code.includes(text)
     );
@@ -130,7 +126,7 @@ const Vouchers = ({ navigation }) => {
         </View>
       }
       <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
-        <Search value={searchTerm} onChangeText={handleSearch} />
+        <Search value={voucher} onChangeText={handleSearch} />
         <View style={styles.VouchersListMap}>
           <FlatList
             data={voucher}
