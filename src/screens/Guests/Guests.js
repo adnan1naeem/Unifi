@@ -90,6 +90,19 @@ const Guests = () => {
         return date;
     };
 
+    const formatItemCode = (item) => {
+        if (item && item.length > 5) {
+            let formattedCode = '';
+            for (let i = 0; i < item.length; i++) {
+                if (i > 0 && i % 5 === 0) {
+                    formattedCode += '-';
+                }
+                formattedCode += item[i];
+            }
+            return formattedCode;
+        }
+        return item;
+    };
 
     const renderVoucherItem = ({ item }) => (
 
@@ -97,7 +110,7 @@ const Guests = () => {
             <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
                 <View style={styles.VouchersList}>
                     <Text style={styles.macAdress}>Mac Adress: 00-10-FA-6E-38-4A</Text>
-                    <Text style={[styles.macAdress, styles.v_Number]}>0342384823</Text>
+                    <Text style={[styles.macAdress, styles.v_Number]}>{formatItemCode("0342384823")}</Text>
                     <Text style={styles.macAdress}>Device Name: Mac</Text>
                     <View style={styles.dateContainer}>
                         <Text style={styles.text4}>Active Date:12/21/2023</Text>
