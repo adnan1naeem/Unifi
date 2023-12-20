@@ -24,7 +24,7 @@ const Home = ({ navigation }) => {
             await AsyncStorage.removeItem('USER');
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'Login' }],
+                routes: [{ name: 'Sites' }],
             });
         } catch (error) {
             console.error('Error signing out:', error);

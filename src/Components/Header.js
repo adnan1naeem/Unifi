@@ -11,7 +11,7 @@ const Header = ({ onPress, loading }) => {
             </TouchableOpacity>
             <Image source={require('../../assets/frglogo.png')} resizeMode='containe' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
-                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : "Login"} />
+                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : "Add"} />
             </TouchableOpacity>
         </View>
 

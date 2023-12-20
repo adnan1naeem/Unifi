@@ -27,7 +27,7 @@ const Splash = ({ navigation }) => {
                     navigation.replace('Sites');
                 }
             } else {
-                navigation.replace('Login');
+                navigation.replace('Sites');
             }
         };
 

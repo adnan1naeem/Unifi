@@ -15,53 +15,85 @@ const Login = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [portId, setPortId] = useState('9443');
     const [url, setUrl] = useState('https://frg-lab.myvnc.com');
+    const [siteId, setSiteId] = useState('1');
     const [siteName, setSiteName] = useState('default');
     const [loading, setLoading] = useState(false);
 
     const handleBytePress = (value) => {
         setIsByteOn(value);
     };
-    useEffect(() => {
-        (async () => {
-            let selectedSite = await AsyncStorage.getItem("SITE");
-            setSiteName(selectedSite)
-        })();
-    }, []);
 
     const handleLogin = async () => {
         try {
             setLoading(true);
-            if (!adminUsername || !password || !url || !portId || !siteName) {
+            if (!adminUsername || !password || !url || !portId || !siteId || !siteName) {
                 alert('Please enter remaining fields');
                 setLoading(false);
                 return;
             }
-
-            await AsyncStorage.setItem("SITE_URL", `${url}:${portId}`);
-
-            let data = JSON.stringify({
+            let siteList = await AsyncStorage.getItem("SITE_LIST");
+            let siteRecord = {
                 username: adminUsername,
-                password: password
-            });
-
-            let config = {
-                method: 'post',
-                url: `${prefix_url}?url=${url}:${portId}/api/auth/login&method=post`,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data
+                password: password,
+                siteId: siteId,
+                portNumber: portId,
+                url: `${url}:${portId}`,
+                siteName: siteName
             };
 
-            axios.request(config).then(async(item) => {
-                if (item?.data?.deviceToken) {
-                    await AsyncStorage.setItem('USER', item?.data?.deviceToken);
+            if (siteList) {
+                siteList = JSON.parse(siteList);
+                const isDuplicate = siteList.some(existingSite => (
+                    existingSite.username === adminUsername &&
+                    existingSite.password === password &&
+                    existingSite.siteId === siteId &&
+                    existingSite.portNumber === portId &&
+                    existingSite.url === url &&
+                    existingSite.siteName === siteName
+                ));
+
+                if (isDuplicate) {
+                    alert("A site with the same credentials already exists.");
+                } else {
+                    siteList.push(siteRecord);
+                    await AsyncStorage.setItem("SITE_LIST", JSON.stringify(siteList));
                     navigation.navigate('Sites');
+
                 }
-            }).catch((error) => {
-                console.log(JSON.stringify(error, null, 2), "frf");
-            });
+            } else {
+                await AsyncStorage.setItem("SITE_LIST", JSON.stringify([siteRecord]));
+                navigation.navigate('Sites');
+
+            }
             setLoading(false);
+
+
+
+
+
+            // let data = JSON.stringify({
+            //     username: adminUsername,
+            //     password: password
+            // });
+
+            // let config = {
+            //     method: 'post',
+            //     url: `${prefix_url}?url=${url}:${portId}/api/auth/login&method=post`,
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     data
+            // };
+
+            // axios.request(config).then(async (item) => {
+            //     if (item?.data?.deviceToken) {
+            //         await AsyncStorage.setItem('USER', item?.data?.deviceToken);
+            //         navigation.navigate('Sites');
+            //     }
+            //     setLoading(false);
+            // }).catch((error) => {
+            //     console.log(JSON.stringify(error, null, 2), "frf");
+            // });
 
         } catch (error) {
             console.log('error :: ', error);
@@ -71,13 +103,12 @@ const Login = ({ navigation }) => {
         }
     };
 
-
     return (
         <ScrollView style={{ backgroundColor: Colors.background }}>
-            <Header navigation={navigation} loading={loading} onPress={handleLogin} />
+            <Header loading={loading} onPress={handleLogin} />
             <View style={styles.innerHeading}>
                 <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
-                <CustomText title={"Fill"} textStyle={[styles.controllerText, { color: Colors.primary }]} />
+                <CustomText title={"Port"} textStyle={[styles.controllerText, { color: Colors.grey }]} />
             </View>
             <View style={styles.inputContainer}>
                 <TextInput
@@ -115,19 +146,23 @@ const Login = ({ navigation }) => {
             </View>
             <View style={styles.siteContainer}>
                 <CustomText title={"SITE"} textStyle={styles.siteText} />
-                <TextInput onChangeText={(text) => setSiteName(text)} placeholderTextColor={Colors.grey} value={siteName} placeholder={"Enter site value"} style={styles.siteInput} />
+                <TextInput onChangeText={(text) => setSiteId(text)} placeholderTextColor={Colors.grey} value={siteId} placeholder={"Enter site id"} style={styles.siteInput} />
             </View>
             <SwitchCase title={"Verify SSL Certificates"} onValueChange={handleBytePress} />
             <CustomText textStyle={styles.infoText}
                 title={"Enabling will verify SSL certificates. Enable only if you have configured a valid certificate on your controller."} />
-            <View style={{ marginTop: 20 }}>
+            <View style={styles.siteContainer}>
+                <CustomText title={"SITE Title (visible in list)"} textStyle={styles.siteText} />
+                <TextInput onChangeText={(text) => setSiteName(text)} placeholderTextColor={Colors.grey} value={siteName} placeholder={"Enter site name"} style={styles.siteInput} />
+            </View>
+            {/* <View style={{ marginTop: 20 }}>
                 <SwitchCase title={"Remember Password"} onValueChange={handleBytePress} />
             </View>
             <View style={{ marginTop: 20 }}>
                 <SwitchCase title={"Require Passcode"} onValueChange={handleBytePress} />
-            </View>
-            <CustomText textStyle={styles.infoText}
-                title={"Controller will be joined automatically if password is remembered."} />
+            </View> */}
+            {/* <CustomText textStyle={styles.infoText}
+                title={"Controller will be joined automatically if password is remembered."} /> */}
         </ScrollView>
     )
 }

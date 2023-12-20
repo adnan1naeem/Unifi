@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
     },
     controllerText: {
         fontSize: 17,
+        paddingRight: "13%",
         color: Colors.heading
     },
     inputContainer: {

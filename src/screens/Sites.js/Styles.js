@@ -57,16 +57,23 @@ export const styles = StyleSheet.create({
     },
     ContainerSite: {
         backgroundColor: Colors.primary,
-        height: Platform.OS === 'ios' ? 100 : 90,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         paddingHorizontal: 15,
         alignItems: 'center',
-        paddingTop: Platform.OS === 'ios' ? '15%' : '5%'
+        paddingTop: Platform.OS === 'ios' ? 55 : 30,
+        paddingBottom: 10
+    },
+    iconStyle: { 
+        position: 'absolute', 
+        bottom: 0, 
+        paddingRight: 20,
+        paddingBottom: 25, 
+        right: 0 
     },
     backButton: {
         color: Colors.white,
-        fontSize: 15,
+        fontSize: 20,
         fontWeight: 'bold'
     },
     titleheading: {
@@ -75,14 +82,18 @@ export const styles = StyleSheet.create({
         fontSize: 13,
         paddingBottom: 5
     },
+    swipeRevoke:{
+        backgroundColor: Colors.white,
+        borderRadius: 18,
+        marginVertical: 7,
+    },
     sitelist: {
         backgroundColor: Colors.white,
         borderRadius: 8,
         paddingVertical: 15,
-        flexDirection: "row",
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: 7,
-        paddingHorizontal: 25
+        paddingHorizontal: 25,
     },
     sitesListtext: {
         color: Colors.black,
@@ -94,9 +105,6 @@ export const styles = StyleSheet.create({
     HeaderIcon: {
         height: 50,
         width: 190,
-        // tintColor: Colors.white,
-        // marginLeft: 25,
-        paddingBottom: 5,
         resizeMode: 'contain',
     }
 });

@@ -5,6 +5,7 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import CustomText from '../../Components/CustomText'
 import { prefix_url } from '../../Utils/Constants'
 import axios from 'axios'
+import Swipeout from "react-native-swipeout";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { styles } from './Styles'
@@ -13,8 +14,10 @@ import Purchases from 'react-native-purchases'
 const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
     const [yearly, setYearly] = useState(false);
-    const [sites, setSites] = useState()
+    const [sites, setSites] = useState([])
     const [loading, setLoading] = useState(false);
+    const [siteLoading, setSiteLoading] = useState(false);
+    const [siteIndex, setSiteIndex] = useState(0);
     const [disable, setDisable] = useState(false);
     const [showSubscription, setShowSubscription] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
@@ -56,36 +59,68 @@ const Sites = ({ navigation }) => {
 
     const handleSites = async () => {
         setLoading(true);
-        const userUrl = await AsyncStorage.getItem("SITE_URL");
-        let config = {
-            method: 'post',
-            url: `${prefix_url}?url=${userUrl}/proxy/network/api/self/sites&method=get`,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
+        let siteList = await AsyncStorage.getItem("SITE_LIST");
+        siteList = JSON.parse(siteList);
+        setSites(siteList);
+        // const userUrl = await AsyncStorage.getItem("SITE_URL");
+        // let config = {
+        //     method: 'post',
+        //     url: `${prefix_url}?url=${userUrl}/proxy/network/api/self/sites&method=get`,
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        // };
 
-        await axios.request(config)
-            .then((response) => {
-                if (response?.data) {
-                    setSites(response?.data?.data);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        // await axios.request(config)
+        //     .then((response) => {
+        //         if (response?.data) {
+        //             setSites(response?.data?.data);
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
+        //     });
 
         setLoading(false);
     };
 
-    const handlesubmit = async (item) => {
-        if (disable === false) {
+    const handlesubmit = async (item, index) => {
+        if (disable === true) {
             alert("Please Choose Your plan before selecting the sites, \nThanks")
             return
         }
+        setSiteIndex(index);
+        setSiteLoading(true);
+
         await AsyncStorage.setItem("SUBSCRIPTION", 'YES');
-        await AsyncStorage.setItem('SITE', item?.name);
-        navigation.replace("BottomTab")
+        await AsyncStorage.setItem('SITE', item?.siteName);
+
+        let data = JSON.stringify({
+            username: item?.username,
+            password: item?.password
+        });
+
+        let config = {
+            method: 'post',
+            url: `${prefix_url}?url=${item?.url}/api/auth/login&method=post`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data
+        };
+
+        axios.request(config).then(async (item) => {
+            if (item?.data?.deviceToken) {
+                await AsyncStorage.setItem('USER', item?.data?.deviceToken);
+                navigation.replace('BottomTab');
+            }
+            setSiteLoading(false);
+        }).catch((error) => {
+            if(error?.message === "Request failed with status code 429"){
+                alert('The provided credentials for this site are not valid!')
+            }
+            setSiteLoading(false);
+        });
     };
 
     const handleSwitchChange = (index, item) => {
@@ -133,16 +168,39 @@ const Sites = ({ navigation }) => {
         );
     };
 
+    const revokeSelected = async (item) => {
+        let siteList = await AsyncStorage.getItem("SITE_LIST");
+        if (siteList) {
+            siteList = JSON.parse(siteList);
+            const indexToRemove = siteList.findIndex(site => site.siteId === item);
+            siteList.splice(indexToRemove, 1);
+            await AsyncStorage.setItem("SITE_LIST", JSON.stringify(siteList));
+            setSites(siteList);
+        }
+    }
 
-    const renderItem = ({ item }) => (
-        <View style={{ marginHorizontal: 15 }}>
-            <TouchableOpacity onPress={() => handlesubmit(item)} style={styles.sitelist}>
-                <CustomText title={item?.name} textStyle={{ color: Colors.black }} />
-                <MaterialCommunityIcons name="arrow-right" style={styles.ForwordArrow} />
-            </TouchableOpacity>
-
-        </View>
-    );
+    const renderItem = ({ item, index }) => {
+        let swipeoutBtns = [
+            {
+                text: 'Revoke',
+                onPress: () => revokeSelected(item),
+                backgroundColor: 'red',
+            },
+        ];
+        return (
+            <View style={{ marginHorizontal: 15 }}>
+                <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
+                    <TouchableOpacity onPress={() => handlesubmit(item, index)} style={styles.sitelist}>
+                        {siteLoading && siteIndex === index ? <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} /> :
+                            <>
+                                <CustomText title={item?.siteName} textStyle={{ color: Colors.black }} />
+                                <MaterialCommunityIcons name="arrow-right" style={styles.ForwordArrow} />
+                            </>
+                        }
+                    </TouchableOpacity>
+                </Swipeout>
+            </View>)
+    };
 
     const renderFooter = () => (
         <View style={styles.modalContent}>
@@ -175,47 +233,7 @@ const Sites = ({ navigation }) => {
                 </View>
             ))}
         </View>
-
     );
-
-    // const renderFooter = () => (
-    //     <View style={styles.modalContainer}>
-    //         <View style={styles.modalContent}>
-
-    //             <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
-
-    //             <View style={styles.toggleContainer}>
-    //                 <View style={styles.text_container}>
-    //                     <Text style={styles.Text_heading}>Monthly</Text>
-    //                     <Text style={styles.Text_description}>
-    //                         {"Where you can Avail the limited restricted thing\n"}
-    //                     </Text>
-    //                 </View>
-    //                 <Switch
-    //                     trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-    //                     thumbColor={monthly ? Colors.white : Colors.white}
-    //                     value={monthly}
-    //                     ios_backgroundColor={"white"}
-    //                     onValueChange={() => setMonthly(!monthly)}
-    //                 />
-    //             </View>
-    //             <View style={styles.toggleContainer}>
-    //                 <View style={styles.text_container}>
-    //                     <Text style={styles.Text_heading}>Yearly</Text>
-    //                     <Text style={styles.Text_description}>
-    //                         {"Where you can Avail the limited restricted thing\n"}
-    //                     </Text>
-    //                 </View>
-    //                 <Switch
-    //                     trackColor={{ false: Colors.light_Black, true: Colors.primary }}
-    //                     thumbColor={yearly ? Colors.white : Colors.white}
-    //                     value={yearly}
-    //                     onValueChange={() => setYearly(!yearly)}
-    //                 />
-    //             </View>
-    //         </View>
-    //     </View>
-    // );
 
     if (loading) {
         return (
@@ -226,11 +244,10 @@ const Sites = ({ navigation }) => {
     return (
         <View>
             <View style={styles.ContainerSite}>
-                <TouchableOpacity style={{ padding: 10, }} onPress={() => navigation.goBack() || navigation.replace("Login")}>
-                    <SimpleLineIcons name="arrow-left" style={styles.backButton} />
-                </TouchableOpacity>
                 <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
-                <CustomText />
+                <TouchableOpacity style={styles.iconStyle} onPress={() => navigation.replace("Login")}>
+                    <SimpleLineIcons name="plus" style={styles.backButton} />
+                </TouchableOpacity>
             </View>
             <ScrollView>
                 <CustomText title={"List of Sites"} textStyle={styles.sitesListtext} />
@@ -244,7 +261,6 @@ const Sites = ({ navigation }) => {
                     />
                 </View>
             </ScrollView>
-
         </View>
     )
 }
