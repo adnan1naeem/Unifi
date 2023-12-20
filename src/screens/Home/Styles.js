@@ -27,10 +27,11 @@ export const styles = StyleSheet.create({
     },
     containerView: {
         width: Width,
-        height: height / 1.4,
+        paddingVertical: 30,
+    },
+    headingContainer: {
         alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center'
+        alignItems: 'center'
     },
     mainContainer: {
         color: Colors.primary,
@@ -38,5 +39,20 @@ export const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: 'bold'
     },
+    DetailsContainer: {
+        color: Colors.black,
+        fontSize: 30,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        paddingVertical: 15
+    },
+    barContainer: {
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop: '20%',
+        width: '85%'
+    },
+    datePickerContainer: { flexDirection: 'row', justifyContent: 'space-between', width: Width, paddingHorizontal: 30, }
+
 
 });

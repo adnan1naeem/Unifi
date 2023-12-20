@@ -1,16 +1,28 @@
-import { FlatList, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { TouchableOpacity, View, Button, Text, ScrollView } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import { styles } from './Styles'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Bar_Chart from '../../Components/Bar_Chart'
-import { Graph_data_Home, X_axis_Labels_Home } from '../../Utils/Arrays_data'
-import { X_Axis } from '../../Components/ComponentsStyle'
+import moment from 'moment';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { useFocusEffect } from '@react-navigation/native'
+import { prefix_url } from '../../Utils/Constants'
+import axios from 'axios'
+
 
 
 const Home = ({ navigation }) => {
     const [siteName, setSiteName] = useState('');
+    const [show, setShow] = useState(false);
+    const [startDateModal, setStartDateModal] = useState(false);
+    const [filteredDataLengths, setFilteredDataLengths] = useState([]);
+    const [startDateIs, setStartDateIs] = useState(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const [endDateIs, setEndDateIs] = useState(new Date());
+    const [voucher, setVoucher] = useState([])
+
+
 
     useEffect(() => {
         (async () => {
@@ -18,6 +30,11 @@ const Home = ({ navigation }) => {
             setSiteName(name);
         })();
     }, [])
+    useEffect(() => {
+        if (voucher?.length > 0 && startDateIs !== null && endDateIs !== null) {
+            fetchData();
+        }
+    }, [startDateIs, endDateIs, voucher]);
 
     const SignOut = async () => {
         try {
@@ -31,13 +48,88 @@ const Home = ({ navigation }) => {
         }
     };
 
+
+    const onChange = (event, selectedDate) => {
+        setShow(false);
+        if (startDateModal) {
+            setStartDateIs(selectedDate);
+        } else {
+            setEndDateIs(selectedDate);
+
+        }
+    };
+
+    const showDatepicker = (value) => {
+        if (value === "start") {
+            setStartDateModal(true);
+        } else {
+            setStartDateModal(false);
+        }
+        setShow(true);
+    };
+
+
+    const fetchData = async () => {
+        let lastDate = new Date(endDateIs);
+        let startDateNew = new Date(startDateIs);
+        let diff = lastDate?.getDate() - startDateNew.getDate();
+        let resultArray = [];
+        for (let i = 0; i <= diff; i++) {
+            let startDate = new Date(startDateNew);
+            let dateIs = startDate.setDate(startDate.getDate() + i);
+            let data = await filterDataForTimeRange(dateIs, lastDate);
+            resultArray.push(data);
+        }
+
+        setFilteredDataLengths(resultArray);
+    };
+    const filterDataForTimeRange = async (startDate, endDate) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const dayAdded = end.getDate() + 7;
+        end.setDate(dayAdded);
+
+        const filteredData = voucher?.filter(item => {
+            const createTime = new Date(item?.create_time * 1000);
+            return createTime >= start && createTime <= end;
+        });
+        let value = { value: filteredData?.length, label: moment(startDate).format("MM/DD") };
+        return value;
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            handleSites();
+        }, [])
+    );
+
+    const handleSites = async () => {
+        const userUrl = await AsyncStorage.getItem("SITE_URL");
+        let config = {
+            method: 'post',
+            url: `${prefix_url}?url=${userUrl}/proxy/network/api/s/default/stat/voucher&method=get`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+        axios.request(config)
+            .then((response) => {
+
+                if (response?.data) {
+                    setVoucher(response?.data?.data)
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
     return (
         <View>
             <View style={styles.HeaderContainer}>
                 <TouchableOpacity onPress={SignOut}>
                     <CustomText title={"Log Out"} textStyle={styles.logout} />
                 </TouchableOpacity>
-
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <CustomText title={"HOME"} textStyle={styles.HeaderTitle} />
                     <View style={{ flexDirection: 'row' }}>
@@ -46,26 +138,52 @@ const Home = ({ navigation }) => {
                     </View>
                 </View>
             </View>
-            <View style={styles.containerView}>
-                <CustomText
-                    title={"Welcome, admin, to"}
-                    textStyle={{ color: Colors.textcolor }}
-                />
-                <CustomText
-                    title={"FRG UniFi Network"}
-                    textStyle={styles.mainContainer}
-                />
-                <CustomText
-                    title={"7.3.83"}
-                    textStyle={{ color: Colors.heading }}
-                />
-                <Bar_Chart
-                    data={Graph_data_Home}
-                    spacing={28}
-                    initialSpacing={12}
-                    width_Container={'88%'}
-                />
-            </View>
+            <ScrollView style={styles.containerView}>
+                <View style={styles.headingContainer}>
+
+
+                    <CustomText
+                        title={"Welcome, admin, to"}
+                        textStyle={{ color: Colors.textcolor }}
+                    />
+                    <CustomText
+                        title={"FRG UniFi Network"}
+                        textStyle={styles.mainContainer}
+                    />
+                    <CustomText
+                        title={"7.3.83"}
+                        textStyle={{ color: Colors.heading }}
+                    />
+                    <CustomText title={"Active Vouchers"} textStyle={styles.DetailsContainer} />
+                </View>
+                <View style={styles.datePickerContainer}>
+                    <View >
+                        <Button onPress={() => showDatepicker("start")} title="Start Date!" />
+                        <Text>StartDate: {moment(startDateIs).format("MM/DD/YYYY")}</Text>
+                    </View>
+                    <View>
+                        <Button onPress={() => showDatepicker('end')} title="End Date!" />
+                        <Text>EndDate: {moment(endDateIs).format("MM/DD/YYYY")}</Text>
+                    </View>
+                </View>
+                {show &&
+                    <DateTimePicker
+                        testID="datePicker"
+                        value={new Date()}
+                        mode={"date"}
+                        onChange={onChange}
+                    />
+                }
+                <View style={styles.barContainer}>
+                    <Bar_Chart
+                        data={filteredDataLengths}
+                        spacing={20}
+                        width_Container={'100%'}
+                        initialSpacing={5}
+                    />
+                </View>
+
+            </ScrollView>
         </View>
     )
 }
