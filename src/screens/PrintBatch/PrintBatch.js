@@ -6,12 +6,16 @@ import {
   TouchableOpacity,
   CustomText,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Colors } from "../../Utils/Colors";
 import { Width } from "../../Components/Dimensions";
 import List from "../../Components/List";
+import { useNavigation } from "@react-navigation/native";
 
-const PrintBatch = ({ navigation }) => {
+const PrintBatch = (props) => {
+  const navigation= useNavigation();
+  const voucherList = props?.route?.params?.voucher;
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.CreateVoucher}>

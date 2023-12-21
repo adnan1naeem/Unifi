@@ -55,7 +55,6 @@ const Vouchers = ({ navigation }) => {
   const handleSites = async () => {
     setLoading(true);
     const userUrl = await AsyncStorage.getItem("SITE_URL");
-    const user = await AsyncStorage.getItem('USER');
     let siteId = await AsyncStorage.getItem('SITE_ID');
     let config = {
       method: 'post',
@@ -65,7 +64,6 @@ const Vouchers = ({ navigation }) => {
       },
     };
 
-    console.log(JSON.stringify(config, null,2), "config");
     axios.request(config)
       .then((response) => {
         if (response?.data) {
@@ -121,7 +119,7 @@ const Vouchers = ({ navigation }) => {
       {isHeaderVisible ?
         <View style={styles.headervouchers}>
           <View style={styles.printadd}>
-            <Print IconStyle={styles.printicon} onPress={() => navigation.navigate("PrintBatch")} />
+            <Print IconStyle={styles.printicon} onPress={() => navigation.navigate("PrintBatch",{voucher:voucher})} />
             <Plus onPress={() => navigation.navigate("CreateVoucher")} IconStyle={styles.plusicon} />
           </View>
           <CustomText title={"Vouchers"} textStyle={styles.voucher} />
