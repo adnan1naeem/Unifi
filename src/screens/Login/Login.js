@@ -13,7 +13,7 @@ const Login = ({ navigation }) => {
     const [isByteOn, setIsByteOn] = useState(false);
     const [adminUsername, setAdminUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [portId, setPortId] = useState('9443');
+    const [portId, setPortId] = useState('8443');
     const [url, setUrl] = useState('https://frg-lab.myvnc.com');
     const [siteId, setSiteId] = useState('1');
     const [siteName, setSiteName] = useState('default');
@@ -57,12 +57,12 @@ const Login = ({ navigation }) => {
                 } else {
                     siteList.push(siteRecord);
                     await AsyncStorage.setItem("SITE_LIST", JSON.stringify(siteList));
-                    navigation.navigate('Sites');
+                    navigation.replace('Sites');
 
                 }
             } else {
                 await AsyncStorage.setItem("SITE_LIST", JSON.stringify([siteRecord]));
-                navigation.navigate('Sites');
+                navigation.replace('Sites');
 
             }
             setLoading(false);

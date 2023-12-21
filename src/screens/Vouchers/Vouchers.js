@@ -62,6 +62,8 @@ const Vouchers = ({ navigation }) => {
         'Content-Type': 'application/json',
       },
     };
+
+    console.log(JSON.stringify(config, null,2));
     axios.request(config)
       .then((response) => {
         if (response?.data) {

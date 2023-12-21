@@ -55,7 +55,7 @@ const Sites = ({ navigation }) => {
 
     useEffect(() => {
         handleSites()
-    }, [])
+    }, []);
 
     const handleSites = async () => {
         setLoading(true);
@@ -116,7 +116,8 @@ const Sites = ({ navigation }) => {
             }
             setSiteLoading(false);
         }).catch((error) => {
-            if(error?.message === "Request failed with status code 403"){
+            console.log(JSON.stringify(error, null,2));
+            if (error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 504") {
                 alert('The provided credentials for this site are not valid!')
             }
             setSiteLoading(false);
@@ -245,7 +246,7 @@ const Sites = ({ navigation }) => {
         <View>
             <View style={styles.ContainerSite}>
                 <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
-                <TouchableOpacity style={styles.iconStyle} onPress={() => navigation.replace("Login")}>
+                <TouchableOpacity style={styles.iconStyle} onPress={() => navigation.navigate("Login")}>
                     <SimpleLineIcons name="plus" style={styles.backButton} />
                 </TouchableOpacity>
             </View>

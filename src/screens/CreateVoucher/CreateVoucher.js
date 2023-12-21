@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal, FlatList, ScrollView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Modal, FlatList, ScrollView, Platform } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../Utils/Colors";
-
+import axios from 'axios'
 import IncrementDecrement from "../../Components/IncrementDecrement";
 import { Width, height } from "../../Components/Dimensions";
 import CustomText from "../../Components/CustomText";
@@ -9,6 +9,8 @@ import InputField from "../../Components/InputField";
 import SwitchCase from "../../Components/SwitchCase";
 import InputFieldNotes from "../../Components/InputFieldNotes";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { prefix_url } from "../../Utils/Constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateVoucher = ({ navigation }) => {
   const [isLimitedSelected, setLimitedSelected] = useState(true);
@@ -38,6 +40,7 @@ const CreateVoucher = ({ navigation }) => {
   const closeModal = () => {
     setModalVisible(false);
   };
+  const [daysSelected, setDaysSelected] = useState();
   const [data, setData] = useState([
     { id: '1', title: '8 Hours' },
     { id: '2', title: '1 day' },
@@ -46,17 +49,46 @@ const CreateVoucher = ({ navigation }) => {
     { id: '5', title: '4 days' },
     { id: '6', title: '7 days' },
     { id: '7', title: 'Custom' },
-
   ]);
 
-  const handleItemPress = (itemId) => {
-    const updatedData = data.map((item) =>
-      item.id === itemId ? { ...item, selected: true } : { ...item, selected: false }
+  const handleItemPress = (item) => {
+    const updatedData = data?.map((value) =>
+      value?.id === item?.id ? { ...value, selected: true } : { ...value, selected: false }
     );
+    setDaysSelected(item);
     setData(updatedData);
     closeModal()
   };
 
+  const createVoucherFun = async () => {
+    let data = { cmd: "create-voucher", n: 2, quota: 2, expire: 2880, expire_number: 1, expire_unit: 1440, note: "testing only" };
+    const user = await AsyncStorage.getItem('USER');
+    const userUrl = await AsyncStorage.getItem("SITE_URL");
+
+    console.log(JSON.stringify(user, null, 2));
+
+    let config = {
+      method: 'post',
+      url: `${prefix_url}?url=https://frg-lab.myvnc.com:9443/api/s/default/cmd/hotspot&method=post`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data
+    };
+    console.log(JSON.stringify(config, null, 2));
+
+    await axios.request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(JSON.stringify(error, null,2), "erre");
+      });
+
+
+    return;
+    navigation.goBack();
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -64,12 +96,13 @@ const CreateVoucher = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <CustomText title={"Cancel"} textStyle={styles.text1} />
         </TouchableOpacity>
-
         <Text style={[styles.text1, {
           fontSize: 18,
           fontWeight: "600",
         }]}>Create Vouchers</Text>
-        <Text style={styles.text1}>Create</Text>
+        <TouchableOpacity onPress={createVoucherFun}>
+          <Text style={styles.text1}>Create</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.Amount}>
 
@@ -110,9 +143,7 @@ const CreateVoucher = ({ navigation }) => {
                 Unlimited use
               </Text>
             </TouchableOpacity>
-
           </View>
-
         </View>
       </View>
       {isLimitedSelected && <IncrementDecrement Amount="Usage" />}
@@ -123,7 +154,7 @@ const CreateVoucher = ({ navigation }) => {
       {/* ////// */}
       <TouchableOpacity onPress={() => openModal()} style={{ paddingVertical: 20, backgroundColor: Colors.white, marginTop: 25, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 29, borderWidth: 0.2, borderColor: Colors.light_Black }}>
         <Text style={{ color: Colors.black, fontSize: 17 }}>Expiration Time</Text>
-        <Text style={{ color: Colors.light_Black, fontSize: 17 }}>1 days</Text>
+        <Text style={{ color: Colors.light_Black, fontSize: 17 }}>{daysSelected?.title}</Text>
       </TouchableOpacity>
       <Modal
         animationType="slide"
@@ -144,12 +175,11 @@ const CreateVoucher = ({ navigation }) => {
             data={data}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleItemPress(item.id)}>
-                <View style={{}}>
+              <TouchableOpacity onPress={() => handleItemPress(item)}>
+                <View>
                   <View style={styles.ContainerFlatModal}>
                     <Text style={styles.item}>{item.title}</Text>
                     {item.selected && <Text style={styles.tickMark}>✔</Text>}
-
                   </View>
 
                 </View>
@@ -209,7 +239,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
+    paddingBottom: 10,
+    paddingTop: Platform.OS === 'ios' ? 60 : 0,
     paddingHorizontal: 20
   },
 
