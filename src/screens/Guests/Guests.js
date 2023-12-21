@@ -18,11 +18,12 @@ const Guests = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [showActivityIndicator, setShowActivityIndicator] = useState(true);
     const [show_ok, setshow_ok] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [expired, setexpired] = useState(false);
-    const [guestList, setguestList] = useState()
+    const [guestList, setguestList] = useState([])
+    const [searchGuestList, setSearchGuestList] = useState([])
+    const [searchText, setSearchText] = useState("")
     const [disconnectedItems, setDisconnectedItems] = useState([]);
-
-
 
     const handleOpen = (action, item) => {
         setModalVisible(true);
@@ -63,33 +64,25 @@ const Guests = () => {
     );
 
     const handleGuest = () => {
-        const currentDate = new Date();
-        const unixTimestamp = Math.floor(currentDate.getTime() / 1000);
-        axios.post(`${prefix_url}guest?start=${unixTimestamp}&end=1701349860466`, {
+        let config = {
+            method: 'get',
+            maxBodyLength: Infinity,
+            url: `${prefix_url}/activeVouchers?start=1700596800000&end=1703188800000`,
             headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(async (response) => {
-                if (response?.data) {
-                    setguestList(response?.data?.data)
-                }
-            })
-            .catch(error => {
-                console.log("Catch error :: ", error);
-            });
-    };
+                'Cookie': 'unifises=coAVJ9lv7BRJsbiyVWrzBauAL3BKXevh'
+            }
+        };
 
-    const extractFirstWord = (sentence) => {
-        const words = sentence?.trim().split(' ');
-        if (words?.length > 0) {
-            return words[0];
-        }
-        return '';
-    };
-    const formated_Time = (time) => {
-        const date = moment?.unix(time)?.format('MMMM Do YYYY, h:mm:ss a');
-        return date;
+        axios.request(config)
+            .then((response) => {
+                setguestList(response?.data?.data);
+                setSearchGuestList(response?.data?.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setLoading(false);
+                console.log(error);
+            });
     };
 
     const formatItemCode = (item) => {
@@ -106,44 +99,53 @@ const Guests = () => {
         return item;
     };
 
-    const renderVoucherItem = ({ item }) => (
-        <View style={{ marginHorizontal: 5, }}>
-            <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
-                <View style={styles.VouchersList}>
-                    <View style={styles.itemHeader}>
-                        <Text style={styles.low}>
-                            200kb{' '}
-                            <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
-                            <Text style={styles.lowText}>{' '}/{' '}</Text>
-                            < Text style={[styles.low, { color: Colors.green }]}>
-                                100kb{' '}
-                                <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
+    const byteConverter = (bytes) => {
+        const kilobytes = bytes;
+        const megabytes = kilobytes / (1024 * 1024);
+        return megabytes;
+    }
+
+    const renderVoucherItem = ({ item }) => {
+        return (
+            <View style={{ marginHorizontal: 5, }}>
+                <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
+                    <View style={styles.VouchersList}>
+                        <View style={styles.itemHeader}>
+                            <Text style={styles.low}>
+                                {byteConverter(item?.tx_bytes)?.toFixed(2)}MB{' '}
+                                <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
+                                <Text style={styles.lowText}>{' '}/{' '}</Text>
+                                < Text style={[styles.low, { color: Colors.green }]}>
+                                {byteConverter(item?.rx_bytes)?.toFixed(2)}KB{' '}
+                                    <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
+                                </Text>
                             </Text>
-                        </Text>
-                    </View>
-                    <Text style={styles.macAdress}>Mac Adress: 00-10-FA-6E-38-4A</Text>
-                    <Text style={[styles.macAdress, styles.v_Number]}>{formatItemCode("0342384823")}</Text>
-                    <Text style={styles.macAdress}>Device Name: Mac</Text>
+                        </View>
+                        <Text style={styles.macAdress}>Mac Adress: {item?.mac}</Text>
+                        <Text style={[styles.macAdress, styles.v_Number]}>{formatItemCode(item?.voucher_code)}</Text>
+                        <Text style={styles.macAdress}>Device Name: Mac</Text>
 
-                    <View style={styles.dateContainer}>
-                        <Text style={styles.text4}>Active Date:12/21/2023</Text>
-                        <Text style={styles.text4}>Expiry Date:01/02/2024</Text>
+                        <View style={styles.dateContainer}>
+                            <Text style={styles.text4}>Active Date:{moment(new Date(item?.start)).format("MM/DD/YYYY")}</Text>
+                            <Text style={styles.text4}>Expiry Date:{moment(new Date(item?.end)).format("MM/DD/YYYY")}</Text>
+                        </View>
                     </View>
-                </View>
-            </Swipeout>
-        </View>
+                </Swipeout>
+            </View>
+        );
+    }
 
-    );
     const handleSearch = text => {
-        console.log(text);
+        setSearchText(text);
+        const filtered = guestList?.filter(
+            item => item?.voucher_code?.includes(text)
+        );
+        setSearchGuestList(filtered)
     };
 
 
-    const renderHeaderItem = ({ item }) => (
-        <View style={{ marginHorizontal: 5, }}>
-            <Search onChangeText={handleSearch} />
-        </View>
-
+    const renderHeaderItem = () => (
+        <Search value={searchText} onChangeText={handleSearch} />
     );
     return (
         <View style={styles.container}>
@@ -163,18 +165,20 @@ const Guests = () => {
                 </View>
             }
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
+                {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: 50 }} /> :
 
-                <FlatList
-                    data={guestList || ['0', '2', '3', '4']}
-                    contentContainerStyle={{ marginTop: 10, }}
-                    ListHeaderComponent={renderHeaderItem}
-                    renderItem={renderVoucherItem}
-                    ListEmptyComponent={
-                        <EmptyState title={"No content available at the moment."} />}
-                    ListFooterComponent={<View style={styles.listFoter} />}
+                    <FlatList
+                        data={searchGuestList}
+                        contentContainerStyle={{ marginTop: 10, }}
+                        ListHeaderComponent={renderHeaderItem}
+                        renderItem={renderVoucherItem}
+                        ListEmptyComponent={
+                            <EmptyState title={"No content available at the moment."} />}
+                        ListFooterComponent={<View style={styles.listFoter} />}
 
-                    keyExtractor={item => item._id}
-                />
+                        keyExtractor={item => item._id}
+                    />
+                }
                 <Modal
                     animationType="slide"
                     transparent={true}

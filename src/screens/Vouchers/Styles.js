@@ -50,7 +50,6 @@ export const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        paddingTop: 40,
         borderBottomColor: Colors.light_Black,
         borderBottomWidth: 0.2,
         marginHorizontal: 20,

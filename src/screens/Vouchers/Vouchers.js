@@ -18,28 +18,19 @@ import EmptyState from '../../Components/EmptyState';
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [voucher, setVoucher] = useState([])
+  const [searchText, setSearchText] = useState("")
   const [searchVoucher, setSearchVoucher] = useState([])
   const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState();
 
   const handleSearch = text => {
+    setSearchText(text);
     const filtered = voucher?.filter(
       item => item?.code?.includes(text)
     );
     setSearchVoucher(filtered)
   };
-
-  const swipeBtns = [
-    {
-      text: "Revoke",
-      backgroundColor: "red",
-      underlayColor: "rgba(0, 0, 0, 1, 0.6)",
-    },
-    {
-      text: 'Share',
-      backgroundColor: 'blue',
-      underlayColor: 'rgba(0, 0, 0, 1, 0.6)',
-    }
-  ];
 
   const handleScroll = (event) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -96,30 +87,81 @@ const Vouchers = ({ navigation }) => {
     return item;
   };
 
-  const renderHeaderItem = ({ item }) => (
-    <Search value={voucher} onChangeText={handleSearch} />
+  const renderHeaderItem = () => (
+    <Search value={searchText} onChangeText={handleSearch} />
   );
 
-  const renderVoucherItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePress(item)}>
-      <Swipeout right={swipeBtns} autoClose={true} backgroundColor="transparent">
-        <View style={styles.VouchersList}>
-          <Text style={styles.text1}>Valid for 30 days</Text>
-          <Text style={styles.text2}>{formatItemCode(item?.code)}</Text>
-          <Text style={styles.text3}>{item?.status} use</Text>
-          <Text style={styles.text4}>Created {formated_Time(item?.create_time)}</Text>
-          <Text style={styles.text5}>Note: {item?.note}</Text>
-        </View>
-      </Swipeout>
-    </TouchableOpacity>
-  );
+  const revokeSelected = async (item) => {
+    setSelectedVoucher(item);
+    setDeleteLoading(true);
+    const userUrl = await AsyncStorage.getItem("SITE_URL");
+    let siteId = await AsyncStorage.getItem('SITE_ID');
+
+    let data = { "_id": item?._id, "cmd": "delete-voucher" };
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      data: data
+    };
+
+    axios.request(config)
+      .then((response) => {
+        handleSites();
+        setDeleteLoading(false);
+      })
+      .catch((error) => {
+        setDeleteLoading(false);
+      });
+  }
+
+  const renderVoucherItem = ({ item }) => {
+    const swipeBtns = [
+      {
+        text: "Revoke",
+        backgroundColor: "red",
+        onPress: () => revokeSelected(item),
+        underlayColor: "rgba(0, 0, 0, 1, 0.6)",
+      }
+      // {
+      //   text: 'Share',
+      //   backgroundColor: 'blue',
+      //   underlayColor: 'rgba(0, 0, 0, 1, 0.6)',
+      // }
+    ];
+    let days;
+    if (parseInt(item?.duration) / 1440 <= 1) {
+      days = `Valid for ${parseInt(item?.duration) / 1440} day`
+    } else {
+      days = `Valid for ${parseInt(item?.duration) / 1440} days`
+    }
+    return (
+      <TouchableOpacity style={{ marginVertical: 10 }} onPress={() => handlePress(item)}>
+        <Swipeout right={swipeBtns} autoClose={true} backgroundColor="transparent">
+          {selectedVoucher?._id === item?._id && deleteLoading ? <ActivityIndicator color={'black'} size={'small'} style={[styles.VouchersList, { height: 150, justifyContent: 'center' }]} /> :
+            <View style={styles.VouchersList}>
+              <Text style={styles.text1}>{days}</Text>
+              <Text style={styles.text2}>{formatItemCode(item?.code)}</Text>
+              <Text style={styles.text3}>{item?.status} use</Text>
+              <Text style={styles.text4}>Created {formated_Time(item?.create_time)}</Text>
+              <Text style={styles.text5}>Note: {item?.note}</Text>
+            </View>
+          }
+        </Swipeout>
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
       {isHeaderVisible ?
         <View style={styles.headervouchers}>
           <View style={styles.printadd}>
-            <Print IconStyle={styles.printicon} onPress={() => navigation.navigate("PrintBatch",{voucher:voucher})} />
+            <Print IconStyle={styles.printicon} onPress={() => navigation.navigate("PrintBatch", { voucher: voucher })} />
             <Plus onPress={() => navigation.navigate("CreateVoucher")} IconStyle={styles.plusicon} />
           </View>
           <CustomText title={"Vouchers"} textStyle={styles.voucher} />
@@ -128,7 +170,7 @@ const Vouchers = ({ navigation }) => {
           <Text />
           <CustomText title={"Vouchers"} textStyle={styles.scrolTitle} />
           <View style={styles.ScrolIconContainer}>
-            <Print IconStyle={styles.scrolPrint} onPress={() => navigation.navigate("PrintBatch")} />
+            <Print IconStyle={styles.scrolPrint} onPress={() => navigation.navigate("PrintBatch", { voucher: voucher })} />
             <Plus onPress={() => navigation.navigate("CreateVoucher")} IconStyle={{
               fontSize: 25,
               color: Colors.print,
@@ -139,7 +181,7 @@ const Vouchers = ({ navigation }) => {
 
       <ScrollView style={{ backgroundColor: Colors.white }} onScroll={handleScroll} scrollEventThrottle={16}>
         <View style={styles.VouchersListMap}>
-          {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: height / 2 }} /> :
+          {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: 50 }} /> :
             <FlatList
               data={searchVoucher}
               keyExtractor={(item) => item?.id}

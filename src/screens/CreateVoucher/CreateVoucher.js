@@ -18,7 +18,7 @@ const CreateVoucher = ({ navigation }) => {
   const [voucherAmount, setVoucherAmount] = useState(1);
   const [voucherUsage, setVoucherUsage] = useState(1);
   const [isBandWidthOn, setIsBandWidthOn] = useState(false);
-  const [uploadValue, setUploadValue] = useState(0);
+  const [uploadValue, setUploadValue] = useState(2);
   const [downloadValue, setDownloadValue] = useState(0);
   const [byteQutaValue, setByteQutaValue] = useState(0);
   const [isByteOn, setIsByteOn] = useState(false);
@@ -78,12 +78,18 @@ const CreateVoucher = ({ navigation }) => {
       quota: isLimitedSelected ? voucherUsage : 0,
       expire: daysSelected?.expire,
       expire_number: daysSelected?.id === 6 ? 30 : 1,
-      down: downloadValue,
-      up: uploadValue,
-      bytes: byteQutaValue,
       expire_unit: 1440,
       note: inputValue
     };
+    if(downloadValue>0){
+      data['down'] = parseInt(downloadValue);
+    }
+    if(uploadValue>1){
+      data['up'] = parseInt(uploadValue);
+    }
+    if(byteQutaValue>0){
+      data['bytes'] = parseInt(byteQutaValue);
+    }
     const userUrl = await AsyncStorage.getItem("SITE_URL");
     let siteId = await AsyncStorage.getItem('SITE_ID');
     let config = {
@@ -97,7 +103,6 @@ const CreateVoucher = ({ navigation }) => {
 
     await axios.request(config)
       .then((response) => {
-        alert("Finally Created");
         console.log(JSON.stringify(response.data));
         navigation.goBack();
       })
