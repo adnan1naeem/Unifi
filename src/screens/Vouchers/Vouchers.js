@@ -1,4 +1,4 @@
-import { Text, View, FlatList, TouchableOpacity, ScrollView, TextInput, ActivityIndicator } from 'react-native'
+import { Text, View, FlatList, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
@@ -12,6 +12,8 @@ import moment from 'moment';
 import { prefix_url } from '../../Utils/Constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Search from '../../Components/Search'
+import { height, } from '../../Components/Dimensions';
+import EmptyState from '../../Components/EmptyState';
 
 const Vouchers = ({ navigation }) => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
@@ -46,12 +48,12 @@ const Vouchers = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      setLoading(true);
       handleSites();
     }, [])
   );
 
   const handleSites = async () => {
+    setLoading(true);
     const userUrl = await AsyncStorage.getItem("SITE_URL");
     let config = {
       method: 'post',
@@ -65,12 +67,13 @@ const Vouchers = ({ navigation }) => {
         if (response?.data) {
           setSearchVoucher(response?.data?.data);
           setVoucher(response?.data?.data)
+          setLoading(false);
         }
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
-    setLoading(false);
   };
   const formated_Time = (time) => {
     const date = moment.unix(time).format('MMMM Do YYYY, h:mm:ss a');
@@ -90,6 +93,10 @@ const Vouchers = ({ navigation }) => {
     }
     return item;
   };
+
+  const renderHeaderItem = ({ item }) => (
+    <Search value={voucher} onChangeText={handleSearch} />
+  );
 
   const renderVoucherItem = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
@@ -127,15 +134,17 @@ const Vouchers = ({ navigation }) => {
           </View>
         </View>
       }
-      <Search value={voucher} onChangeText={handleSearch} />
 
       <ScrollView style={{ backgroundColor: Colors.white }} onScroll={handleScroll} scrollEventThrottle={16}>
         <View style={styles.VouchersListMap}>
-          {loading ? <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', marginTop: 50 }} /> :
+          {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: height / 2 }} /> :
             <FlatList
               data={searchVoucher}
               keyExtractor={(item) => item?.id}
+              ListHeaderComponent={renderHeaderItem}
               renderItem={renderVoucherItem}
+              ListEmptyComponent={
+                <EmptyState title={"No content available at the moment."} />}
             />}
         </View>
       </ScrollView>

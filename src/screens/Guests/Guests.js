@@ -1,4 +1,4 @@
-import { FlatList, Text, View, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Alert } from 'react-native'
+import { FlatList, Text, View, TouchableOpacity, ScrollView, Modal, ActivityIndicator, } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import Swipeout from 'react-native-swipeout';
 import { Colors } from '../../Utils/Colors';
@@ -9,17 +9,19 @@ import { prefix_url } from '../../Utils/Constants';
 import axios from 'axios'
 import moment from 'moment';
 import { useFocusEffect } from '@react-navigation/native';
-
+import Octicons_Icons from '../../Components/Icons/Octicons_Icons';
+import Search from '../../Components/Search';
+import EmptyState from '../../Components/EmptyState';
 
 const Guests = () => {
-
     const [isHeaderVisible, setIsHeaderVisible] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [showActivityIndicator, setShowActivityIndicator] = useState(true);
-    const [showHiText, setShowHiText] = useState(false);
+    const [show_ok, setshow_ok] = useState(false);
     const [expired, setexpired] = useState(false);
     const [guestList, setguestList] = useState()
     const [disconnectedItems, setDisconnectedItems] = useState([]);
+
 
 
     const handleOpen = (action, item) => {
@@ -27,10 +29,10 @@ const Guests = () => {
         setShowActivityIndicator(true);
         setTimeout(() => {
             setShowActivityIndicator(false);
-            setShowHiText(true);
+            setshow_ok(true);
             setTimeout(() => {
                 setModalVisible(false);
-                setShowHiText(false);
+                setshow_ok(false);
                 setexpired(true)
             }, 2000);
         }, 3000);
@@ -105,13 +107,24 @@ const Guests = () => {
     };
 
     const renderVoucherItem = ({ item }) => (
-
         <View style={{ marginHorizontal: 5, }}>
             <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
                 <View style={styles.VouchersList}>
+                    <View style={styles.itemHeader}>
+                        <Text style={styles.low}>
+                            200kb{' '}
+                            <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
+                            <Text style={styles.lowText}>{' '}/{' '}</Text>
+                            < Text style={[styles.low, { color: Colors.green }]}>
+                                100kb{' '}
+                                <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
+                            </Text>
+                        </Text>
+                    </View>
                     <Text style={styles.macAdress}>Mac Adress: 00-10-FA-6E-38-4A</Text>
                     <Text style={[styles.macAdress, styles.v_Number]}>{formatItemCode("0342384823")}</Text>
                     <Text style={styles.macAdress}>Device Name: Mac</Text>
+
                     <View style={styles.dateContainer}>
                         <Text style={styles.text4}>Active Date:12/21/2023</Text>
                         <Text style={styles.text4}>Expiry Date:01/02/2024</Text>
@@ -121,8 +134,17 @@ const Guests = () => {
         </View>
 
     );
+    const handleSearch = text => {
+        console.log(text);
+    };
 
 
+    const renderHeaderItem = ({ item }) => (
+        <View style={{ marginHorizontal: 5, }}>
+            <Search onChangeText={handleSearch} />
+        </View>
+
+    );
     return (
         <View style={styles.container}>
             {isHeaderVisible ?
@@ -141,10 +163,16 @@ const Guests = () => {
                 </View>
             }
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
+
                 <FlatList
                     data={guestList || ['0', '2', '3', '4']}
-                    contentContainerStyle={{ marginTop: 50, }}
+                    contentContainerStyle={{ marginTop: 10, }}
+                    ListHeaderComponent={renderHeaderItem}
                     renderItem={renderVoucherItem}
+                    ListEmptyComponent={
+                        <EmptyState title={"No content available at the moment."} />}
+                    ListFooterComponent={<View style={styles.listFoter} />}
+
                     keyExtractor={item => item._id}
                 />
                 <Modal
@@ -158,13 +186,13 @@ const Guests = () => {
                             {showActivityIndicator && (
                                 <ActivityIndicator size={'large'} style={{ color: Colors.light_Black }} />
                             )}
-                            {showHiText && (
+                            {show_ok && (
                                 <AntDesign_icon name='check' IconStyle={{ color: Colors.light_Black, fontSize: 50, fontWeight: 'bold' }} />
                             )}
                         </View>
                     </View>
                 </Modal>
-                <View style={{ height: 240 }} />
+                {/* <View /> */}
             </ScrollView>
         </View>
     )

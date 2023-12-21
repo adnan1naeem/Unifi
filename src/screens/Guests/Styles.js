@@ -55,9 +55,9 @@ export const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     itemHeader: {
-        paddingVertical: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignSelf: 'flex-end',
+        padding: 15,
+
     },
     title: {
         fontSize: 17,
@@ -90,7 +90,6 @@ export const styles = StyleSheet.create({
         textAlign: 'right',
     },
     VouchersList: {
-        paddingTop: 20,
         backgroundColor: Colors.white,
         marginHorizontal: 20,
         borderRadius: 10
@@ -149,7 +148,8 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         color: Colors.black,
         paddingVertical: 5
-    }
+    },
+    listFoter: { height: 240 }
 
 
 })
