@@ -1,1 +1,1 @@
-export const prefix_url = "https://unifi-proxy.vercel.app"
+export const prefix_url = "http://192.168.1.133:3001"

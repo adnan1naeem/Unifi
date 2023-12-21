@@ -5,25 +5,39 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Colors } from "../Utils/Colors";
 import { Width } from "./Dimensions";
 import Plus from "./Icons/Plus";
 import Minus from "./Icons/Minus";
 
-const IncrementDecrement = ({ Amount }) => {
+const IncrementDecrement = ({ Amount, setVoucherAmount, setVoucherUsage }) => {
   const [inputValue, setInputValue] = useState(1);
-
   const handleIncrement = () => {
+    if (Amount === "Usage") {
+      setVoucherUsage((prevValue) => prevValue + 1);
+    } else {
+      setVoucherAmount((prevValue) => prevValue + 1);
+    }
     setInputValue((prevValue) => prevValue + 1);
   };
 
   const handleDecrement = () => {
+    if (Amount === "Usage") {
+      setVoucherUsage((prevValue) => Math.max(prevValue - 1, 1));
+    } else {
+      setVoucherAmount((prevValue) => Math.max(prevValue - 1, 1));
+    }
     setInputValue((prevValue) => Math.max(prevValue - 1, 1));
   };
   const handleInputChange = text => {
     const numericValue = parseInt(text, 10);
     if (!isNaN(numericValue)) {
+      if (Amount === "Usage") {
+        setVoucherUsage(Math.max(numericValue, 1));
+      } else {
+        setVoucherAmount(Math.max(numericValue, 1));
+      }
       setInputValue(Math.max(numericValue, 1));
     }
   };

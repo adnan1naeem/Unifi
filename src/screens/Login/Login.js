@@ -14,8 +14,9 @@ const Login = ({ navigation }) => {
     const [adminUsername, setAdminUsername] = useState('');
     const [password, setPassword] = useState('');
     const [portId, setPortId] = useState('8443');
-    const [url, setUrl] = useState('https://frg-lab.myvnc.com');
-    const [siteId, setSiteId] = useState('1');
+    // const [url, setUrl] = useState('https://frg-lab.myvnc.com'); //Live
+    const [url, setUrl] = useState('https://frg.myvnc.com'); //Local
+    const [siteId, setSiteId] = useState('cfnvpcxe');
     const [siteName, setSiteName] = useState('default');
     const [loading, setLoading] = useState(false);
 

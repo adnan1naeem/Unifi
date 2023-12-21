@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal, FlatList, ScrollView, Platform } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Modal, FlatList, ScrollView, Platform, TextInput } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../Utils/Colors";
 import axios from 'axios'
@@ -15,8 +15,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const CreateVoucher = ({ navigation }) => {
   const [isLimitedSelected, setLimitedSelected] = useState(true);
   const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [voucherAmount, setVoucherAmount] = useState(1);
+  const [voucherUsage, setVoucherUsage] = useState(1);
   const [isBandWidthOn, setIsBandWidthOn] = useState(false);
+  const [uploadValue, setUploadValue] = useState(0);
+  const [downloadValue, setDownloadValue] = useState(0);
+  const [byteQutaValue, setByteQutaValue] = useState(0);
   const [isByteOn, setIsByteOn] = useState(false);
+
+  const [inputValue, setInputValue] = useState("");
 
   const handleSwitchChange = (value) => {
     setIsSwitchOn(value);
@@ -30,25 +37,29 @@ const CreateVoucher = ({ navigation }) => {
   const handleBytePress = (value) => {
     setIsByteOn(value);
   };
+
   const handleUnlimitedPress = () => {
     setLimitedSelected(false);
   };
+
   const [modalVisible, setModalVisible] = useState(false);
+
   const openModal = () => {
     setModalVisible(true);
   };
+
   const closeModal = () => {
     setModalVisible(false);
   };
+
   const [daysSelected, setDaysSelected] = useState();
   const [data, setData] = useState([
-    { id: '1', title: '8 Hours' },
-    { id: '2', title: '1 day' },
-    { id: '3', title: '2 days' },
-    { id: '4', title: '3 days' },
-    { id: '5', title: '4 days' },
-    { id: '6', title: '7 days' },
-    { id: '7', title: 'Custom' },
+    { id: '1', title: '8 Hours', expire: 480 },
+    { id: '2', title: '1 day', expire: 1440 },
+    { id: '3', title: '2 days', expire: 2880 },
+    { id: '4', title: '4 days', expire: 5760 },
+    { id: '5', title: '7 days', expire: 10080 },
+    { id: '6', title: '30 days', expire: "custom" },
   ]);
 
   const handleItemPress = (item) => {
@@ -57,37 +68,42 @@ const CreateVoucher = ({ navigation }) => {
     );
     setDaysSelected(item);
     setData(updatedData);
-    closeModal()
+    closeModal();
   };
 
   const createVoucherFun = async () => {
-    let data = { cmd: "create-voucher", n: 2, quota: 2, expire: 2880, expire_number: 1, expire_unit: 1440, note: "testing only" };
-    const user = await AsyncStorage.getItem('USER');
+    let data = {
+      cmd: "create-voucher",
+      n: voucherAmount,
+      quota: isLimitedSelected ? voucherUsage : 0,
+      expire: daysSelected?.expire,
+      expire_number: daysSelected?.id === 6 ? 30 : 1,
+      down: downloadValue,
+      up: uploadValue,
+      bytes: byteQutaValue,
+      expire_unit: 1440,
+      note: inputValue
+    };
     const userUrl = await AsyncStorage.getItem("SITE_URL");
-
-    console.log(JSON.stringify(user, null, 2));
-
+    let siteId = await AsyncStorage.getItem('SITE_ID');
     let config = {
       method: 'post',
-      url: `${prefix_url}?url=https://frg-lab.myvnc.com:9443/api/s/default/cmd/hotspot&method=post`,
+      url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
       headers: {
         'Content-Type': 'application/json',
       },
       data
     };
-    console.log(JSON.stringify(config, null, 2));
 
     await axios.request(config)
       .then((response) => {
+        alert("Finally Created");
         console.log(JSON.stringify(response.data));
+        navigation.goBack();
       })
       .catch((error) => {
-        console.log(JSON.stringify(error, null,2), "erre");
+        console.log(JSON.stringify(error, null, 2), "erre");
       });
-
-
-    return;
-    navigation.goBack();
   }
 
   return (
@@ -105,9 +121,7 @@ const CreateVoucher = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.Amount}>
-
-        <IncrementDecrement Amount="Amount" />
-
+        <IncrementDecrement Amount={"Amount"} setVoucherAmount={setVoucherAmount} />
         <View style={styles.usage}>
           <View style={styles.limited}>
             <TouchableOpacity
@@ -146,10 +160,10 @@ const CreateVoucher = ({ navigation }) => {
           </View>
         </View>
       </View>
-      {isLimitedSelected && <IncrementDecrement Amount="Usage" />}
+      {isLimitedSelected && <IncrementDecrement Amount="Usage" setVoucherUsage={setVoucherUsage} />}
       <View style={styles.toggleButton}>
         <SwitchCase title="Limited Download Bandwidth" onValueChange={handleSwitchChange} textColor='black' />
-        {isSwitchOn && <InputField text="Bandwidth Limit(kbps)" />}
+        {isSwitchOn && <InputField text="Bandwidth Limit(kbps)" onChange={setDownloadValue} />}
       </View>
       {/* ////// */}
       <TouchableOpacity onPress={() => openModal()} style={{ paddingVertical: 20, backgroundColor: Colors.white, marginTop: 25, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 29, borderWidth: 0.2, borderColor: Colors.light_Black }}>
@@ -191,18 +205,14 @@ const CreateVoucher = ({ navigation }) => {
 
       <View style={styles.toggleButton}>
         <SwitchCase title="Limited Upload Bandwidth" onValueChange={handleBandwidthLimit} textColor='black' />
-        {isBandWidthOn && <InputField text="Bandwidth Limit(kbps)" />}
+        {isBandWidthOn && <InputField text="Bandwidth Limit(kbps)" onChange={setUploadValue} />}
       </View>
       <View style={styles.toggleButton}>
         <SwitchCase title="Byte Quta" onValueChange={handleBytePress} textColor='black' />
-        {isByteOn && <InputField text="Bandwidth Limit(kbps)" />}
-      </View>
-      <View style={styles.toggleButton}>
-        <SwitchCase title="Byte Quta" onValueChange={handleBytePress} textColor='black' />
-        {isByteOn && <InputField text="Bandwidth Limit(kbps)" />}
+        {isByteOn && <InputField text="Bandwidth Limit(kbps)" onChange={setByteQutaValue} />}
       </View>
       <View style={[styles.toggleButton, { marginBottom: 60 }]}>
-        <InputFieldNotes text="Note" />
+        <InputFieldNotes text="Notes" onChange={setInputValue} />
       </View>
     </ScrollView>
   );
@@ -308,5 +318,23 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderTopColor: "#bfbfbf",
     borderTopWidth: 0.5,
-  }
+  },
+  InputField: {
+    width: Width,
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: Colors.white,
+    marginTop: 2,
+    paddingHorizontal: 18,
+    justifyContent: "space-between",
+    paddingVertical: 15,
+
+  },
+  text: {
+    fontSize: 17,
+  },
+  input: {
+    width: 60,
+    fontSize: 17
+  },
 });

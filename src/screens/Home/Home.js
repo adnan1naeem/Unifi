@@ -105,13 +105,18 @@ const Home = ({ navigation }) => {
 
     const handleSites = async () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
+        // const user = await AsyncStorage.getItem('USER');
+        let siteId = await AsyncStorage.getItem('SITE_ID');
         let config = {
             method: 'post',
-            url: `${prefix_url}?url=${userUrl}/proxy/network/api/s/default/stat/voucher&method=get`,
+            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/voucher&method=get`,
             headers: {
                 'Content-Type': 'application/json',
+                // 'Cookie': `unifises=${user}; Path=/; Secure; HttpOnly;`
             },
         };
+
+        console.log(JSON.stringify(config, null, 2), "configconfig")
         axios.request(config)
             .then((response) => {
 

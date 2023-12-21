@@ -3,16 +3,16 @@ import React, { useState } from "react";
 import { Width } from "./Dimensions";
 import { Colors } from "../Utils/Colors";
 
-const InputFieldNotes = ({text}) => {
+const InputFieldNotes = ({text,onChange}) => {
   const [inputValue, setInputValue] = useState("");
   const handleInputChange = (text) => {
-    // Ensure the input contains only numeric values
+    onChange(text);
     setInputValue(text);
   };
 
   return (
     <View style={styles.InputField}>
-      <Text style={styles.text}>{text}</Text>
+      <Text style={styles.text}>{text}:</Text>
       <TextInput
         style={styles.input}
         value={inputValue}
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   InputField: {
     width: Width,
     display: "flex",
-    flexDirection: "row",
     backgroundColor: Colors.white,
     marginTop: 2,
     paddingHorizontal: 18,
@@ -42,7 +41,8 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   input: {
-    width: 60,
+    paddingHorizontal: 10,
+    height: 60,
     fontSize: 17
   },
 });

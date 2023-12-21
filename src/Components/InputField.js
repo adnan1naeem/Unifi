@@ -4,11 +4,11 @@ import { Width } from "./Dimensions";
 import { Colors } from "../Utils/Colors";
 import SwitchCase from "./SwitchCase";
 
-const InputField = ({text}) => {
+const InputField = ({text,onChange}) => {
   const [inputValue, setInputValue] = useState("");
   const handleInputChange = (text) => {
-    // Ensure the input contains only numeric values
     const numericValue = text.replace(/[^0-9]/g, "");
+    onChange(numericValue);
     setInputValue(numericValue);
   };
 
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   input: {
-    width: 20,
+    width: 60,
     fontSize: 17
   },
 });

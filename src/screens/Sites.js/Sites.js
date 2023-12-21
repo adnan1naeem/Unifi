@@ -94,29 +94,38 @@ const Sites = ({ navigation }) => {
 
         await AsyncStorage.setItem("SUBSCRIPTION", 'YES');
         await AsyncStorage.setItem('SITE', item?.siteName);
+        await AsyncStorage.setItem('SITE_ID', item?.siteId);
+        await AsyncStorage.setItem('SITE_URL', item?.url);
 
         let data = JSON.stringify({
-            username: item?.username,
-            password: item?.password
+            username: 'upWork0867845',
+            password: 'upWork0867845',
+            for_hotspot: true,
+            strict: true,
+            remember: false,
+            site_name: 'cfnvpcxe'
         });
 
         let config = {
             method: 'post',
-            url: `${prefix_url}?url=${item?.url}/api/auth/login&method=post`,
+            maxBodyLength: Infinity,
+            url: `${prefix_url}?url=${item?.url}/api/login&method=post`,
             headers: {
                 'Content-Type': 'application/json',
             },
-            data
+            data: data
         };
 
         axios.request(config).then(async (item) => {
-            if (item?.data?.deviceToken) {
-                await AsyncStorage.setItem('USER', item?.data?.deviceToken);
+            const cookieString = item?.headers["set-cookie"][0];
+            const cookieValue = cookieString.split('=')[1].split(';')[0];
+            if (cookieValue) {
+                await AsyncStorage.setItem('USER', cookieValue);
                 navigation.replace('BottomTab');
             }
             setSiteLoading(false);
         }).catch((error) => {
-            console.log(JSON.stringify(error, null,2));
+            console.log(JSON.stringify(error, null, 2));
             if (error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 504") {
                 alert('The provided credentials for this site are not valid!')
             }
