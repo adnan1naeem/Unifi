@@ -127,11 +127,6 @@ const Vouchers = ({ navigation }) => {
         onPress: () => revokeSelected(item),
         underlayColor: "rgba(0, 0, 0, 1, 0.6)",
       }
-      // {
-      //   text: 'Share',
-      //   backgroundColor: 'blue',
-      //   underlayColor: 'rgba(0, 0, 0, 1, 0.6)',
-      // }
     ];
     let days;
     if (parseInt(item?.duration) / 1440 <= 1) {

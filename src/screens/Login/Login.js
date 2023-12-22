@@ -1,5 +1,5 @@
 import { ScrollView, View, TextInput, Alert, KeyboardAvoidingView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import Header from '../../Components/Header'
@@ -8,7 +8,8 @@ import { styles } from './Styles'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, route }) => {
+
     const [isByteOn, setIsByteOn] = useState(false);
     const [adminUsername, setAdminUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -18,6 +19,17 @@ const Login = ({ navigation }) => {
     const [siteId, setSiteId] = useState('cfnvpcxe');
     const [siteName, setSiteName] = useState('default');
     const [loading, setLoading] = useState(false);
+
+    useEffect(()=>{
+        if(route?.params?.site){
+            let editSite = route?.params?.site;
+            setAdminUsername(editSite?.username ||editSite['Username']);
+            setPortId(editSite?.portNumber || editSite['Port Number']);
+            setUrl(editSite?.url || editSite['URL']);
+            setSiteId(editSite?.siteId || editSite['Site ID']);
+            setSiteName(editSite?.siteName || editSite['Site Name']);
+        }
+    },[route])
 
 
     const handleBytePress = (value) => {

@@ -274,6 +274,10 @@ const Sites = ({ navigation }) => {
         }
     }
 
+    const editSite = async (item) => {
+       navigation.navigate("Login", {site: item});
+    }
+
 
     const handleHelpPress = () => {
         setShowModal(true);
@@ -289,6 +293,11 @@ const Sites = ({ navigation }) => {
                 text: 'Revoke',
                 onPress: () => revokeSelected(item),
                 backgroundColor: 'red',
+            },
+            {
+                text: 'Edit',
+                onPress: () => editSite(item),
+                backgroundColor: Colors.primary,
             },
         ];
         return (

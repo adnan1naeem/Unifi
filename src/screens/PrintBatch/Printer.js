@@ -11,7 +11,7 @@ import Less from '../../Components/Icons/Less'
 import Print from '../../Components/Icons/Print'
 import { useNavigation } from '@react-navigation/native'
 
-const Printer = ({  route }) => {
+const Printer = ({ route }) => {
     const navigation = useNavigation();
 
     const [printerItems, setprinterItems] = useState(route?.params?.item?.items)
@@ -95,11 +95,12 @@ const Printer = ({  route }) => {
 
     <script>
         function generateContainerHTML(itemCode) {
+            {console.log(itemCode)}
             return \`
                 <div class="container">
                     <div class="main-container">
                     <div class="textline">Valid for 30 days</div>
-                    <div class="textbold">\${itemCode}</div>
+                    <div class="textbold">\${itemCode.code}</div>
                     <div class="text">Download Speed:</div>
                     <div class="text">Upload Speed:</div>
                     <div class="text">Byte Quota:</div>
@@ -115,7 +116,7 @@ const Printer = ({  route }) => {
         const containerWidth = parentContainerWidth / numberOfContainersInRow;
 
         const contentArea = document.getElementById('contentArea');
-        for (let i = 0; i < array.length; i++) {
+        for (let i = 0; i < array?.length; i++) {
             const itemCode = array[i];
             const containerHTML = generateContainerHTML(itemCode);
 
@@ -138,15 +139,23 @@ const Printer = ({  route }) => {
         await RNPrint.print({ filePath: results.filePath });
     };
 
+    const returnDays = (duration) => {
+        let days;
+        if (parseInt(duration) / 1440 <= 1) {
+            days = `Valid for ${parseInt(duration) / 1440} day`
+        } else {
+            days = `Valid for ${parseInt(duration) / 1440} days`
+        }
+        return days;
+    }
 
     const renderVoucherItem = ({ item }) => (
-
         <View style={{ marginVertical: 5, marginHorizontal: 25, paddingVertical: 25, borderRadius: 10, borderWidth: 2, borderColor: Colors.black, borderStyle: 'dashed', alignItems: 'center', }}>
-            <CustomText textStyle={{ color: Colors.black, }} title={"Valid for 30 days"} />
+            <CustomText textStyle={{ color: Colors.black, }} title={returnDays(item?.duration)} />
             <CustomText textStyle={{ color: Colors.black, fontSize: 20, fontWeight: 'bold' }} title={formatItemCode(item?.code || "23434-44324")} />
-            <CustomText textStyle={{ color: Colors.black, }} title={'Download Speed:'} />
-            <CustomText textStyle={{ color: Colors.black, }} title={"Upload Speed:"} />
-            <CustomText textStyle={{ color: Colors.black, }} title={"Byte Quota:"} />
+            <CustomText textStyle={{ color: Colors.black, }} title={`Download Speed: ${item?.qos_rate_max_down || 0}`} />
+            <CustomText textStyle={{ color: Colors.black, }} title={`Upload Speed: ${item?.qos_rate_max_up || 0}`} />
+            <CustomText textStyle={{ color: Colors.black, }} title={`Byte Quota: ${item?.qos_usage_quota || 0}`} />
         </View>
 
     );
@@ -169,13 +178,13 @@ const Printer = ({  route }) => {
         <View style={{ flex: 1, }}>
             <View style={{ backgroundColor: Colors.primary, flexDirection: 'row', justifyContent: 'space-betweene', alignItems: 'center', paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingVertical: 10, paddingHorizontal: 20, justifyContent: 'space-between' }}>
                 <TouchableOpacity>
-                    <Less onPress={()=> navigation.goBack()} IconStyle={{ fontSize: 25, color: Colors.white }} />
+                    <Less onPress={() => navigation.goBack()} IconStyle={{ fontSize: 25, color: Colors.white }} />
                 </TouchableOpacity>
                 <Print onPress={printPDF} IconStyle={{ fontSize: 25, color: Colors.white }} />
             </View>
 
             <FlatList
-                data={printerItems || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}
+                data={printerItems || []}
                 keyExtractor={(item) => item?.id}
                 renderItem={renderVoucherItem}
                 renderHeaderItem={renderHeaderItem}

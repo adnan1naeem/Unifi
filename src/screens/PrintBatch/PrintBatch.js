@@ -33,7 +33,7 @@ const PrintBatch = ({ route, }) => {
       create_time,
       items: groupedData[create_time],
     }));
-    setdateBaseFilter(resultArray)
+    setdateBaseFilter(resultArray?.reverse())
   }, [])
 
   const formated_Time = (time) => {
