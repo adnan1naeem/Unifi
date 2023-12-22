@@ -168,7 +168,7 @@ const Sites = ({ navigation }) => {
             for_hotspot: true,
             strict: true,
             remember: false,
-            site_name: item?.siteName || item["Site Name"]
+            site_name: item?.siteId || item["Site ID"]
         });
 
         let config = {
