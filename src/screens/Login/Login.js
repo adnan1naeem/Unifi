@@ -156,14 +156,6 @@ const Login = ({ navigation }) => {
                 <CustomText title={"SITE Title (visible in list)"} textStyle={styles.siteText} />
                 <TextInput onChangeText={(text) => setSiteName(text)} placeholderTextColor={Colors.grey} value={siteName} placeholder={"Enter site name"} style={styles.siteInput} />
             </View>
-            {/* <View style={{ marginTop: 20 }}>
-                <SwitchCase title={"Remember Password"} onValueChange={handleBytePress} />
-            </View>
-            <View style={{ marginTop: 20 }}>
-                <SwitchCase title={"Require Passcode"} onValueChange={handleBytePress} />
-            </View> */}
-            {/* <CustomText textStyle={styles.infoText}
-                title={"Controller will be joined automatically if password is remembered."} /> */}
         </ScrollView>
     )
 }

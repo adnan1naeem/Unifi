@@ -10,6 +10,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { styles } from './Styles'
 import Purchases from 'react-native-purchases'
+import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
+import DocumentPicker from 'react-native-document-picker';
+import Papa from 'papaparse';
 
 const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
@@ -21,6 +25,7 @@ const Sites = ({ navigation }) => {
     const [disable, setDisable] = useState(false);
     const [showSubscription, setShowSubscription] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
+    const [csvData, setCsvData] = useState([]);
 
     const APIKeys = {
         apple: "appl_AUcEDGAcJBfMRWMmHnJnhobpfyP",
@@ -66,6 +71,84 @@ const Sites = ({ navigation }) => {
         setLoading(false);
     };
 
+    const pickCSVFile = async () => {
+        try {
+          const result = await DocumentPicker.pick({
+            type: [DocumentPicker.types.allFiles],
+          });
+          const fileContent = await RNFS.readFile(result[0]?.uri);
+
+          if (result[0]?.type === 'text/csv') {
+            Papa.parse(fileContent, {
+                header: true, // Set to true if your CSV file has a header row
+                skipEmptyLines: true,
+                complete: async(result) => {
+                    console.log(JSON.stringify(result?.data, null,2), " finally yes");
+                  setSites(result?.data);
+                  await AsyncStorage.setItem("SITE_LIST", JSON.stringify(result?.data));
+                },
+                error: (error) => {
+                  console.error('CSV Parsing Error:', error);
+                  Alert.alert('Error', 'An error occurred while parsing the CSV file.');
+                },
+              });
+
+          }
+        } catch (error) {
+            console.log(JSON.stringify(error, null,2), " errorerror");
+          if (DocumentPicker.isCancel(error)) {
+            // User cancelled the picker
+          } else {
+            console.error('Error picking CSV file:', error);
+            Alert.alert('Error', 'An error occurred while picking the CSV file.');
+          }
+        }
+      };
+
+      const createCSVFile = async (sitesList) => {
+        const headers = ['Username', 'Password', 'Site ID', 'Port Number', 'URL', 'Site Name'];
+        const csvData = [headers.join(',')];
+    
+        sitesList?.forEach((item) => {
+          const row = Object.values(item).map((value) => `"${value}"`);
+          csvData.push(row.join(','));
+        });
+    
+        const csvContent = csvData.join('\n');
+        const filePath = `${RNFS.DocumentDirectoryPath}/data.csv`;
+    
+        try {
+          await RNFS.writeFile(filePath, csvContent, 'utf8');
+        } catch (error) {
+          console.error('Error creating CSV file:', error);
+        }
+      };
+
+
+      useEffect(()=>{
+        if(sites?.length >0){
+            createCSVFile(sites);
+        }
+      },[sites])
+
+    const shareCSVFile = async () => {
+        const filePath = `${RNFS.DocumentDirectoryPath}/data.csv`;
+    
+        try {
+          await Share.open({
+            title: 'Share CSV File',
+            message: 'CSV File from your app',
+            url: `file://${filePath}`,
+            type: 'text/csv',
+            failOnCancel: false,
+          });
+        } catch (error) {
+          console.error('Error sharing CSV file:', error);
+          Alert.alert('Error', 'An error occurred while sharing the CSV file.');
+        }
+      };
+    
+
     const handlesubmit = async (item, index) => {
         if (disable === true) {
             alert("Please Choose Your plan before selecting the sites, \nThanks")
@@ -75,23 +158,23 @@ const Sites = ({ navigation }) => {
         setSiteLoading(true);
 
         await AsyncStorage.setItem("SUBSCRIPTION", 'YES');
-        await AsyncStorage.setItem('SITE', item?.siteName);
-        await AsyncStorage.setItem('SITE_ID', item?.siteId);
-        await AsyncStorage.setItem('SITE_URL', item?.url);
+        await AsyncStorage.setItem('SITE', item?.siteName || item["Site Name"]);
+        await AsyncStorage.setItem('SITE_ID', item?.siteId || item["Site ID"]);
+        await AsyncStorage.setItem('SITE_URL', item?.url || item["URL"]);
 
         let data = JSON.stringify({
-            username: item?.username,
-            password: item?.password,
+            username: item?.username || item["Username"],
+            password: item?.password || item["Password"],
             for_hotspot: true,
             strict: true,
             remember: false,
-            site_name: item?.siteName
+            site_name: item?.siteName || item["Site Name"]
         });
 
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}?url=${item?.url}/api/auth/login&method=post`,
+            url: `${prefix_url}?url=${item?.url  || item["URL"]}/api/login&method=post`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -185,7 +268,7 @@ const Sites = ({ navigation }) => {
                     <TouchableOpacity onPress={() => handlesubmit(item, index)} style={styles.sitelist}>
                         {siteLoading && siteIndex === index ? <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} /> :
                             <>
-                                <CustomText title={item?.siteName} textStyle={{ color: Colors.black }} />
+                                <CustomText title={item?.siteName || item["Site Name"]} textStyle={{ color: Colors.black }} />
                                 <MaterialCommunityIcons name="arrow-right" style={styles.ForwordArrow} />
                             </>
                         }
@@ -255,10 +338,10 @@ const Sites = ({ navigation }) => {
             </ScrollView>
             <View style={styles.container}>
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity style={[styles.button, styles.buttonLeft]}>
+                    <TouchableOpacity onPress={shareCSVFile} style={[styles.button, styles.buttonLeft]}>
                         <Text style={styles.buttonText}>Backup</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, styles.buttonRight]}>
+                    <TouchableOpacity onPress={pickCSVFile} style={[styles.button, styles.buttonRight]}>
                         <Text style={styles.buttonText}>Restore</Text>
                     </TouchableOpacity>
                 </View>

@@ -56,6 +56,25 @@
     </dict>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
+    <key>NSFileProviderDomain</key>
+    <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    </array>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>LSItemContentTypes</key>
+        <array>
+          <string>public.text</string>
+          <string>public.data</string>
+          <!-- Add other document types as needed -->
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>Text Document</string>
+        <key>LSHandlerRank</key>
+        <string>Alternate</string>
+      </dict>
+    </array>
     <key>UIRequiredDeviceCapabilities</key>
     <array>
       <string>armv7</string>

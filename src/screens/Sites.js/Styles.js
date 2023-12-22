@@ -125,7 +125,7 @@ export const styles = StyleSheet.create({
         height: '100%',
       },
       buttonLeft: {
-        backgroundColor: '#3498db', // Change to your desired color
+        backgroundColor: Colors.primary, // Change to your desired color
         width: '50%',
       },
       buttonRight: {
