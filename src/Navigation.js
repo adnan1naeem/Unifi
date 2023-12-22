@@ -7,6 +7,7 @@ import PrintBatch from "./screens/PrintBatch/PrintBatch";
 import Login from "./screens/Login/Login";
 import Splash from "./screens/Splash/Splash";
 import Sites from "./screens/Sites.js/Sites";
+import Printer from "./screens/PrintBatch/Printer";
 
 
 const Navigation = () => {
@@ -25,6 +26,7 @@ const Navigation = () => {
                 <Stack.Screen name="BottomTab" component={BottomTab} />
                 <Stack.Screen name="CreateVoucher" component={CreateVoucher} />
                 <Stack.Screen name="PrintBatch" component={PrintBatch} />
+                <Stack.Screen name="Printer" component={Printer} />
 
             </Stack.Navigator>
         </NavigationContainer>

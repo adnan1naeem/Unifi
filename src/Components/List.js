@@ -1,15 +1,18 @@
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { Width } from "./Dimensions";
 import { Colors } from "../Utils/Colors";
+import Greater from "./Icons/Greater";
 
-const List = ({ text }) => {
+const List = ({ text, onPress }) => {
 
 
   return (
-    <View style={styles.InputField}>
+    <TouchableOpacity onPress={onPress} style={styles.InputField}>
       <Text style={styles.text}>{text}</Text>
-    </View>
+      <Greater IconStyle={{ fontSize: 20 }} />
+
+    </TouchableOpacity>
   );
 };
 
@@ -17,17 +20,14 @@ export default List;
 
 const styles = StyleSheet.create({
   InputField: {
-    width: Width,
-    display: "flex",
     flexDirection: "row",
     backgroundColor: Colors.white,
-    paddingHorizontal: 18,
+    paddingHorizontal: 20,
     justifyContent: "space-between",
     paddingVertical: 15,
-    borderTopColor: "#bfbfbf",
-    borderTopWidth: 0.5,
-
-
+    marginVertical: 5,
+    marginHorizontal: 20,
+    borderRadius: 15
   },
   text: {
     fontSize: 18,
