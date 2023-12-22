@@ -1,15 +1,12 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import Fontisto from "react-native-vector-icons/Fontisto";
-import Entypo from 'react-native-vector-icons/Entypo'
 import Home from './screens/Home/Home';
 import { Colors } from "./Utils/Colors";
 import Guests from "./screens/Guests/Guests";
 import Payments from "./screens/Payments/Payments";
 import Vouchers from './screens/Vouchers/Vouchers';
-import Operators from './screens/Operators/Operators';
+import Tools from './screens/Tools/Index';
 import { Image } from "react-native";
 
 
@@ -74,15 +71,15 @@ const BottomTab = () => {
                 name="Vouchers"
                 component={Vouchers}
             />
-            {/* <Tab.Screen
+            <Tab.Screen
                 options={{
-                    tabBarLabel: "Operators",
+                    tabBarLabel: "Tools",
                     tabBarIcon: ({ color, size }) => (
-                        <Image source={require('../assets/Profile.png')} tintColor={color} style={{ height: 30, width: 30, resizeMode: 'contain' }} />),
+                        <Image source={require('../assets/Tools.png')} tintColor={color} size={size} style={{ height: 25, width: 25, resizeMode: 'contain' }} />),
                 }}
-                name="Operators"
-                component={Operators}
-            /> */}
+                name="Tools"
+                component={Tools}
+            />
         </Tab.Navigator>
     );
 };

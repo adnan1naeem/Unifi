@@ -19,7 +19,7 @@ const Login = ({ navigation }) => {
     const [siteId, setSiteId] = useState('cfnvpcxe');
     const [siteName, setSiteName] = useState('default');
     const [loading, setLoading] = useState(false);
-    
+
     const handleBytePress = (value) => {
         setIsByteOn(value);
     };
