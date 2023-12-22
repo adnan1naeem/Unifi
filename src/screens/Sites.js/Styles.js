@@ -106,5 +106,34 @@ export const styles = StyleSheet.create({
         height: 50,
         width: 190,
         resizeMode: 'contain',
-    }
+    },
+    container: {
+        flex: 1,
+        // Add other styles as needed for your main content
+      },
+      buttonsContainer: {
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: 'row',
+        width: '100%',
+        height: 70,
+      },
+      button: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      },
+      buttonLeft: {
+        backgroundColor: '#3498db', // Change to your desired color
+        width: '50%',
+      },
+      buttonRight: {
+        backgroundColor: '#2ecc71', // Change to your desired color
+        width: '50%',
+      },
+      buttonText: {
+        color: '#ffffff', // Change to your desired text color
+        fontSize: 16,
+      },
 });

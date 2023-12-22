@@ -1,4 +1,4 @@
-import { StatusBar, View } from 'react-native';
+import { LogBox, StatusBar, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Navigation from './src/Navigation';
@@ -21,6 +21,7 @@ const App = () => {
     } catch (e) {
     }
   }
+  LogBox.ignoreAllLogs();
 
   return (
     <SafeAreaProvider>

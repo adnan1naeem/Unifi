@@ -1,4 +1,4 @@
-import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, ScrollView, } from 'react-native'
+import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, ScrollView, Button, } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
@@ -61,26 +61,8 @@ const Sites = ({ navigation }) => {
         setLoading(true);
         let siteList = await AsyncStorage.getItem("SITE_LIST");
         siteList = JSON.parse(siteList);
+        console.log(JSON.stringify(siteList, null,2));
         setSites(siteList);
-        // const userUrl = await AsyncStorage.getItem("SITE_URL");
-        // let config = {
-        //     method: 'post',
-        //     url: `${prefix_url}?url=${userUrl}/proxy/network/api/self/sites&method=get`,
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        // };
-
-        // await axios.request(config)
-        //     .then((response) => {
-        //         if (response?.data) {
-        //             setSites(response?.data?.data);
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     });
-
         setLoading(false);
     };
 
@@ -98,18 +80,18 @@ const Sites = ({ navigation }) => {
         await AsyncStorage.setItem('SITE_URL', item?.url);
 
         let data = JSON.stringify({
-            username: 'upWork0867845',
-            password: 'upWork0867845',
+            username: item?.username,
+            password: item?.password,
             for_hotspot: true,
             strict: true,
             remember: false,
-            site_name: 'cfnvpcxe'
+            site_name: item?.siteName
         });
 
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}?url=${item?.url}/api/login&method=post`,
+            url: `${prefix_url}?url=${item?.url}/api/auth/login&method=post`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -271,6 +253,16 @@ const Sites = ({ navigation }) => {
                     />
                 </View>
             </ScrollView>
+            <View style={styles.container}>
+                <View style={styles.buttonsContainer}>
+                    <TouchableOpacity style={[styles.button, styles.buttonLeft]}>
+                        <Text style={styles.buttonText}>Backup</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.button, styles.buttonRight]}>
+                        <Text style={styles.buttonText}>Restore</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     )
 }
