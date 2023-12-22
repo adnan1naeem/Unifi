@@ -213,7 +213,7 @@ const Guests = () => {
 
 
     const renderHeaderItem = () => (
-        <Search value={searchText} onChangeText={handleSearch} />
+        <Search value={searchText} onPress={handleSearch} />
     );
     return (
         <View style={styles.container}>

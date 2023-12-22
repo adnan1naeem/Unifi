@@ -16,14 +16,14 @@ export const styles = StyleSheet.create({
         paddingTop: 5,
         fontWeight: 'bold',
         fontSize: 24,
-        color: Colors.black
+        color: Colors.white
     },
     siteTitle: {
         textTransform: 'capitalize',
         paddingTop: 5,
         fontWeight: 'bold',
         fontSize: 24,
-        color: Colors.black
+        color: Colors.white
     },
     containerView: {
         width: Width,

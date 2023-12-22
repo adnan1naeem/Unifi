@@ -9,7 +9,7 @@ const Header = ({ onPress, loading }) => {
             <TouchableOpacity>
                 <CustomText title={''} textStyle={{ ...styles.login, paddingTop: 15 }} />
             </TouchableOpacity>
-            <Image source={require('../../assets/frglogo.png')} resizeMode='containe' style={styles.logo} />
+            <Image source={require('../../assets/frglogo.png')} resizeMode='contain' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
                 <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : "Add"} />
             </TouchableOpacity>

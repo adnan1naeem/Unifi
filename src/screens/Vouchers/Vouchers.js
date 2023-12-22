@@ -88,7 +88,7 @@ const Vouchers = ({ navigation }) => {
   };
 
   const renderHeaderItem = () => (
-    <Search value={searchText} onChangeText={handleSearch} />
+    <Search value={searchText} onPress={() => handleSearch()} />
   );
 
   const revokeSelected = async (item) => {

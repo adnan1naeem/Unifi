@@ -1,12 +1,10 @@
-import { ScrollView, View, TextInput, Alert, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { ScrollView, View, TextInput, Alert, KeyboardAvoidingView } from 'react-native'
+import React, { useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import Header from '../../Components/Header'
 import SwitchCase from '../../Components/SwitchCase'
 import { styles } from './Styles'
-import axios from 'axios'
-import { prefix_url } from '../../Utils/Constants'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -25,8 +23,6 @@ const Login = ({ navigation }) => {
     const handleBytePress = (value) => {
         setIsByteOn(value);
     };
-    // var pkg = require('./package.json');
-    // console.log("sadas:: ", pkg.version);
 
 
     const handleLogin = async () => {
@@ -81,7 +77,8 @@ const Login = ({ navigation }) => {
     };
 
     return (
-        <>
+        <KeyboardAvoidingView keyboardVerticalOffset={50} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flexGrow: 1 }}>
 
             <ScrollView style={{ backgroundColor: Colors.background }}>
                 <Header loading={loading} onPress={handleLogin} />
@@ -138,7 +135,7 @@ const Login = ({ navigation }) => {
 
             </ScrollView>
 
-        </>
+        </KeyboardAvoidingView>
     )
 }
 
