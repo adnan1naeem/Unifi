@@ -26,66 +26,88 @@ const Guests = () => {
     const [searchText, setSearchText] = useState("")
     const [disconnectedItems, setDisconnectedItems] = useState([]);
 
-    const handleOpen = async(item) => {
+    const handleExtend = async (item) => {
         console.log(item);
-        // setModalVisible(true);
-        // setShowActivityIndicator(true);
-        // setTimeout(() => {
-            const userUrl = await AsyncStorage.getItem("SITE_URL");
-            let siteId = await AsyncStorage.getItem('SITE_ID');
-        
+        setModalVisible(true);
+        setShowActivityIndicator(true);
+        setTimeout(() => {
             let data = JSON.stringify({
-                "_id": item?._id,
-                "cmd": "extend"
+                "id": item?._id
             });
 
             let config = {
                 method: 'post',
                 maxBodyLength: Infinity,
-                url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
-                headers: { 
-                    'authority': 'frg-lab.myvnc.com:9443', 
-                    'accept': 'application/json, text/plain, */*', 
-                    'accept-language': 'en-US,en;q=0.9', 
-                    'content-type': 'application/json', 
-                    'cookie': 'TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkM2M2MDFmYS1mMmY0LTQwYjYtOWJiZC1lM2M3OTY0MjhjNDkiLCJjc3JmVG9rZW4iOiI1M2JlMTBhMy01ZjVjLTQxNWYtYmYyYi0xMDhkZDUzNjAxMDMiLCJqdGkiOiIwOTZiMDU4Ny0zMTFjLTRmMTYtYmZmYy1mMDBhYTkzNTU4ZWQiLCJwYXNzd29yZFJldmlzaW9uIjoxNzAxMzM5ODU3LCJpYXQiOjE3MDMxNTkxNTIsImV4cCI6MTcwMzE2Mjc1Mn0.GAvkN7IAfh6lLb0yM8dTiARDDpr8qQYiTV-grB-vzCo; TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkM2M2MDFmYS1mMmY0LTQwYjYtOWJiZC1lM2M3OTY0MjhjNDkiLCJjc3JmVG9rZW4iOiI1M2JlMTBhMy01ZjVjLTQxNWYtYmYyYi0xMDhkZDUzNjAxMDMiLCJqdGkiOiIwOTZiMDU4Ny0zMTFjLTRmMTYtYmZmYy1mMDBhYTkzNTU4ZWQiLCJwYXNzd29yZFJldmlzaW9uIjoxNzAxMzM5ODU3LCJpYXQiOjE3MDMxNTk1NDgsImV4cCI6MTcwMzE2MzE0OH0.HBUXfo-cGyhGz0ZqmxhIHnbDpDGKiCjV1_8D-kN5s5Y', 
-                    'origin': 'https://frg-lab.myvnc.com:9443', 
-                    'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"', 
-                    'sec-ch-ua-mobile': '?0', 
-                    'sec-ch-ua-platform': '"macOS"', 
-                    'sec-fetch-dest': 'empty', 
-                    'sec-fetch-mode': 'cors', 
-                    'sec-fetch-site': 'same-origin', 
-                    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36', 
-                    'x-csrf-token': '53be10a3-5f5c-415f-bf2b-108dd5360103'
-                  },
+                url: `${prefix_url}/extendVoucher`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 data: data
             };
 
             axios.request(config)
                 .then((response) => {
-                    alert('testing');
-                    // setShowActivityIndicator(false);
-                    // setshow_ok(true);
-                    // setTimeout(() => {
-                    //     setModalVisible(false);
-                    //     setshow_ok(false);
-                    //     setexpired(true)
-                    // }, 1000);
+                    console.log(JSON.stringify(response, null, 2), "response")
+                    setShowActivityIndicator(false);
+                    setshow_ok(true);
+                    handleGuest();
+                    setTimeout(() => {
+                        setModalVisible(false);
+                        setshow_ok(false);
+                        setexpired(true)
+                    }, 1000);
                 })
                 .catch((error) => {
-                    // setShowActivityIndicator(false);
-                    // setshow_ok(true);
-                    // setTimeout(() => {
-                    //     setModalVisible(false);
-                    //     setshow_ok(false);
-                    //     setexpired(true)
-                    // }, 100);
-                    console.log(JSON.stringify(error, null,2));
+                    if (error?.message === "Request failed with status code 429") {
+                        alert("Too many attempts!\n Please try again after few minutes");
+                    }
+                    setShowActivityIndicator(false);
+                    setModalVisible(false);
+                    setshow_ok(false);
+
                 });
-        // }, 3000);
+        }, 1000);
     };
 
+    const handleTerminate = async (item) => {
+        setModalVisible(true);
+        setShowActivityIndicator(true);
+        setTimeout(() => {
+            let data = JSON.stringify({
+                "id": item?._id
+            });
+
+            let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                url: `${prefix_url}/terminateVoucher`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: data
+            };
+
+            axios.request(config)
+                .then((response) => {
+                    setShowActivityIndicator(false);
+                    setshow_ok(true);
+                    handleGuest();
+                    setTimeout(() => {
+                        setModalVisible(false);
+                        setshow_ok(false);
+                        setexpired(true)
+                    }, 1000);
+                })
+                .catch((error) => {
+                    if (error?.message === "Request failed with status code 429") {
+                        alert("Too many attempts!\n Please try again after few minutes");
+                    }
+                    setShowActivityIndicator(false);
+                    setModalVisible(false);
+                    setshow_ok(false);
+                });
+        }, 1000);
+    };
     const handleScroll = (event) => {
         const offsetY = event.nativeEvent.contentOffset.y;
         setIsHeaderVisible(offsetY <= 0);
@@ -141,16 +163,16 @@ const Guests = () => {
 
     const renderVoucherItem = ({ item }) => {
         const swipeoutBtns = [
-            // {
-            //     text: 'Extend',
-            //     onPress: () => handleOpen(item),
-            //     backgroundColor: Colors.primary,
-            // },
-            // {
-            //     text: 'Disconnect',
-            //     onPress: () => handleOpen(item),
-            //     backgroundColor: Colors.danger,
-            // },
+            {
+                text: 'Extend',
+                onPress: () => handleExtend(item),
+                backgroundColor: Colors.primary,
+            },
+            {
+                text: 'Disconnect',
+                onPress: () => handleTerminate(item),
+                backgroundColor: Colors.danger,
+            },
         ];
         return (
             <View style={{ marginHorizontal: 5, }}>

@@ -87,8 +87,21 @@ const Sites = ({ navigation }) => {
                     header: true, // Set to true if your CSV file has a header row
                     skipEmptyLines: true,
                     complete: async (result) => {
-                        console.log(JSON.stringify(result?.data, null, 2), " finally yes");
-                        setSites(result?.data);
+                        let array = [];
+                        result?.data?.map((existingSite)=> {
+                            const isDuplicate =  sites?.some(item => (
+                                (existingSite.username || item["Username"]) === item?.username &&
+                                (existingSite.password || item["Password"]) === item?.password &&
+                                (existingSite.siteId || item["Site ID"]) === item?.siteId &&
+                                (existingSite.portNumber || item["Port Number"]) === item?.portId &&
+                                (existingSite.url || item["URL"]) === item?.url &&
+                                (existingSite.siteName || item["Site Name"]) === item?.siteName
+                            ));
+                            if(!isDuplicate){
+                                array.push(existingSite);
+                            }
+                        })
+                        setSites(array);
                         await AsyncStorage.setItem("SITE_LIST", JSON.stringify(result?.data));
                     },
                     error: (error) => {
@@ -195,8 +208,11 @@ const Sites = ({ navigation }) => {
             setSiteLoading(false);
         }).catch((error) => {
             console.log(JSON.stringify(error, null, 2));
-            if (error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 504") {
+            if (error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 500" || error?.message === "Request failed with status code 504") {
                 alert('The provided credentials for this site are not valid!')
+            }
+            if (error?.message === "Request failed with status code 404") {
+                alert('The provided url and port for this site are not valid!')
             }
             setSiteLoading(false);
         });

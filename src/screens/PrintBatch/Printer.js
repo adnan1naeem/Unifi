@@ -9,8 +9,11 @@ import RNPrint from 'react-native-print';
 import LeftU from '../../Components/Icons/LeftU'
 import Less from '../../Components/Icons/Less'
 import Print from '../../Components/Icons/Print'
+import { useNavigation } from '@react-navigation/native'
 
-const Printer = ({ navigation, route }) => {
+const Printer = ({  route }) => {
+    const navigation = useNavigation();
+
     const [printerItems, setprinterItems] = useState(route?.params?.item?.items)
     const [selectedPrinter, setSelectedPrinter] = useState(null);
 
@@ -165,8 +168,8 @@ const Printer = ({ navigation, route }) => {
     return (
         <View style={{ flex: 1, }}>
             <View style={{ backgroundColor: Colors.primary, flexDirection: 'row', justifyContent: 'space-betweene', alignItems: 'center', paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingVertical: 10, paddingHorizontal: 20, justifyContent: 'space-between' }}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Less IconStyle={{ fontSize: 25, color: Colors.white }} />
+                <TouchableOpacity>
+                    <Less onPress={()=> navigation.goBack()} IconStyle={{ fontSize: 25, color: Colors.white }} />
                 </TouchableOpacity>
                 <Print onPress={printPDF} IconStyle={{ fontSize: 25, color: Colors.white }} />
             </View>

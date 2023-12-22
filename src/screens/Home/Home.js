@@ -22,8 +22,8 @@ const Home = ({ navigation }) => {
     const [endDateIs, setEndDateIs] = useState(new Date());
     const [voucher, setVoucher] = useState([])
 
-
-
+    const maxEndDate = moment(startDateIs).add(35, 'days').toDate();
+    
     useEffect(() => {
         (async () => {
             let name = await AsyncStorage.getItem('SITE');
@@ -175,6 +175,7 @@ const Home = ({ navigation }) => {
                     <DateTimePicker
                         testID="datePicker"
                         value={new Date()}
+                        maximumDate={!startDateModal ? maxEndDate : undefined}
                         mode={"date"}
                         onChange={onChange}
                     />

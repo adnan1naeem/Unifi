@@ -49,12 +49,12 @@ const Login = ({ navigation }) => {
 
             if (siteList) {
                 siteList = JSON.parse(siteList);
-                const isDuplicate = siteList.some(existingSite => (
+                const isDuplicate = siteList?.some(existingSite => (
                     existingSite.username === adminUsername &&
                     existingSite.password === password &&
                     existingSite.siteId === siteId &&
                     existingSite.portNumber === portId &&
-                    existingSite.url === url &&
+                    existingSite.url === `${url}:${portId}` &&
                     existingSite.siteName === siteName
                 ));
 
@@ -64,7 +64,6 @@ const Login = ({ navigation }) => {
                     siteList.push(siteRecord);
                     await AsyncStorage.setItem("SITE_LIST", JSON.stringify(siteList));
                     navigation.replace('Sites');
-
                 }
             } else {
                 await AsyncStorage.setItem("SITE_LIST", JSON.stringify([siteRecord]));
@@ -72,34 +71,6 @@ const Login = ({ navigation }) => {
 
             }
             setLoading(false);
-
-
-
-
-
-            // let data = JSON.stringify({
-            //     username: adminUsername,
-            //     password: password
-            // });
-
-            // let config = {
-            //     method: 'post',
-            //     url: `${prefix_url}?url=${url}:${portId}/api/auth/login&method=post`,
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     data
-            // };
-
-            // axios.request(config).then(async (item) => {
-            //     if (item?.data?.deviceToken) {
-            //         await AsyncStorage.setItem('USER', item?.data?.deviceToken);
-            //         navigation.navigate('Sites');
-            //     }
-            //     setLoading(false);
-            // }).catch((error) => {
-            //     console.log(JSON.stringify(error, null, 2), "frf");
-            // });
 
         } catch (error) {
             console.log('error :: ', error);
