@@ -7,7 +7,8 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingHorizontal: 30,
         paddingTop: 20,
-        paddingBottom: 10
+        paddingBottom: 10,
+
     },
     controllerText: {
         fontSize: 17,

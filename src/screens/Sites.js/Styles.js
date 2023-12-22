@@ -9,9 +9,13 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
 
     },
+    ModalText: { color: Colors.black, textAlign: 'center', paddingVertical: 10, },
+    modalHeading: { color: Colors.black, textAlign: 'center', paddingVertical: 10, fontSize: 20, fontWeight: 'bold' },
     mainFlatContainer: {
 
     },
+    modalOuterContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
+    modalContainer: { backgroundColor: 'white', padding: 20, borderRadius: 10, marginHorizontal: 20 },
     ForwordArrow: {
         alignSelf: 'center',
         fontSize: 25,
@@ -58,18 +62,19 @@ export const styles = StyleSheet.create({
     ContainerSite: {
         backgroundColor: Colors.primary,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         paddingHorizontal: 15,
         alignItems: 'center',
+        paddingBottom: 10,
         paddingTop: Platform.OS === 'ios' ? 55 : 30,
-        paddingBottom: 10
+
     },
-    iconStyle: { 
-        position: 'absolute', 
-        bottom: 0, 
-        paddingRight: 20,
-        paddingBottom: 25, 
-        right: 0 
+    iconStyle: {
+        // position: 'absolute',
+        // bottom: 0,
+        // paddingRight: 20,
+        // paddingBottom: 25,
+        // right: 0
     },
     backButton: {
         color: Colors.white,
@@ -82,7 +87,7 @@ export const styles = StyleSheet.create({
         fontSize: 13,
         paddingBottom: 5
     },
-    swipeRevoke:{
+    swipeRevoke: {
         backgroundColor: Colors.white,
         borderRadius: 18,
         marginVertical: 7,
@@ -108,32 +113,31 @@ export const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     container: {
-        flex: 1,
-        // Add other styles as needed for your main content
-      },
-      buttonsContainer: {
+        marginBottom: Platform.OS === 'ios' ? 10 : 0
+    },
+    buttonsContainer: {
         position: 'absolute',
         bottom: 0,
         flexDirection: 'row',
         width: '100%',
         height: 70,
-      },
-      button: {
+    },
+    button: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
-      },
-      buttonLeft: {
+    },
+    buttonLeft: {
         backgroundColor: Colors.primary, // Change to your desired color
         width: '50%',
-      },
-      buttonRight: {
+    },
+    buttonRight: {
         backgroundColor: '#2ecc71', // Change to your desired color
         width: '50%',
-      },
-      buttonText: {
+    },
+    buttonText: {
         color: '#ffffff', // Change to your desired text color
         fontSize: 16,
-      },
+    },
 });

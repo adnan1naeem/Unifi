@@ -1,4 +1,4 @@
-import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, ScrollView, Button, } from 'react-native'
+import { Text, View, Image, TouchableOpacity, FlatList, Switch, Platform, ActivityIndicator, Alert, ScrollView, Button, Modal, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
@@ -14,6 +14,8 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 import DocumentPicker from 'react-native-document-picker';
 import Papa from 'papaparse';
+import { height } from '../../Components/Dimensions'
+import { ios } from '../../../app.config'
 
 const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
@@ -26,6 +28,8 @@ const Sites = ({ navigation }) => {
     const [showSubscription, setShowSubscription] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
     const [csvData, setCsvData] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+
 
     const APIKeys = {
         apple: "appl_AUcEDGAcJBfMRWMmHnJnhobpfyP",
@@ -66,88 +70,88 @@ const Sites = ({ navigation }) => {
         setLoading(true);
         let siteList = await AsyncStorage.getItem("SITE_LIST");
         siteList = JSON.parse(siteList);
-        console.log(JSON.stringify(siteList, null,2));
+        console.log(JSON.stringify(siteList, null, 2));
         setSites(siteList);
         setLoading(false);
     };
 
     const pickCSVFile = async () => {
         try {
-          const result = await DocumentPicker.pick({
-            type: [DocumentPicker.types.allFiles],
-          });
-          const fileContent = await RNFS.readFile(result[0]?.uri);
+            const result = await DocumentPicker.pick({
+                type: [DocumentPicker.types.allFiles],
+            });
+            const fileContent = await RNFS.readFile(result[0]?.uri);
 
-          if (result[0]?.type === 'text/csv') {
-            Papa.parse(fileContent, {
-                header: true, // Set to true if your CSV file has a header row
-                skipEmptyLines: true,
-                complete: async(result) => {
-                    console.log(JSON.stringify(result?.data, null,2), " finally yes");
-                  setSites(result?.data);
-                  await AsyncStorage.setItem("SITE_LIST", JSON.stringify(result?.data));
-                },
-                error: (error) => {
-                  console.error('CSV Parsing Error:', error);
-                  Alert.alert('Error', 'An error occurred while parsing the CSV file.');
-                },
-              });
+            if (result[0]?.type === 'text/csv') {
+                Papa.parse(fileContent, {
+                    header: true, // Set to true if your CSV file has a header row
+                    skipEmptyLines: true,
+                    complete: async (result) => {
+                        console.log(JSON.stringify(result?.data, null, 2), " finally yes");
+                        setSites(result?.data);
+                        await AsyncStorage.setItem("SITE_LIST", JSON.stringify(result?.data));
+                    },
+                    error: (error) => {
+                        console.error('CSV Parsing Error:', error);
+                        Alert.alert('Error', 'An error occurred while parsing the CSV file.');
+                    },
+                });
 
-          }
+            }
         } catch (error) {
-            console.log(JSON.stringify(error, null,2), " errorerror");
-          if (DocumentPicker.isCancel(error)) {
-            // User cancelled the picker
-          } else {
-            console.error('Error picking CSV file:', error);
-            Alert.alert('Error', 'An error occurred while picking the CSV file.');
-          }
+            console.log(JSON.stringify(error, null, 2), " errorerror");
+            if (DocumentPicker.isCancel(error)) {
+                // User cancelled the picker
+            } else {
+                console.error('Error picking CSV file:', error);
+                Alert.alert('Error', 'An error occurred while picking the CSV file.');
+            }
         }
-      };
+    };
 
-      const createCSVFile = async (sitesList) => {
+    const createCSVFile = async (sitesList) => {
         const headers = ['Username', 'Password', 'Site ID', 'Port Number', 'URL', 'Site Name'];
         const csvData = [headers.join(',')];
-    
+
         sitesList?.forEach((item) => {
-          const row = Object.values(item).map((value) => `"${value}"`);
-          csvData.push(row.join(','));
+            const row = Object.values(item).map((value) => `"${value}"`);
+            csvData.push(row.join(','));
         });
-    
+
         const csvContent = csvData.join('\n');
         const filePath = `${RNFS.DocumentDirectoryPath}/data.csv`;
-    
+
         try {
-          await RNFS.writeFile(filePath, csvContent, 'utf8');
+            await RNFS.writeFile(filePath, csvContent, 'utf8');
         } catch (error) {
-          console.error('Error creating CSV file:', error);
+            console.error('Error creating CSV file:', error);
         }
-      };
+    };
 
 
-      useEffect(()=>{
-        if(sites?.length >0){
+    useEffect(() => {
+        if (sites?.length > 0) {
             createCSVFile(sites);
         }
-      },[sites])
+    }, [sites])
 
     const shareCSVFile = async () => {
         const filePath = `${RNFS.DocumentDirectoryPath}/data.csv`;
-    
+
         try {
-          await Share.open({
-            title: 'Share CSV File',
-            message: 'CSV File from your app',
-            url: `file://${filePath}`,
-            type: 'text/csv',
-            failOnCancel: false,
-          });
+            await Share.open({
+                title: 'Share CSV File',
+                message: 'CSV File from your app',
+                url: `file://${filePath}`,
+                type: 'text/csv',
+                failOnCancel: false,
+            });
         } catch (error) {
-          console.error('Error sharing CSV file:', error);
-          Alert.alert('Error', 'An error occurred while sharing the CSV file.');
+            console.error('Error sharing CSV file:', error);
+            Alert.alert('Error', 'An error occurred while sharing the CSV file.');
         }
-      };
-    
+    };
+
 
     const handlesubmit = async (item, index) => {
         if (disable === true) {
@@ -174,7 +178,7 @@ const Sites = ({ navigation }) => {
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}?url=${item?.url  || item["URL"]}/api/login&method=post`,
+            url: `${prefix_url}?url=${item?.url || item["URL"]}/api/login&method=post`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -254,6 +258,15 @@ const Sites = ({ navigation }) => {
         }
     }
 
+
+    const handleHelpPress = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
     const renderItem = ({ item, index }) => {
         let swipeoutBtns = [
             {
@@ -310,6 +323,8 @@ const Sites = ({ navigation }) => {
         </View>
     );
 
+
+
     if (loading) {
         return (
             <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
@@ -317,14 +332,19 @@ const Sites = ({ navigation }) => {
     }
 
     return (
-        <View>
+        <View style={{ flex: 1 }}>
             <View style={styles.ContainerSite}>
-                <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
+                <TouchableOpacity onPress={handleHelpPress}>
+                    <CustomText textStyle={{ fontSize: 18, fontWeight: 'bold' }} title={"Help"} />
+                </TouchableOpacity>
+                <View>
+                    <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
+                </View>
                 <TouchableOpacity style={styles.iconStyle} onPress={() => navigation.navigate("Login")}>
                     <SimpleLineIcons name="plus" style={styles.backButton} />
                 </TouchableOpacity>
             </View>
-            <ScrollView>
+            <ScrollView >
                 <CustomText title={"List of Controllers"} textStyle={styles.sitesListtext} />
                 <View style={{ marginTop: '15%', paddingBottom: "25%" }}>
                     <CustomText title={sites?.length === 1 ? "Controller" : "Controllers"} textStyle={styles.titleheading} />
@@ -335,6 +355,31 @@ const Sites = ({ navigation }) => {
                         keyExtractor={(item) => item?._id}
                     />
                 </View>
+                <Modal
+                    visible={showModal}
+                    animationType="slide"
+                    transparent={true}
+                    onRequestClose={closeModal}
+                >
+                    <View style={styles.modalOuterContainer}>
+
+                        <View style={styles.modalContainer}>
+                            <TouchableOpacity style={{}} onPress={closeModal}>
+                                <Text style={{ textAlign: 'right', fontSize: 20 }}>✘</Text>
+                            </TouchableOpacity>
+                            <CustomText textStyle={styles.modalHeading} title={"About US"} />
+                            <CustomText textStyle={styles.ModalText} title={`Version:${Platform.OS === ios ? '1.0.4' : "1.0.8"}`} />
+                            <CustomText textStyle={styles.ModalText} title={"Unifi Hotspot Manager is a robust mobile application designed to efficiently manage and configure Wi-Fi hotspots. It enables users to easily control network settings, monitor usage, and provide secure access, empowering efficient management of Wi-Fi connections and access points."} />
+                            <CustomText textStyle={styles.ModalText} title={"If you need any assistance regarding Unifi Hotspot Manager Kindly contact."} />
+                            <TouchableOpacity onPress={() =>
+                                Linking.openURL('mailto:info@frg-technology.com')
+                            } style={{ alignSelf: 'center', paddingVertical: 10 }}>
+                                <CustomText textStyle={{ color: Colors.primary }} title={"info@frg-technology.com"} />
+                            </TouchableOpacity>
+
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
             <View style={styles.container}>
                 <View style={styles.buttonsContainer}>
