@@ -1,5 +1,5 @@
 import { FlatList, Text, View, TouchableOpacity, ScrollView, Modal, ActivityIndicator, } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Swipeout from 'react-native-swipeout';
 import { Colors } from '../../Utils/Colors';
 import CustomText from '../../Components/CustomText'
@@ -7,8 +7,6 @@ import AntDesign_icon from '../../Components/Icons/AntDesign_icon';
 import { styles } from './Styles';
 import { prefix_url } from '../../Utils/Constants';
 import axios from 'axios'
-import moment from 'moment';
-import { useFocusEffect } from '@react-navigation/native';
 import Octicons_Icons from '../../Components/Icons/Octicons_Icons';
 import Search from '../../Components/Search';
 import EmptyState from '../../Components/EmptyState';
@@ -26,7 +24,7 @@ const Guests = () => {
     const [searchText, setSearchText] = useState("")
 
     const handleExtend = async (item) => {
-        console.log(item);
+
         setModalVisible(true);
         setShowActivityIndicator(true);
         const userUrl = await AsyncStorage.getItem("SITE_URL");
@@ -191,28 +189,39 @@ const Guests = () => {
             {
                 text: 'Extend',
                 onPress: () => handleExtend(item),
-                backgroundColor: Colors.primary,
+                backgroundColor: Colors.primary
             },
             {
                 text: 'Disconnect',
-                onPress: () => handleTerminate(item),
-                backgroundColor: Colors.danger,
+                onPress: () => item?.expired == true ? null : handleTerminate(item),
+                backgroundColor: item?.expired == true ? Colors.heading : Colors.danger,
+                disabled: item?.expired == true ? true : false
+
             },
         ];
         return (
             <View style={{ marginHorizontal: 5, }}>
                 <Swipeout style={styles.swipeRevoke} right={swipeoutBtns} autoClose={true} backgroundColor="transparent">
                     <View style={styles.VouchersList}>
+
                         <View style={styles.itemHeader}>
-                            <Text style={styles.low}>
-                                {byteConverter(item?.tx_bytes)}{' '}
-                                <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
-                                <Text style={styles.lowText}>{' '}/{' '}</Text>
-                                < Text style={[styles.low, { color: Colors.green }]}>
-                                    {byteConverter(item?.rx_bytes)}{' '}
-                                    <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
+                            {item?.expired == true &&
+                                <View style={{ borderRadius: 5, overflow: 'hidden' }}>
+                                    <Text style={{ backgroundColor: 'red', textAlign: 'center', color: Colors.white, padding: 10, }}>{"Expired"}</Text>
+
+                                </View>}
+                            <>
+                                <Text style={styles.low}>
+                                    {byteConverter(item?.tx_bytes)}{' '}
+                                    <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
+                                    <Text style={styles.lowText}>{' '}/{' '}</Text>
+                                    <Text style={[styles.low, { color: Colors.green }]}>
+                                        {byteConverter(item?.rx_bytes)}{' '}
+                                        <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
+                                    </Text>
                                 </Text>
-                            </Text>
+                            </>
+
                         </View>
                         <Text style={styles.macAdress}>Mac Adress: {item?.mac}</Text>
                         <Text style={[styles.macAdress, styles.v_Number]}>{formatItemCode(item?.voucher_code)}</Text>
@@ -232,14 +241,14 @@ const Guests = () => {
         if (searchText === "") {
             setSearchGuestList(guestList);
         }
-      }, [searchText])
-    
-      const handleSearch = () => {
+    }, [searchText])
+
+    const handleSearch = () => {
         const filtered = guestList?.filter(
-          item => item?.voucher_code?.includes(searchText)
+            item => item?.voucher_code?.includes(searchText)
         );
         setSearchGuestList(filtered)
-      };
+    };
 
     return (
         <View style={styles.container}>
@@ -259,7 +268,7 @@ const Guests = () => {
                 </View>
             }
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
-            <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
+                <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
 
                 {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: 50 }} /> :
 

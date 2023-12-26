@@ -55,8 +55,11 @@ export const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     itemHeader: {
-        alignSelf: 'flex-end',
+
         padding: 15,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        flex: 1
 
     },
     title: {
