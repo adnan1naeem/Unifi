@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     Container: {
         backgroundColor: Colors.primary,
         height: 120,
+        paddingHorizontal: 10,
         alignItems: 'center',
         justifyContent: 'center',
         marginHorizontal: 30,

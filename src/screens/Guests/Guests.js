@@ -35,7 +35,7 @@ const Guests = () => {
             let data = JSON.stringify({
                 "_id": item?._id,
                 "cmd": "extend"
-              });
+            });
 
             let config = {
                 method: 'post',
@@ -79,7 +79,7 @@ const Guests = () => {
             let data = JSON.stringify({
                 "_id": item?._id,
                 "cmd": "terminate"
-              });
+            });
 
             let config = {
                 method: 'post',
@@ -117,11 +117,9 @@ const Guests = () => {
         setIsHeaderVisible(offsetY <= 0);
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            handleGuest();
-        }, [])
-    );
+    useEffect(() => {
+        handleGuest();
+    }, [])
 
     const handleGuest = async () => {
         setLoading(true);
@@ -140,7 +138,6 @@ const Guests = () => {
             .then((response) => {
                 setguestList(response?.data?.data);
                 setSearchGuestList(response?.data?.data);
-                console.log(response?.data?.data?.length);
                 setLoading(false);
             })
             .catch((error) => {
@@ -231,18 +228,19 @@ const Guests = () => {
         );
     }
 
-    const handleSearch = text => {
-        setSearchText(text);
+    useEffect(() => {
+        if (searchText === "") {
+            setSearchGuestList(guestList);
+        }
+      }, [searchText])
+    
+      const handleSearch = () => {
         const filtered = guestList?.filter(
-            item => item?.voucher_code?.includes(text)
+          item => item?.voucher_code?.includes(searchText)
         );
         setSearchGuestList(filtered)
-    };
+      };
 
-
-    const renderHeaderItem = () => (
-        <Search value={searchText} onPress={handleSearch} />
-    );
     return (
         <View style={styles.container}>
             {isHeaderVisible ?
@@ -261,19 +259,19 @@ const Guests = () => {
                 </View>
             }
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
+            <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
+
                 {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: 50 }} /> :
 
                     <FlatList
                         data={searchGuestList}
                         contentContainerStyle={{ marginTop: 10, }}
-                        ListHeaderComponent={renderHeaderItem}
                         renderItem={renderVoucherItem}
                         maxToRenderPerBatch={10}
                         initialNumToRender={10}
                         ListEmptyComponent={
-                            <EmptyState title={"No content available at the moment."} />}
+                            <EmptyState title={"No active voucher available at the moment."} />}
                         ListFooterComponent={<View style={styles.listFoter} />}
-
                         keyExtractor={item => item._id}
                     />
                 }

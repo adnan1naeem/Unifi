@@ -3,10 +3,9 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Colors } from '../Utils/Colors';
 import { Width } from './Dimensions';
-import CustomText from './CustomText';
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 
-const Search = ({ value, onPress }) => {
+const Search = ({ value, onChange, onPress }) => {
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -14,7 +13,7 @@ const Search = ({ value, onPress }) => {
                 <TextInput
                     style={styles.input}
                     placeholder="Search..."
-                    // onChangeText={onChangeText}
+                    onChangeText={onChange}
                     value={value}
                 />
             </View>

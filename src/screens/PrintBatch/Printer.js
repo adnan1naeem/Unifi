@@ -1,21 +1,20 @@
 import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import EmptyState from '../../Components/EmptyState'
-import moment from 'moment'
 import CustomText from '../../Components/CustomText'
 import { Colors } from '../../Utils/Colors'
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNPrint from 'react-native-print';
-import LeftU from '../../Components/Icons/LeftU'
 import Less from '../../Components/Icons/Less'
 import Print from '../../Components/Icons/Print'
 import { useNavigation } from '@react-navigation/native'
+import Modal from 'react-native-modal';
+import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
 
 const Printer = ({ route }) => {
     const navigation = useNavigation();
-
-    const [printerItems, setprinterItems] = useState(route?.params?.item?.items)
-    const [selectedPrinter, setSelectedPrinter] = useState(null);
+    const [printerItems, setprinterItems] = useState(route?.params?.item?.items);
 
     const formatItemCode = (item) => {
         if (item && item.length > 5) {
@@ -158,13 +157,54 @@ const Printer = ({ route }) => {
         });
     };
 
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
+
+    const handlePrint = () => {
+        console.log("Print action");
+        toggleModal();
+        setTimeout(() => {
+            printPDF()
+        }, 500);
+    };
+
+    const handleImportCSV = () => {
+        toggleModal();
+        setTimeout(() => {
+            shareCSVFile(printerItems);
+        }, 500);
+    };
+
+    const shareCSVFile = async (voucherList) => {
+        try {
+            const headers = Object.keys(voucherList[0])?.join(',');
+            const csvData = [headers].concat(
+                voucherList?.map((item) => Object.values(item).map((value) => `"${value}"`).join(','))
+            ).join('\n');
+
+            const csvFilePath = RNFS.CachesDirectoryPath + '/data.csv';
+            await RNFS.writeFile(csvFilePath, csvData, 'utf8');
+
+            await Share.open({
+                url: 'file://' + csvFilePath,
+                type: 'text/csv',
+                filename: 'data.csv',
+            });
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
     return (
         <View style={{ flex: 1, }}>
             <View style={{ backgroundColor: Colors.primary, flexDirection: 'row', justifyContent: 'space-betweene', alignItems: 'center', paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingVertical: 10, paddingHorizontal: 20, justifyContent: 'space-between' }}>
                 <TouchableOpacity>
                     <Less onPress={() => navigation.goBack()} IconStyle={{ fontSize: 25, color: Colors.white }} />
                 </TouchableOpacity>
-                <Print onPress={printPDF} IconStyle={{ fontSize: 25, color: Colors.white }} />
+                <Print onPress={toggleModal} IconStyle={{ fontSize: 25, color: Colors.white }} />
             </View>
 
             <FlatList
@@ -176,6 +216,20 @@ const Printer = ({ route }) => {
                 ListEmptyComponent={
                     <EmptyState title={"No content available at the moment."} />}
             />
+            <Modal
+                isVisible={isModalVisible}
+                onBackdropPress={toggleModal}
+                onBackButtonPress={toggleModal}
+            >
+                <View style={styles.modalContainer}>
+                    <TouchableOpacity style={styles.modalOption} onPress={handlePrint}>
+                        <Text style={styles.printText}>Print</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.modalOption} onPress={handleImportCSV}>
+                        <Text style={styles.printText}>Import CSV</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
 
         </View >
 
@@ -185,5 +239,24 @@ const Printer = ({ route }) => {
 export default Printer
 
 const styles = StyleSheet.create({
-
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      modalContainer: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+      },
+      modalOption: {
+        padding: 10,
+        marginBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: 'gray',
+      },
+      printText:{
+        fontSize: 16,
+        color: Colors.black
+      }
 })

@@ -1,5 +1,5 @@
 import { Text, View, FlatList, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Colors } from "../../Utils/Colors";
 import Plus from '../../Components/Icons/Plus';
 import Print from '../../Components/Icons/Print';
@@ -24,10 +24,15 @@ const Vouchers = ({ navigation }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState();
 
-  const handleSearch = text => {
-    setSearchText(text);
+  useEffect(() => {
+    if (searchText === "") {
+      setSearchVoucher(voucher);
+    }
+  }, [searchText])
+
+  const handleSearch = () => {
     const filtered = voucher?.filter(
-      item => item?.code?.includes(text)
+      item => item?.code?.includes(searchText)
     );
     setSearchVoucher(filtered)
   };
@@ -86,10 +91,6 @@ const Vouchers = ({ navigation }) => {
     }
     return item;
   };
-
-  const renderHeaderItem = () => (
-    <Search value={searchText} onPress={() => handleSearch()} />
-  );
 
   const revokeSelected = async (item) => {
     setSelectedVoucher(item);
@@ -175,15 +176,16 @@ const Vouchers = ({ navigation }) => {
       }
 
       <ScrollView style={{ backgroundColor: Colors.white }} onScroll={handleScroll} scrollEventThrottle={16}>
+        <Search value={searchText} onChange={setSearchText} onPress={() => handleSearch()} />
         <View style={styles.VouchersListMap}>
           {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: 50 }} /> :
             <FlatList
               data={searchVoucher}
               keyExtractor={(item) => item?.id}
-              ListHeaderComponent={renderHeaderItem}
               renderItem={renderVoucherItem}
+              initialNumToRender={10}
               ListEmptyComponent={
-                <EmptyState title={"No content available at the moment."} />}
+                <EmptyState title={"List of vouchers are not available at the moment."} />}
             />}
         </View>
       </ScrollView>
