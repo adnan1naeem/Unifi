@@ -3,15 +3,16 @@ import React from 'react'
 import { Colors } from '../Utils/Colors'
 import CustomText from './CustomText'
 
-const Header = ({ routes, onPress, loading }) => {
+const Header = ({ routes, onPress, loading, back }) => {
     return (
         <View style={styles.HeaderContainer}>
-            <TouchableOpacity>
-                <CustomText title={''} textStyle={{ ...styles.login, paddingTop: 15 }} />
+
+            <TouchableOpacity onPress={back}>
+                <CustomText title={'cancel'} textStyle={{ ...styles.login, paddingTop: 15 }} />
             </TouchableOpacity>
             <Image source={require('../../assets/frglogo.png')} resizeMode='contain' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
-                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> :  routes ? "Update": "Add"} />
+                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : routes ? "Update" : "Add"} />
             </TouchableOpacity>
         </View>
 

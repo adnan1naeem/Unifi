@@ -8,18 +8,21 @@ import { prefix_url } from '../../Utils/Constants'
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { height } from '../../Components/Dimensions'
 
 const Index = () => {
+
     const [loading, setLoading] = useState(true);
     const [voucher, setVoucher] = useState([]);
     const [activeVoucher, setActiveVoucher] = useState([]);
 
     useEffect(() => {
-        (async()=>{
+        (async () => {
             await handleGuest();
             await getNonActiveVoucher();
         })();
     }, [])
+
 
     const handleGuest = async () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
@@ -46,25 +49,25 @@ const Index = () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
         let siteId = await AsyncStorage.getItem('SITE_ID');
         let config = {
-          method: 'post',
-          url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/voucher&method=get`,
-          headers: {
-            'Content-Type': 'application/json',
-          },
+            method: 'post',
+            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/voucher&method=get`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
         };
-    
+
         axios.request(config)
-          .then((response) => {
-            if (response?.data) {
-              setVoucher(response?.data?.data)
-              setLoading(false);
-            }
-          })
-          .catch((error) => {
-            console.log(JSON.stringify(error, null,2));
-            setLoading(false);
-          });
-      };
+            .then((response) => {
+                if (response?.data) {
+                    setVoucher(response?.data?.data)
+                    setLoading(false);
+                }
+            })
+            .catch((error) => {
+                console.log(JSON.stringify(error, null, 2));
+                setLoading(false);
+            });
+    };
 
     const shareCSVFile = async (voucherList) => {
         try {
@@ -87,41 +90,28 @@ const Index = () => {
     };
 
     return (
-        <View>
+        <View style={{ height: height, }}>
             <View style={styles.container}>
                 <CustomText title={"Tools"} textStyle={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }} />
             </View>
-            {loading ? <ActivityIndicator size={"small"} style={{ justifyContent: 'center', marginTop: 50 }} /> :
-                <><TouchableOpacity
-                    style={{
-                        height: 50,
-                        margin: 20,
-                        borderRadius: 20,
-                        backgroundColor: Colors.primary,
-                        marginTop: 20,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                    onPress={()=>shareCSVFile(activeVoucher)}
-                >
-                    <CustomText title={'Export Active Voucher'} textStyle={{ color: 'white', fontSize: 16 }} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{
-                        height: 50,
-                        margin: 20,
-                        borderRadius: 20,
-                        backgroundColor: Colors.primary,
-                        marginTop: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                    onPress={()=>shareCSVFile(voucher)}
-                >
-                    <CustomText title={'Export Non Active Voucher'} textStyle={{ color: 'white', fontSize: 16 }} />
-                </TouchableOpacity>
-                </>
-            }
+            <View style={{ justifyContent: 'center', flex: 1 }}>
+                {loading ? <ActivityIndicator size={"small"} style={{}} /> :
+                    <View>
+                        <TouchableOpacity
+                            style={styles.buttonsContainer}
+                            onPress={() => shareCSVFile(activeVoucher)}
+                        >
+                            <CustomText title={'Export Active Voucher'} textStyle={styles.ButtonTitle} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.buttonsContainer, { marginTop: 10 }]}
+                            onPress={() => shareCSVFile(voucher)}
+                        >
+                            <CustomText title={'Export Non Active Voucher'} textStyle={styles.ButtonTitle} />
+                        </TouchableOpacity>
+                    </View>
+                }
+            </View>
         </View>
     )
 }

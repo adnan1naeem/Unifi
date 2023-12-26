@@ -39,8 +39,8 @@ const Sites = ({ navigation }) => {
 
     useEffect(() => {
         (async () => {
-             Purchases.configure({
-                apiKey: Platform.OS === "ios" ? APIKeys.apple :  APIKeys.google,
+            Purchases.configure({
+                apiKey: Platform.OS === "ios" ? APIKeys.apple : APIKeys.google,
             });
             Purchases.getOfferings()
                 .then((offerings) => {
@@ -62,7 +62,7 @@ const Sites = ({ navigation }) => {
                 });
         })();
     }, []);
-    
+
 
     useEffect(() => {
         handleSites()
@@ -421,13 +421,12 @@ const Sites = ({ navigation }) => {
                             <TouchableOpacity style={{}} onPress={closeModal}>
                                 <Text style={{ textAlign: 'right', fontSize: 20 }}>✘</Text>
                             </TouchableOpacity>
-                            <CustomText textStyle={styles.modalHeading} title={"About US"} />
-                            <CustomText textStyle={styles.ModalText} title={`Version:${Platform.OS === ios ? '1.0.4' : "1.0.8"}`} />
-                            <CustomText textStyle={styles.ModalText} title={"Unifi Hotspot Manager is a robust mobile application designed to efficiently manage and configure Wi-Fi hotspots. It enables users to easily control network settings, monitor usage, and provide secure access, empowering efficient management of Wi-Fi connections and access points."} />
-                            <CustomText textStyle={styles.ModalText} title={"If you need any assistance regarding Unifi Hotspot Manager Kindly contact."} />
-                            <TouchableOpacity onPress={() =>
-                                Linking.openURL('mailto:info@frg-technology.com')
-                            } style={{ alignSelf: 'center', paddingVertical: 10 }}>
+                            <CustomText textStyle={styles.modalHeading} title={"ABOUT US"} />
+                            <CustomText textStyle={styles.ModalText} title={`Application Version Number:${Platform.OS === ios ? '1.0.3' : " 1.0.7"}`} />
+                            <CustomText textStyle={styles.ModalText} title={"Unifi Hotspot Manager provide you access to Ubiquiti Unifi Network Hotspot Management, where you can add / remove / manage and print vouchers of multiple sites and multiple controller. Our application allow you to see overview of each site hotspot voucher sale. It will save lots of your time to manage your Unifi hotspot on the move whether you are administering a single network or remotely managing multiple sites"} />
+                            <CustomText textStyle={styles.ModalText} title={"If you need any assistance regarding Unifi system & solutions kindly contact"} />
+                            <TouchableOpacity onPress={() => Linking.openURL('mailto:info@frg-technology.com')}
+                                style={{ alignSelf: 'center', paddingBottom: 10 }}>
                                 <CustomText textStyle={{ color: Colors.primary }} title={"info@frg-technology.com"} />
                             </TouchableOpacity>
 
@@ -439,8 +438,6 @@ const Sites = ({ navigation }) => {
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity onPress={shareCSVFile} style={[styles.button, styles.buttonLeft]}>
                         <AntDesign name="cloudupload" style={{ fontSize: 30, color: Colors.white }} />
-
-                        {/* <MaterialCommunityIcons name="restore" style={{ fontSize: 30, color: Colors.white }} /> */}
                         <Text style={styles.buttonText}>Backup</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={pickCSVFile} style={[styles.button, styles.buttonRight]}>

@@ -33,7 +33,6 @@ const Login = ({ navigation, route }) => {
         }
     }, [route])
 
-
     const handleBytePress = (value) => {
         setIsByteOn(value);
     };
@@ -93,9 +92,8 @@ const Login = ({ navigation, route }) => {
     return (
         <KeyboardAvoidingView keyboardVerticalOffset={50} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flexGrow: 1 }}>
-
             <ScrollView style={{ backgroundColor: Colors.background }}>
-                <Header routes={route?.params?.site ? true : false} loading={loading} onPress={handleLogin} />
+                <Header back={() => navigation.goBack()} routes={route?.params?.site ? true : false} loading={loading} onPress={handleLogin} />
                 <View style={styles.innerHeading}>
                     <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
                     <CustomText title={"Port"} textStyle={[styles.controllerText, { color: Colors.grey }]} />
