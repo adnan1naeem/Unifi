@@ -19,6 +19,7 @@ const Home = ({ navigation }) => {
     const [startDateIs, setStartDateIs] = useState(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const [endDateIs, setEndDateIs] = useState(new Date());
     const [voucher, setVoucher] = useState([])
+    const [numberOfActiveVouchers, setnumberOfActiveVouchers] = useState()
 
     const maxEndDate = moment(startDateIs).add(35, 'days').toDate();
 
@@ -78,8 +79,16 @@ const Home = ({ navigation }) => {
             let data = await filterDataForTimeRange(dateIs, lastDate);
             resultArray.push(data);
         }
+        console.log(resultArray);
 
         setFilteredDataLengths(resultArray);
+        let sum = 0;
+        for (let i = 0; i < resultArray?.length; i++) {
+            sum += resultArray[i].value;
+        }
+        setnumberOfActiveVouchers(sum)
+        console.log("The sum  is:", sum);
+
     };
     const filterDataForTimeRange = async (startDate, endDate) => {
         const start = new Date(startDate);
@@ -122,6 +131,10 @@ const Home = ({ navigation }) => {
             });
     };
 
+    useEffect(() => {
+
+    }, [])
+
     return (
         <View>
             <View style={styles.HeaderContainer}>
@@ -152,7 +165,10 @@ const Home = ({ navigation }) => {
                         title={"7.3.83"}
                         textStyle={{ color: Colors.heading }}
                     />
-                    <CustomText title={"Active Vouchers"} textStyle={styles.DetailsContainer} />
+                    <View style={{ flexDirection: 'row' }}>
+                        <CustomText title={`Active Vouchers: `} textStyle={[styles.DetailsContainer, { color: Colors.primary }]} />
+                        <CustomText title={numberOfActiveVouchers} textStyle={styles.DetailsContainer} />
+                    </View>
                 </View>
                 <View style={styles.datePickerContainer}>
                     <View >

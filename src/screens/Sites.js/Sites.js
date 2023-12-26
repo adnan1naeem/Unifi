@@ -14,8 +14,8 @@ import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 import DocumentPicker from 'react-native-document-picker';
 import Papa from 'papaparse';
-import { height } from '../../Components/Dimensions'
 import { ios } from '../../../app.config'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
@@ -88,8 +88,8 @@ const Sites = ({ navigation }) => {
                     skipEmptyLines: true,
                     complete: async (result) => {
                         let array = [];
-                        result?.data?.map((existingSite)=> {
-                            const isDuplicate =  sites?.some(item => (
+                        result?.data?.map((existingSite) => {
+                            const isDuplicate = sites?.some(item => (
                                 (existingSite.username || item["Username"]) === item?.username &&
                                 (existingSite.password || item["Password"]) === item?.password &&
                                 (existingSite.siteId || item["Site ID"]) === item?.siteId &&
@@ -97,7 +97,7 @@ const Sites = ({ navigation }) => {
                                 (existingSite.url || item["URL"]) === item?.url &&
                                 (existingSite.siteName || item["Site Name"]) === item?.siteName
                             ));
-                            if(!isDuplicate){
+                            if (!isDuplicate) {
                                 array.push(existingSite);
                             }
                         })
@@ -275,7 +275,7 @@ const Sites = ({ navigation }) => {
     }
 
     const editSite = async (item) => {
-       navigation.navigate("Login", {site: item});
+        navigation.navigate("Login", { site: item });
     }
 
 
@@ -409,9 +409,14 @@ const Sites = ({ navigation }) => {
             <View style={styles.container}>
                 <View style={styles.buttonsContainer}>
                     <TouchableOpacity onPress={shareCSVFile} style={[styles.button, styles.buttonLeft]}>
+                        <AntDesign name="cloudupload" style={{ fontSize: 30, color: Colors.white }} />
+
+                        {/* <MaterialCommunityIcons name="restore" style={{ fontSize: 30, color: Colors.white }} /> */}
                         <Text style={styles.buttonText}>Backup</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={pickCSVFile} style={[styles.button, styles.buttonRight]}>
+                        <AntDesign name="clouddownload" style={{ fontSize: 30, color: Colors.white }} />
+
                         <Text style={styles.buttonText}>Restore</Text>
                     </TouchableOpacity>
                 </View>

@@ -113,14 +113,15 @@ export const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     container: {
-        marginBottom: Platform.OS === 'ios' ? 10 : 0
+        marginBottom: Platform.OS === 'ios' ? 10 : 0,
     },
     buttonsContainer: {
         position: 'absolute',
-        bottom: 0,
+        bottom: -10,
         flexDirection: 'row',
-        width: '100%',
-        height: 70,
+        width: Width,
+        height: 80,
+
     },
     button: {
         flex: 1,

@@ -41,10 +41,10 @@ export const styles = StyleSheet.create({
     },
     DetailsContainer: {
         color: Colors.black,
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        paddingVertical: 15
+        paddingVertical: 15,
     },
     barContainer: {
         justifyContent: 'center',
