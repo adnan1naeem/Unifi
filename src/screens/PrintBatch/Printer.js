@@ -30,7 +30,33 @@ const Printer = ({ route }) => {
         }
         return item;
     };
+    const returnDays = (duration) => {
+        let days;
+        if (parseInt(duration) / 1440 <= 1) {
+            days = `Valid for ${parseInt(duration) / 1440} day`
+        } else {
+            days = `Valid for ${parseInt(duration) / 1440} days`
+        }
+        return days;
+    }
 
+    const generatePrinterItemsHTML = (items) => {
+        let itemsHTML = '';
+        items.forEach((item) => {
+            itemsHTML += `
+                <div class="container">
+                    <div class="main-container">
+                         <div class="textline">${returnDays(item?.duration)}</div>
+                          <div class="textbold">${formatItemCode(item?.code || "23434-44324")}</div>
+                        <div class="text">Download Speed: ${item?.qos_rate_max_down || 0}</div>
+                        <div class="text">Upload Speed: ${item?.qos_rate_max_up || 0}</div>
+                        <div class="text">Byte Quota: ${item?.qos_usage_quota || 0}</div>
+                    </div>
+                </div>
+            `;
+        });
+        return itemsHTML;
+    };
     const contentToPrint = `
 <!DOCTYPE html>
 <html>
@@ -47,17 +73,13 @@ const Printer = ({ route }) => {
 
         .parent-container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
+            flex-wrap: wrap;   
             margin: 0;
             padding: 0;
             gap: 0;
         }
 
-        .container {
-            width: 58mm; /* Adjust the width of the card */
-            margin-bottom: 20px;
-            padding: 10px;
+        .container { 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -65,8 +87,8 @@ const Printer = ({ route }) => {
         }
         .main-container{
              border: 2px dotted black; /* Dotted border */
-             padding: 10px;
-               width: 34mm;
+             padding: 12px;
+               width: 45mm;
         }
         .text {
             color: black;
@@ -75,7 +97,7 @@ const Printer = ({ route }) => {
            
         }
         .textbold{
-              color: black;
+            color: black;
             font-size: 14px;
             font-weight: 800;
             text-align: center
@@ -91,41 +113,11 @@ const Printer = ({ route }) => {
 </head>
 <body>
     <div class="parent-container" id="contentArea">
+      ${generatePrinterItemsHTML(printerItems)}
     </div>
-
-    <script>
-        function generateContainerHTML(itemCode) {
-            {console.log(itemCode)}
-            return \`
-                <div class="container">
-                    <div class="main-container">
-                    <div class="textline">Valid for 30 days</div>
-                    <div class="textbold">\${itemCode.code}</div>
-                    <div class="text">Download Speed:</div>
-                    <div class="text">Upload Speed:</div>
-                    <div class="text">Byte Quota:</div>
-                    </div>
-                </div>
-            \`;
-        }
-
-        const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12,13,14,15,16,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12,13,14,15,16]; // Example array data
-        const parentContainerWidth = 210;
-        const numberOfContainersInRow = 4;
-
-        const containerWidth = parentContainerWidth / numberOfContainersInRow;
-
-        const contentArea = document.getElementById('contentArea');
-        for (let i = 0; i < array?.length; i++) {
-            const itemCode = array[i];
-            const containerHTML = generateContainerHTML(itemCode);
-
-            contentArea.insertAdjacentHTML('beforeend', \`<div class="container" style="width: \${containerWidth}mm">\${containerHTML}</div>\`);
-
-            if ((i + 1) % numberOfContainersInRow === 0) {
-                contentArea.insertAdjacentHTML('beforeend', '<br>'); // Start the next row
-            }
-        }
+         
+           <script>
+       
     </script>
 </body>
 </html>
@@ -139,15 +131,7 @@ const Printer = ({ route }) => {
         await RNPrint.print({ filePath: results.filePath });
     };
 
-    const returnDays = (duration) => {
-        let days;
-        if (parseInt(duration) / 1440 <= 1) {
-            days = `Valid for ${parseInt(duration) / 1440} day`
-        } else {
-            days = `Valid for ${parseInt(duration) / 1440} days`
-        }
-        return days;
-    }
+
 
     const renderVoucherItem = ({ item }) => (
         <View style={{ marginVertical: 5, marginHorizontal: 25, paddingVertical: 25, borderRadius: 10, borderWidth: 2, borderColor: Colors.black, borderStyle: 'dashed', alignItems: 'center', }}>
