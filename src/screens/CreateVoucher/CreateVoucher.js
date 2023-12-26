@@ -60,7 +60,7 @@ const CreateVoucher = ({ navigation }) => {
     { id: '3', title: '2 days', expire: 2880 },
     { id: '4', title: '4 days', expire: 5760 },
     { id: '5', title: '7 days', expire: 10080 },
-    { id: '6', title: '30 days', expire: "custom" },
+    { id: '6', title: '30 days', expire: 43200 },
   ]);
 
   const handleItemPress = (item) => {
@@ -81,7 +81,7 @@ const CreateVoucher = ({ navigation }) => {
         n: voucherAmount,
         quota: isLimitedSelected ? voucherUsage : 0,
         expire: daysSelected?.expire,
-        expire_number: daysSelected?.id === 6 ? 30 : 1,
+        expire_number: 1,
         expire_unit: 1440,
         note: inputValue
       };

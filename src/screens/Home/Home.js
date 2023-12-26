@@ -19,7 +19,7 @@ const Home = ({ navigation }) => {
     const [startDateIs, setStartDateIs] = useState(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const [endDateIs, setEndDateIs] = useState(new Date());
     const [voucher, setVoucher] = useState([])
-    const [numberOfActiveVouchers, setnumberOfActiveVouchers] = useState()
+    const [numberOfActiveVouchers, setnumberOfActiveVouchers] = useState(0)
 
     const maxEndDate = moment(startDateIs).add(35, 'days').toDate();
 
@@ -87,6 +87,7 @@ const Home = ({ navigation }) => {
         setnumberOfActiveVouchers(sum)
 
     };
+
     const filterDataForTimeRange = async (startDate, endDate) => {
         const start = new Date(startDate);
         const end = new Date(endDate);
@@ -94,43 +95,44 @@ const Home = ({ navigation }) => {
         end.setDate(dayAdded);
         const filteredData = voucher?.filter(item => {
             const createTime = new Date(item?.end * 1000);
-            return createTime >= start && createTime <= end;
+            return item?.expired === false && createTime >= start && createTime <= end;
         });
         let value = { value: filteredData?.length, label: moment(startDate).format("MM/DD") };
         return value;
     };
-
-    useFocusEffect(
-        useCallback(() => {
+    
+    useEffect(()=>{
+        if(startDateIs && endDateIs){
             handleSites();
-        }, [])
-    );
+        }
+    },[startDateIs, endDateIs])
 
     const handleSites = async () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
         let siteId = await AsyncStorage.getItem('SITE_ID');
+        const startDate = new Date(startDateIs)?.getTime();
+        const endDate = new Date(endDateIs)?.getTime();
+
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}/?url=${userUrl}/api/s/${siteId}/stat/guest?within=24&method=get`,
+            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/guest/start=${parseInt(startDate)}/end=${parseInt(endDate)}&method=get`,
             headers: {
                 'Content-Type': 'application/json',
             }
         };
+
         axios.request(config)
             .then((response) => {
+                console.log(JSON.stringify(response?.data?.data?.length, null, 2));
                 if (response?.data) {
                     setVoucher(response?.data?.data)
                 }
             })
             .catch((error) => {
-                console.log(JSON.stringify(error,));
+                console.log(JSON.stringify(error, null, 2));
             });
     };
-
-    useEffect(() => {
-
-    }, [])
 
     return (
         <View>
@@ -164,7 +166,7 @@ const Home = ({ navigation }) => {
                     />
                     <View style={{ flexDirection: 'row' }}>
                         <CustomText title={`Active Vouchers: `} textStyle={styles.DetailsContainer} />
-                        <CustomText title={numberOfActiveVouchers || '0'} textStyle={[styles.DetailsContainer, { color: Colors.primary }]} />
+                        <CustomText title={numberOfActiveVouchers} textStyle={[styles.DetailsContainer, { color: Colors.primary }]} />
                     </View>
                 </View>
                 <View style={styles.datePickerContainer}>

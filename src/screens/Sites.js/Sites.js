@@ -202,6 +202,8 @@ const Sites = ({ navigation }) => {
             data: data
         };
 
+        console.log(JSON.stringify(config, null,2));
+
         axios.request(config).then(async (item) => {
             const cookieString = item?.headers["set-cookie"][0];
             const cookieValue = cookieString.split('=')[1].split(';')[0];
@@ -297,8 +299,8 @@ const Sites = ({ navigation }) => {
         }
     }
 
-    const editSite = async (item) => {
-        navigation.navigate("Login", { site: item });
+    const editSite = async (item, index) => {
+        navigation.navigate("Login", { site: item, index: index });
     }
 
 
@@ -319,7 +321,7 @@ const Sites = ({ navigation }) => {
             },
             {
                 text: 'Edit',
-                onPress: () => editSite(item),
+                onPress: () => editSite(item, index),
                 backgroundColor: Colors.primary,
             },
         ];

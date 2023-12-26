@@ -37,7 +37,6 @@ const Login = ({ navigation, route }) => {
         setIsByteOn(value);
     };
 
-
     const handleLogin = async () => {
         try {
             setLoading(true);
@@ -70,7 +69,11 @@ const Login = ({ navigation, route }) => {
                 if (isDuplicate) {
                     alert("A site with the same credentials already exists.");
                 } else {
-                    siteList.push(siteRecord);
+                    if (route?.params?.index >= 0) {
+                        siteList[route?.params?.index] = siteRecord;
+                    } else {
+                        siteList.push(siteRecord);
+                    }
                     await AsyncStorage.setItem("SITE_LIST", JSON.stringify(siteList));
                     navigation.replace('Sites');
                 }
