@@ -268,10 +268,17 @@ const Sites = ({ navigation }) => {
         );
     };
 
+    useEffect(() => {
+        if (searchText === "") {
+            setsearchSitesList(sites);
+        }
+    }, [searchText])
 
     const handleSearch = () => {
-        const filtered = sites.filter(item =>
-            item?.siteName.toLowerCase().includes(searchText.toLowerCase())
+        const filtered = sites?.filter(item => {
+            let siteName = item?.siteName?.toLowerCase() || item['Site Name']?.toLowerCase();
+            return siteName?.toLowerCase().includes(searchText.toLowerCase())
+        }
         );
         setsearchSitesList(filtered);
     };
@@ -391,9 +398,10 @@ const Sites = ({ navigation }) => {
             </View>
 
             <ScrollView >
-                <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
                 <CustomText title={"List of Controllers"} textStyle={styles.sitesListtext} />
-                <View style={{ marginTop: '15%', paddingBottom: "25%" }}>
+                <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
+
+                <View style={{ paddingBottom: "25%" }}>
                     <CustomText title={sites?.length === 1 ? "Controller" : "Controllers"} textStyle={styles.titleheading} />
                     <FlatList
                         data={searchSitesList}
