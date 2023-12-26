@@ -7,7 +7,7 @@ import Guests from "./screens/Guests/Guests";
 import Payments from "./screens/Payments/Payments";
 import Vouchers from './screens/Vouchers/Vouchers';
 import Tools from './screens/Tools/Index';
-import { Image } from "react-native";
+import { Image, Platform } from "react-native";
 
 
 const Tab = createBottomTabNavigator();
@@ -20,13 +20,13 @@ const BottomTab = () => {
                 tabBarInactiveTintColor: Colors.blur,
                 tabBarActiveTintColor: Colors.white,
                 tabBarStyle: {
-                    height: 60,
+                    height: Platform.OS === "ios" ? 70 : 60,
                     paddingHorizontal: 5,
                     paddingTop: 5,
                     backgroundColor: Colors.primary,
                     position: 'absolute',
                     borderTopWidth: 0,
-                    paddingBottom: 10
+                    paddingBottom: 15
                 },
 
             })}
