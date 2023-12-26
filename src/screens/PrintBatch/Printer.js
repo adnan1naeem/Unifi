@@ -1,5 +1,5 @@
 import { FlatList, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import EmptyState from '../../Components/EmptyState'
 import CustomText from '../../Components/CustomText'
 import { Colors } from '../../Utils/Colors'
@@ -11,10 +11,12 @@ import { useNavigation } from '@react-navigation/native'
 import Modal from 'react-native-modal';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Printer = ({ route }) => {
     const navigation = useNavigation();
     const [printerItems, setprinterItems] = useState(route?.params?.item?.items);
+    const [siteName, setSiteName] = useState('');
 
     const formatItemCode = (item) => {
         if (item && item.length > 5) {
@@ -198,12 +200,20 @@ const Printer = ({ route }) => {
         }
     };
 
+
+    useEffect(() => {
+        (async () => {
+            let name = await AsyncStorage.getItem('SITE');
+            setSiteName(name);
+        })();
+    }, [])
     return (
         <View style={{ flex: 1, }}>
             <View style={{ backgroundColor: Colors.primary, flexDirection: 'row', justifyContent: 'space-betweene', alignItems: 'center', paddingTop: Platform.OS === 'ios' ? 60 : 40, paddingVertical: 10, paddingHorizontal: 20, justifyContent: 'space-between' }}>
                 <TouchableOpacity>
                     <Less onPress={() => navigation.goBack()} IconStyle={{ fontSize: 25, color: Colors.white }} />
                 </TouchableOpacity>
+                <CustomText numberOfLines={1} title={siteName} textStyle={styles.siteTitle} />
                 <Print onPress={toggleModal} IconStyle={{ fontSize: 25, color: Colors.white }} />
             </View>
 
@@ -243,20 +253,27 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-      },
-      modalContainer: {
+    },
+    modalContainer: {
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10,
-      },
-      modalOption: {
+    },
+    modalOption: {
         padding: 10,
         marginBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: 'gray',
-      },
-      printText:{
+    },
+    printText: {
         fontSize: 16,
         color: Colors.black
-      }
+    },
+    siteTitle: {
+        paddingTop: 5,
+        width: 130,
+        fontWeight: 'bold',
+        fontSize: 24,
+        color: Colors.white
+    },
 })

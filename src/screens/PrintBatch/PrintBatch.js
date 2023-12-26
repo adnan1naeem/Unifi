@@ -4,7 +4,6 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  CustomText,
   Platform,
   FlatList
 } from "react-native";
@@ -14,10 +13,13 @@ import { Width } from "../../Components/Dimensions";
 import List from "../../Components/List";
 import { useNavigation } from "@react-navigation/native";
 import moment from 'moment';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomText from "../../Components/CustomText";
 
 const PrintBatch = ({ route, }) => {
   const navigation = useNavigation();
   const [dateBaseFilter, setdateBaseFilter] = useState()
+  const [siteName, setSiteName] = useState('');
 
   useEffect(() => {
     const data = route?.params?.voucher;
@@ -41,25 +43,20 @@ const PrintBatch = ({ route, }) => {
     return date;
   };
 
+  useEffect(() => {
+    (async () => {
+      let name = await AsyncStorage.getItem('SITE');
+      setSiteName(name);
+    })();
+  }, [])
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.CreateVoucher}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text
-            style={styles.text1}>Cancel </Text>
+          <CustomText title={"Cancel"} textStyle={styles.text1} />
         </TouchableOpacity>
-        <Text
-          style={[
-            styles.text1,
-            {
-              fontSize: 18,
-              fontWeight: "600",
-            },
-          ]}
-        >
-          Print Batch
-        </Text>
+        <CustomText numberOfLines={1} title={siteName} textStyle={styles.siteTitle} />
       </View>
 
       <View style={{ marginTop: 55 }}></View>
@@ -86,15 +83,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     paddingTop: Platform.OS === 'android' ? "5%" : 60,
     paddingBottom: "5%",
-    display: "flex",
     flexDirection: "row",
     gap: 90,
     paddingLeft: 15,
     paddingRight: 15,
+    alignItems: 'center'
   },
   text1: {
     color: Colors.white,
     fontSize: 15,
     marginTop: 2,
+  },
+  siteTitle: {
+    paddingTop: 5,
+    width: 130,
+    fontWeight: 'bold',
+    fontSize: 24,
+    color: Colors.white
   },
 });

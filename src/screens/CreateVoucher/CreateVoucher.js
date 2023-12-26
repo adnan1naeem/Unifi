@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Modal, FlatList, ScrollView, Platform, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Modal, FlatList, ScrollView, Platform, KeyboardAvoidingView, ActivityIndicator } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../Utils/Colors";
 import axios from 'axios'
@@ -22,6 +22,7 @@ const CreateVoucher = ({ navigation }) => {
   const [downloadValue, setDownloadValue] = useState(0);
   const [byteQutaValue, setByteQutaValue] = useState(0);
   const [isByteOn, setIsByteOn] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const [inputValue, setInputValue] = useState("");
 
@@ -72,44 +73,51 @@ const CreateVoucher = ({ navigation }) => {
   };
 
   const createVoucherFun = async () => {
-    let data = {
-      cmd: "create-voucher",
-      n: voucherAmount,
-      quota: isLimitedSelected ? voucherUsage : 0,
-      expire: daysSelected?.expire,
-      expire_number: daysSelected?.id === 6 ? 30 : 1,
-      expire_unit: 1440,
-      note: inputValue
-    };
-    if (downloadValue > 0) {
-      data['down'] = parseInt(downloadValue);
-    }
-    if (uploadValue > 1) {
-      data['up'] = parseInt(uploadValue);
-    }
-    if (byteQutaValue > 0) {
-      data['bytes'] = parseInt(byteQutaValue);
-    }
-    const userUrl = await AsyncStorage.getItem("SITE_URL");
-    let siteId = await AsyncStorage.getItem('SITE_ID');
-    let config = {
-      method: 'post',
-      url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data
-    };
+    try {
+      setLoading(true);
 
-    await axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-        navigation.goBack();
-      })
-      .catch((error) => {
-        console.log(JSON.stringify(error, null, 2), "erre");
-      });
-  }
+      let data = {
+        cmd: "create-voucher",
+        n: voucherAmount,
+        quota: isLimitedSelected ? voucherUsage : 0,
+        expire: daysSelected?.expire,
+        expire_number: daysSelected?.id === 6 ? 30 : 1,
+        expire_unit: 1440,
+        note: inputValue
+      };
+
+      if (downloadValue > 0) {
+        data['down'] = parseInt(downloadValue);
+      }
+      if (uploadValue > 1) {
+        data['up'] = parseInt(uploadValue);
+      }
+      if (byteQutaValue > 0) {
+        data['bytes'] = parseInt(byteQutaValue);
+      }
+
+      const userUrl = await AsyncStorage.getItem("SITE_URL");
+      let siteId = await AsyncStorage.getItem('SITE_ID');
+      let config = {
+        method: 'post',
+        url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data
+      };
+
+      const response = await axios.request(config);
+
+      console.log(JSON.stringify(response.data));
+      navigation.goBack();
+    } catch (error) {
+      console.log(JSON.stringify(error, null, 2), "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <KeyboardAvoidingView keyboardVerticalOffset={50} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -123,9 +131,11 @@ const CreateVoucher = ({ navigation }) => {
             fontSize: 18,
             fontWeight: "600",
           }]}>Create Vouchers</Text>
-          <TouchableOpacity onPress={createVoucherFun}>
-            <Text style={styles.text1}>Create</Text>
-          </TouchableOpacity>
+          {loading ?
+            <ActivityIndicator size={'small'} color={Colors.white} /> :
+            <TouchableOpacity onPress={createVoucherFun}>
+              <Text style={styles.text1}>Create</Text>
+            </TouchableOpacity>}
         </View>
         <View style={styles.Amount}>
           <IncrementDecrement Amount={"Amount"} setVoucherAmount={setVoucherAmount} />
@@ -172,7 +182,7 @@ const CreateVoucher = ({ navigation }) => {
           <SwitchCase title="Limited Download Bandwidth" onValueChange={handleSwitchChange} textColor='black' />
           {isSwitchOn && <InputField text="Bandwidth Limit(kbps)" onChange={setDownloadValue} />}
         </View>
-        {/* ////// */}
+
         <TouchableOpacity onPress={() => openModal()} style={{ paddingVertical: 20, backgroundColor: Colors.white, marginTop: 25, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 29, borderWidth: 0.2, borderColor: Colors.light_Black }}>
           <Text style={{ color: Colors.black, fontSize: 17 }}>Expiration Time</Text>
           <Text style={{ color: Colors.light_Black, fontSize: 17 }}>{daysSelected?.title}</Text>
