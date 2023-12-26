@@ -28,11 +28,9 @@ const Sites = ({ navigation }) => {
     const [disable, setDisable] = useState(false);
     const [showSubscription, setShowSubscription] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
-    const [csvData, setCsvData] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [searchSitesList, setsearchSitesList] = useState([])
     const [searchText, setSearchText] = useState("")
-
 
     const APIKeys = {
         apple: "appl_AUcEDGAcJBfMRWMmHnJnhobpfyP",
@@ -41,29 +39,30 @@ const Sites = ({ navigation }) => {
 
     useEffect(() => {
         (async () => {
-            try {
-                if (Platform.OS == "android") {
-                    Purchases.configure({ apiKey: APIKeys.google });
-                } else {
-                    Purchases.configure({ apiKey: APIKeys.apple });
-                }
-                const offerings = await Purchases.getOfferings();
-                const customerInfo = await Purchases.getCustomerInfo();
-                if (Object?.entries(customerInfo?.entitlements?.active)?.length > 0) {
-                    setShowSubscription(false);
-                } else {
-                    setShowSubscription(true);
-                }
-                if (offerings?.current !== null && offerings?.current?.availablePackages?.length !== 0) {
-                    setLoading(false);
-                    setAvailablePakages(offerings?.current?.availablePackages);
-                }
-            }
-            catch (error) {
-                setDisable(true);
-            }
+             Purchases.configure({
+                apiKey: Platform.OS === "ios" ? APIKeys.apple :  APIKeys.google,
+            });
+            Purchases.getOfferings()
+                .then((offerings) => {
+                    const activeEntitlement = offerings.current.active;
+                    if (activeEntitlement) {
+                        setDisable(false);
+                        // User is subscribed
+                        setShowSubscription(false);
+                    } else {
+                        // User is not subscribed
+                        setLoading(false);
+                        setAvailablePakages(offerings?.current?.availablePackages);
+                        setShowSubscription(true);
+                    }
+                })
+                .catch((error) => {
+                    setDisable(true);
+                    console.error('Error fetching entitlements:', error);
+                });
         })();
     }, []);
+    
 
     useEffect(() => {
         handleSites()
