@@ -95,7 +95,7 @@ const Login = ({ navigation, route }) => {
             style={{ flexGrow: 1 }}>
 
             <ScrollView style={{ backgroundColor: Colors.background }}>
-                <Header loading={loading} onPress={handleLogin} />
+                <Header routes={route?.params?.site ? true : false} loading={loading} onPress={handleLogin} />
                 <View style={styles.innerHeading}>
                     <CustomText title={"CONTROLLER"} textStyle={styles.controllerText} />
                     <CustomText title={"Port"} textStyle={[styles.controllerText, { color: Colors.grey }]} />

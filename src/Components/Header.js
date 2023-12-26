@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Platform, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, Image, TouchableOpacity, Platform, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { Colors } from '../Utils/Colors'
 import CustomText from './CustomText'
 
-const Header = ({ onPress, loading }) => {
+const Header = ({ routes, onPress, loading }) => {
     return (
         <View style={styles.HeaderContainer}>
             <TouchableOpacity>
@@ -11,7 +11,7 @@ const Header = ({ onPress, loading }) => {
             </TouchableOpacity>
             <Image source={require('../../assets/frglogo.png')} resizeMode='contain' style={styles.logo} />
             <TouchableOpacity onPress={onPress} style={styles.login}>
-                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> : "Add"} />
+                <CustomText title={loading ? <ActivityIndicator color={Colors.white} /> :  routes ? "Update": "Add"} />
             </TouchableOpacity>
         </View>
 
