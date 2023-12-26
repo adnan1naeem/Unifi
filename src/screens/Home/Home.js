@@ -11,8 +11,6 @@ import { useFocusEffect } from '@react-navigation/native'
 import { prefix_url } from '../../Utils/Constants'
 import axios from 'axios'
 
-
-
 const Home = ({ navigation }) => {
     const [siteName, setSiteName] = useState('');
     const [show, setShow] = useState(false);
@@ -23,7 +21,7 @@ const Home = ({ navigation }) => {
     const [voucher, setVoucher] = useState([])
 
     const maxEndDate = moment(startDateIs).add(35, 'days').toDate();
-    
+
     useEffect(() => {
         (async () => {
             let name = await AsyncStorage.getItem('SITE');
@@ -68,13 +66,13 @@ const Home = ({ navigation }) => {
         setShow(true);
     };
 
-
     const fetchData = async () => {
         let lastDate = new Date(endDateIs);
         let startDateNew = new Date(startDateIs);
-        let diff = lastDate?.getDate() - startDateNew.getDate();
+        let diff = lastDate - startDateNew;
+        const differenceInDays = diff / (1000 * 60 * 60 * 24);
         let resultArray = [];
-        for (let i = 0; i <= diff; i++) {
+        for (let i = 0; i <= differenceInDays; i++) {
             let startDate = new Date(startDateNew);
             let dateIs = startDate.setDate(startDate.getDate() + i);
             let data = await filterDataForTimeRange(dateIs, lastDate);
@@ -88,9 +86,8 @@ const Home = ({ navigation }) => {
         const end = new Date(endDate);
         const dayAdded = end.getDate() + 7;
         end.setDate(dayAdded);
-
         const filteredData = voucher?.filter(item => {
-            const createTime = new Date(item?.create_time * 1000);
+            const createTime = new Date(item?.end * 1000);
             return createTime >= start && createTime <= end;
         });
         let value = { value: filteredData?.length, label: moment(startDate).format("MM/DD") };
@@ -105,27 +102,23 @@ const Home = ({ navigation }) => {
 
     const handleSites = async () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
-        // const user = await AsyncStorage.getItem('USER');
         let siteId = await AsyncStorage.getItem('SITE_ID');
         let config = {
             method: 'post',
-            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/voucher&method=get`,
+            maxBodyLength: Infinity,
+            url: `${prefix_url}/?url=${userUrl}/api/s/${siteId}/stat/guest?within=24&method=get`,
             headers: {
                 'Content-Type': 'application/json',
-                // 'Cookie': `unifises=${user}; Path=/; Secure; HttpOnly;`
-            },
+            }
         };
-
-        console.log(JSON.stringify(config, null, 2), "configconfig")
         axios.request(config)
             .then((response) => {
-
                 if (response?.data) {
                     setVoucher(response?.data?.data)
                 }
             })
             .catch((error) => {
-                console.log(error);
+                console.log(JSON.stringify(error,));
             });
     };
 
@@ -139,7 +132,7 @@ const Home = ({ navigation }) => {
                     <CustomText title={"HOME"} textStyle={styles.HeaderTitle} />
                     <View style={{ flexDirection: 'row' }}>
                         <CustomText title={"site: "} textStyle={styles.HeaderTitle} />
-                        <CustomText title={siteName} textStyle={styles.siteTitle} />
+                        <CustomText numberOfLines={1} title={siteName} textStyle={styles.siteTitle} />
                     </View>
                 </View>
             </View>

@@ -24,30 +24,31 @@ const Guests = () => {
     const [guestList, setguestList] = useState([])
     const [searchGuestList, setSearchGuestList] = useState([])
     const [searchText, setSearchText] = useState("")
-    const [disconnectedItems, setDisconnectedItems] = useState([]);
 
     const handleExtend = async (item) => {
         console.log(item);
         setModalVisible(true);
         setShowActivityIndicator(true);
+        const userUrl = await AsyncStorage.getItem("SITE_URL");
+        let siteId = await AsyncStorage.getItem('SITE_ID');
         setTimeout(() => {
             let data = JSON.stringify({
-                "id": item?._id
-            });
+                "_id": item?._id,
+                "cmd": "extend"
+              });
 
             let config = {
                 method: 'post',
                 maxBodyLength: Infinity,
-                url: `${prefix_url}/extendVoucher`,
+                url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 data: data
             };
 
             axios.request(config)
                 .then((response) => {
-                    console.log(JSON.stringify(response, null, 2), "response")
                     setShowActivityIndicator(false);
                     setshow_ok(true);
                     handleGuest();
@@ -72,15 +73,18 @@ const Guests = () => {
     const handleTerminate = async (item) => {
         setModalVisible(true);
         setShowActivityIndicator(true);
+        const userUrl = await AsyncStorage.getItem("SITE_URL");
+        let siteId = await AsyncStorage.getItem('SITE_ID');
         setTimeout(() => {
             let data = JSON.stringify({
-                "id": item?._id
-            });
+                "_id": item?._id,
+                "cmd": "terminate"
+              });
 
             let config = {
                 method: 'post',
                 maxBodyLength: Infinity,
-                url: `${prefix_url}/terminateVoucher`,
+                url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -119,13 +123,16 @@ const Guests = () => {
         }, [])
     );
 
-    const handleGuest = () => {
+    const handleGuest = async () => {
+        setLoading(true);
+        const userUrl = await AsyncStorage.getItem("SITE_URL");
+        let siteId = await AsyncStorage.getItem('SITE_ID');
         let config = {
-            method: 'get',
+            method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}/activeVouchers?start=1700596800000&end=1703188800000`,
+            url: `${prefix_url}/?url=${userUrl}/api/s/${siteId}/stat/guest?within=24&method=get`,
             headers: {
-                'Cookie': 'unifises=coAVJ9lv7BRJsbiyVWrzBauAL3BKXevh'
+                'Content-Type': 'application/json',
             }
         };
 
@@ -133,11 +140,12 @@ const Guests = () => {
             .then((response) => {
                 setguestList(response?.data?.data);
                 setSearchGuestList(response?.data?.data);
+                console.log(response?.data?.data?.length);
                 setLoading(false);
             })
             .catch((error) => {
                 setLoading(false);
-                console.log(error);
+                console.log(JSON.stringify(error,));
             });
     };
 
@@ -156,9 +164,29 @@ const Guests = () => {
     };
 
     const byteConverter = (bytes) => {
-        const kilobytes = bytes;
-        const megabytes = kilobytes / (1024 * 1024);
-        return megabytes;
+        const kilobyte = 1024;
+        const megabyte = kilobyte * 1024;
+        const gigabyte = megabyte * 1024;
+
+        if (bytes < kilobyte) {
+            return bytes + ' B';
+        } else if (bytes < megabyte) {
+            return (bytes / kilobyte).toFixed(2) + 'KB';
+        } else if (bytes < gigabyte) {
+            return (bytes / megabyte).toFixed(2) + 'MB';
+        } else {
+            return (bytes / gigabyte).toFixed(2) + 'GB';
+        }
+    }
+
+    const convertDate = (timeStamp) => {
+        const timeStampIs = timeStamp + '000'
+        const date = new Date(parseInt(timeStampIs));
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        return `${day}/${month}/${year}`
     }
 
     const renderVoucherItem = ({ item }) => {
@@ -180,11 +208,11 @@ const Guests = () => {
                     <View style={styles.VouchersList}>
                         <View style={styles.itemHeader}>
                             <Text style={styles.low}>
-                                {byteConverter(item?.tx_bytes)?.toFixed(2)}MB{' '}
+                                {byteConverter(item?.tx_bytes)}{' '}
                                 <Octicons_Icons name={'arrow-down'} IconStyle={[styles.icon, { color: Colors.purple }]} />
                                 <Text style={styles.lowText}>{' '}/{' '}</Text>
                                 < Text style={[styles.low, { color: Colors.green }]}>
-                                    {byteConverter(item?.rx_bytes)?.toFixed(2)}KB{' '}
+                                    {byteConverter(item?.rx_bytes)}{' '}
                                     <Octicons_Icons name={"arrow-up"} IconStyle={[styles.icon, { color: Colors.green }]} />
                                 </Text>
                             </Text>
@@ -194,8 +222,8 @@ const Guests = () => {
                         <Text style={styles.macAdress}>Device Name: Mac</Text>
 
                         <View style={styles.dateContainer}>
-                            <Text style={styles.text4}>Active Date:{moment(new Date(item?.start)).format("MM/DD/YYYY")}</Text>
-                            <Text style={styles.text4}>Expiry Date:{moment(new Date(item?.end)).format("MM/DD/YYYY")}</Text>
+                            <Text style={styles.text4}>Active Date:{convertDate(item?.start)}</Text>
+                            <Text style={styles.text4}>Expiry Date is:{convertDate(item?.end)}</Text>
                         </View>
                     </View>
                 </Swipeout>
@@ -240,6 +268,8 @@ const Guests = () => {
                         contentContainerStyle={{ marginTop: 10, }}
                         ListHeaderComponent={renderHeaderItem}
                         renderItem={renderVoucherItem}
+                        maxToRenderPerBatch={10}
+                        initialNumToRender={10}
                         ListEmptyComponent={
                             <EmptyState title={"No content available at the moment."} />}
                         ListFooterComponent={<View style={styles.listFoter} />}

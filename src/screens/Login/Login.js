@@ -20,16 +20,18 @@ const Login = ({ navigation, route }) => {
     const [siteName, setSiteName] = useState('default');
     const [loading, setLoading] = useState(false);
 
-    useEffect(()=>{
-        if(route?.params?.site){
+    useEffect(() => {
+        if (route?.params?.site) {
             let editSite = route?.params?.site;
-            setAdminUsername(editSite?.username ||editSite['Username']);
+            const originalUrl = editSite?.url || editSite['URL'];
+            const modifiedUrl = originalUrl.replace(/:\d+$/, '');
+            setAdminUsername(editSite?.username || editSite['Username']);
             setPortId(editSite?.portNumber || editSite['Port Number']);
-            setUrl(editSite?.url || editSite['URL']);
+            setUrl(modifiedUrl);
             setSiteId(editSite?.siteId || editSite['Site ID']);
             setSiteName(editSite?.siteName || editSite['Site Name']);
         }
-    },[route])
+    }, [route])
 
 
     const handleBytePress = (value) => {
@@ -101,6 +103,7 @@ const Login = ({ navigation, route }) => {
                 <View style={styles.inputContainer}>
                     <TextInput
                         value={url}
+                        autoCapitalize='none'
                         selectionColor={Colors.primary}
                         placeholder='IP Address / URL'
                         onChangeText={(text) => setUrl(text)}
@@ -120,12 +123,14 @@ const Login = ({ navigation, route }) => {
                         <TextInput
                             placeholder='Username'
                             value={adminUsername}
+                            autoCapitalize='none'
                             onChangeText={(text) => setAdminUsername(text)}
                             placeholderTextColor={Colors.grey}
                             style={styles.inputThird} />
                         <TextInput
                             placeholder='Password'
                             value={password}
+                            autoCapitalize='none'
                             onChangeText={(text) => setPassword(text)}
                             placeholderTextColor={Colors.grey}
                             style={styles.inputThird} />
@@ -134,14 +139,26 @@ const Login = ({ navigation, route }) => {
                 </View>
                 <View style={styles.siteContainer}>
                     <CustomText title={"SITE"} textStyle={styles.siteText} />
-                    <TextInput onChangeText={(text) => setSiteId(text)} placeholderTextColor={Colors.grey} value={siteId} placeholder={"Enter site id"} style={styles.siteInput} />
+                    <TextInput
+                        autoCapitalize='none'
+                        onChangeText={(text) => setSiteId(text)}
+                        placeholderTextColor={Colors.grey}
+                        value={siteId}
+                        placeholder={"Enter site id"}
+                        style={styles.siteInput} />
                 </View>
                 <SwitchCase title={"Verify SSL Certificates"} onValueChange={handleBytePress} />
                 <CustomText textStyle={styles.infoText}
                     title={"Enabling will verify SSL certificates. Enable only if you have configured a valid certificate on your controller."} />
                 <View style={styles.siteContainer}>
                     <CustomText title={"SITE Title (visible in list)"} textStyle={styles.siteText} />
-                    <TextInput onChangeText={(text) => setSiteName(text)} placeholderTextColor={Colors.grey} value={siteName} placeholder={"Enter site name"} style={styles.siteInput} />
+                    <TextInput
+                        autoCapitalize='none'
+                        onChangeText={(text) => setSiteName(text)}
+                        placeholderTextColor={Colors.grey}
+                        value={siteName}
+                        placeholder={"Enter site name"}
+                        style={styles.siteInput} />
                 </View>
 
 

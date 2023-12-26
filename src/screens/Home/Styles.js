@@ -19,8 +19,8 @@ export const styles = StyleSheet.create({
         color: Colors.white
     },
     siteTitle: {
-        textTransform: 'capitalize',
         paddingTop: 5,
+        width: 130,
         fontWeight: 'bold',
         fontSize: 24,
         color: Colors.white
