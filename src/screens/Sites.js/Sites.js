@@ -16,6 +16,7 @@ import DocumentPicker from 'react-native-document-picker';
 import Papa from 'papaparse';
 import { ios } from '../../../app.config'
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import Search from '../../Components/Search'
 
 const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
@@ -29,6 +30,8 @@ const Sites = ({ navigation }) => {
     const [availablePakages, setAvailablePakages] = useState([])
     const [csvData, setCsvData] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [searchSitesList, setsearchSitesList] = useState([])
+    const [searchText, setSearchText] = useState("")
 
 
     const APIKeys = {
@@ -72,6 +75,8 @@ const Sites = ({ navigation }) => {
         siteList = JSON.parse(siteList);
         console.log(JSON.stringify(siteList, null, 2));
         setSites(siteList);
+        setsearchSitesList(siteList)
+
         setLoading(false);
     };
 
@@ -263,6 +268,17 @@ const Sites = ({ navigation }) => {
         );
     };
 
+
+    const handleSearch = () => {
+        const filtered = sites.filter(item =>
+            item?.siteName.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setsearchSitesList(filtered);
+    };
+
+
+
+
     const revokeSelected = async (item) => {
         let siteList = await AsyncStorage.getItem("SITE_LIST");
         if (siteList) {
@@ -271,6 +287,7 @@ const Sites = ({ navigation }) => {
             siteList.splice(indexToRemove, 1);
             await AsyncStorage.setItem("SITE_LIST", JSON.stringify(siteList));
             setSites(siteList);
+            setsearchSitesList(siteList)
         }
     }
 
@@ -350,11 +367,14 @@ const Sites = ({ navigation }) => {
 
 
 
+
     if (loading) {
         return (
             <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
         );
     }
+
+
 
     return (
         <View style={{ flex: 1 }}>
@@ -369,12 +389,14 @@ const Sites = ({ navigation }) => {
                     <SimpleLineIcons name="plus" style={styles.backButton} />
                 </TouchableOpacity>
             </View>
+
             <ScrollView >
+                <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
                 <CustomText title={"List of Controllers"} textStyle={styles.sitesListtext} />
                 <View style={{ marginTop: '15%', paddingBottom: "25%" }}>
                     <CustomText title={sites?.length === 1 ? "Controller" : "Controllers"} textStyle={styles.titleheading} />
                     <FlatList
-                        data={sites}
+                        data={searchSitesList}
                         renderItem={renderItem}
                         ListFooterComponent={showSubscription && renderFooter}
                         keyExtractor={(item) => item?._id}
