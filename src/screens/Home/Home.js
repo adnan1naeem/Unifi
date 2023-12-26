@@ -79,15 +79,12 @@ const Home = ({ navigation }) => {
             let data = await filterDataForTimeRange(dateIs, lastDate);
             resultArray.push(data);
         }
-        console.log(resultArray);
-
         setFilteredDataLengths(resultArray);
         let sum = 0;
         for (let i = 0; i < resultArray?.length; i++) {
             sum += resultArray[i].value;
         }
         setnumberOfActiveVouchers(sum)
-        console.log("The sum  is:", sum);
 
     };
     const filterDataForTimeRange = async (startDate, endDate) => {
@@ -166,8 +163,8 @@ const Home = ({ navigation }) => {
                         textStyle={{ color: Colors.heading }}
                     />
                     <View style={{ flexDirection: 'row' }}>
-                        <CustomText title={`Active Vouchers: `} textStyle={[styles.DetailsContainer, { color: Colors.primary }]} />
-                        <CustomText title={numberOfActiveVouchers} textStyle={styles.DetailsContainer} />
+                        <CustomText title={`Active Vouchers: `} textStyle={styles.DetailsContainer} />
+                        <CustomText title={numberOfActiveVouchers || '0'} textStyle={[styles.DetailsContainer, { color: Colors.primary }]} />
                     </View>
                 </View>
                 <View style={styles.datePickerContainer}>
