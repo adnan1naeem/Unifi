@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Button, Text, ScrollView } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors } from '../../Utils/Colors'
 import CustomText from '../../Components/CustomText'
 import { styles } from './Styles'
@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import Bar_Chart from '../../Components/Bar_Chart'
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useFocusEffect } from '@react-navigation/native'
 import { prefix_url } from '../../Utils/Constants'
 import axios from 'axios'
 
@@ -54,7 +53,6 @@ const Home = ({ navigation }) => {
             setStartDateIs(selectedDate);
         } else {
             setEndDateIs(selectedDate);
-
         }
     };
 
@@ -68,55 +66,49 @@ const Home = ({ navigation }) => {
     };
 
     const fetchData = async () => {
-        let lastDate = new Date(endDateIs);
-        let startDateNew = new Date(startDateIs);
-        let diff = lastDate - startDateNew;
-        const differenceInDays = diff / (1000 * 60 * 60 * 24);
         let resultArray = [];
-        for (let i = 0; i <= differenceInDays; i++) {
-            let startDate = new Date(startDateNew);
-            let dateIs = startDate.setDate(startDate.getDate() + i);
-            let data = await filterDataForTimeRange(dateIs, lastDate);
-            resultArray.push(data);
-        }
-        setFilteredDataLengths(resultArray);
-        let sum = 0;
-        for (let i = 0; i < resultArray?.length; i++) {
-            sum += resultArray[i].value;
-        }
-        setnumberOfActiveVouchers(sum)
-
-    };
-
-    const filterDataForTimeRange = async (startDate, endDate) => {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const dayAdded = end.getDate() + 7;
-        end.setDate(dayAdded);
-        const filteredData = voucher?.filter(item => {
-            const createTime = new Date(item?.end * 1000);
-            return item?.expired === false && createTime >= start && createTime <= end;
+        const dateCountObject = {};
+        voucher.forEach(entry => {
+            const startDate = new Date(entry.start * 1000);
+            const formattedDate = startDate.toISOString().split('T')[0];
+            dateCountObject[formattedDate] = dateCountObject[formattedDate] ? dateCountObject[formattedDate] + 1 : 1;
         });
-        let value = { value: filteredData?.length, label: moment(startDate).format("MM/DD") };
-        return value;
+        Object.entries(dateCountObject).forEach(([key, value]) => {
+            let result = { value: value, label: moment(key).format("MM/DD") };
+            resultArray.push(result);
+        })
+        setFilteredDataLengths(resultArray.reverse());
+        setnumberOfActiveVouchers(voucher?.length)
+
     };
-    
-    useEffect(()=>{
-        if(startDateIs && endDateIs){
+
+    useEffect(() => {
+        if (startDateIs && endDateIs) {
             handleSites();
         }
-    },[startDateIs, endDateIs])
+    }, [startDateIs, endDateIs])
+
+    const returnExpectedDate = (date) => {
+        const originalDateString = moment(date);
+        const originalDate = new Date(originalDateString);
+        const datePart = originalDate.toISOString().slice(0, 10);
+        const formattedDateTimeString = `${datePart} 00:00:00`;
+        let formatedDate = moment.utc(formattedDateTimeString, 'YYYY-MM-DD').unix() * 1000;
+        return formatedDate;
+    }
 
     const handleSites = async () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
         let siteId = await AsyncStorage.getItem('SITE_ID');
-        const startDate = new Date(startDateIs)?.getTime();
-        const endDate = new Date(endDateIs)?.getTime();
+        let date = new Date(endDateIs);
+        date.setDate(date.getDate() + 1);
+        let startDate = returnExpectedDate(startDateIs);
+        let endDate = returnExpectedDate(date);
 
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/guest/start=${parseInt(startDate)}/end=${parseInt(endDate)}&method=get`,
+            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/guest?start=${parseInt(startDate)}%26end=${parseInt(endDate)}&method=get`,
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -124,7 +116,6 @@ const Home = ({ navigation }) => {
 
         axios.request(config)
             .then((response) => {
-                console.log(JSON.stringify(response?.data?.data?.length, null, 2));
                 if (response?.data) {
                     setVoucher(response?.data?.data)
                 }
