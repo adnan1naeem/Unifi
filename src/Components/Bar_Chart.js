@@ -10,10 +10,10 @@ const Bar_Chart = ({ data, width_Container, spacing, initialSpacing }) => {
                 data={data}
                 frontColor={Colors.primary}
                 barBorderRadius={12}
-                barMarginBottom={5}
+                barMarginBottom={1}
+                disablePress={true}
                 isAnimated
                 animationDuration={1000}
-                disablePress={true}
                 dashWidth={0}
                 key={'xyz'}
                 initialSpacing={initialSpacing}

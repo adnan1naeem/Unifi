@@ -74,10 +74,22 @@ const Home = ({ navigation }) => {
             dateCountObject[formattedDate] = dateCountObject[formattedDate] ? dateCountObject[formattedDate] + 1 : 1;
         });
         Object.entries(dateCountObject).forEach(([key, value]) => {
-            let result = { value: value, label: moment(key).format("MM/DD") };
+            let result = {
+                value: value, label: moment(key).format("MM/DD"), topLabelComponent: () => (
+                    <Text style={{ color: Colors.textcolor, fontSize: 10, marginBottom: 6 }}>{value}</Text>
+                ),
+            };
             resultArray.push(result);
         })
-        setFilteredDataLengths(resultArray.reverse());
+        let data = resultArray.sort((a, b) => {
+            const [monthA, dayA] = a.label.split('/').map(Number);
+            const [monthB, dayB] = b.label.split('/').map(Number);
+            if (monthA !== monthB) {
+                return monthA - monthB;
+            }
+            return dayA - dayB;
+        });
+        setFilteredDataLengths(data);
         setnumberOfActiveVouchers(voucher?.length)
 
     };
