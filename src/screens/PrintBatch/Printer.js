@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Printer = ({ route }) => {
     const navigation = useNavigation();
-    const [printerItems, setprinterItems] = useState(route?.params?.item?.items);
+    const [printerItems, setprinterItems] = useState([...route?.params?.item?.items]);
     const [siteName, setSiteName] = useState('');
 
     const formatItemCode = (item) => {
@@ -46,6 +46,7 @@ const Printer = ({ route }) => {
         items.forEach((item) => {
             itemsHTML += `
                 <div class="container">
+
                     <div class="main-container">
                          <div class="textline">${returnDays(item?.duration)}</div>
                           <div class="textbold">${formatItemCode(item?.code || "23434-44324")}</div>
@@ -85,7 +86,16 @@ const Printer = ({ route }) => {
             flex-direction: column;
             align-items: center;
             box-sizing: border-box;
+            padding-bottom : 48px
+
         }
+      .headerContainer {
+       padding: 20px; 
+       text-align: center;  
+       color: black;  
+       align-self:center;
+       
+      }
         .main-container{
              border: 2px dotted black; /* Dotted border */
              padding: 12px;
@@ -113,8 +123,11 @@ const Printer = ({ route }) => {
     </style>
 </head>
 <body>
+<div>
+<h1 class="headerContainer">${siteName}</h1>
     <div class="parent-container" id="contentArea">
       ${generatePrinterItemsHTML(printerItems)}
+    </div>
     </div>
          
            <script>
@@ -166,24 +179,24 @@ const Printer = ({ route }) => {
     };
 
     const handlePrint = () => {
-        console.log("Print action");
         toggleModal();
         setTimeout(() => {
             printPDF()
-        }, 500);
+        }, 1200);
     };
 
     const handleImportCSV = () => {
         toggleModal();
         setTimeout(() => {
             shareCSVFile(printerItems);
-        }, 500);
+        }, 1200);
     };
 
     const shareCSVFile = async (voucherList) => {
         try {
+            let csvData = `Controller Name:   ${siteName}\n\n\n`;
             const headers = Object.keys(voucherList[0])?.join(',');
-            const csvData = [headers].concat(
+            csvData += [headers].concat(
                 voucherList?.map((item) => Object.values(item).map((value) => `"${value}"`).join(','))
             ).join('\n');
 
