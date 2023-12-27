@@ -1,6 +1,6 @@
 
 
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { Colors } from '../../Utils/Colors';
 import { Width } from '../../Components/Dimensions';
 
@@ -25,11 +25,19 @@ export const styles = StyleSheet.create({
     HeaderContainer: {
         backgroundColor: Colors.primary,
         paddingHorizontal: 20
+
+    },
+    HeaderContainerSecond: {
+        height: Platform.OS === 'ios' ? 120 : 100,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     ScrolGuests: {
         paddingLeft: Width / 5,
         fontWeight: 'bold',
-        fontSize: 20
+        fontSize: 20,
+        color: Colors.white
     },
     ScrolContainer: {
         height: 100,
@@ -42,7 +50,7 @@ export const styles = StyleSheet.create({
     HeaderTitle: {
         fontWeight: 'bold',
         fontSize: 27,
-        color: Colors.black
+        color: Colors.white
     },
     itemContainer: {
         backgroundColor: Colors.white,

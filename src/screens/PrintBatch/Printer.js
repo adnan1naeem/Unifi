@@ -274,6 +274,7 @@ const styles = StyleSheet.create({
         width: 130,
         fontWeight: 'bold',
         fontSize: 24,
-        color: Colors.white
+        color: Colors.white,
+        paddingLeft: 20
     },
 })
