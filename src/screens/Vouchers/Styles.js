@@ -6,7 +6,8 @@ export const styles = StyleSheet.create({
     headervouchers: {
         width: Width,
         backgroundColor: Colors.primary,
-        paddingVertical: '5%'
+        paddingVertical: '5%',
+        paddingTop: Platform.OS === 'ios' ? 40 : 20
     },
     printadd: {
         paddingTop: Platform.OS === 'ios' ? 20 : 0,
