@@ -253,25 +253,21 @@ const Guests = () => {
     return (
         <View style={styles.container}>
             {isHeaderVisible ?
-                <View style={[styles.HeaderContainer, { height: 120, }]}>
-                    <TouchableOpacity onPress={handleGuest}>
-                        <CustomText title={"24 hours"} textStyle={{ marginTop: 50, textAlign: 'right' }} />
-                    </TouchableOpacity>
+                <View style={[styles.HeaderContainer, styles.HeaderContainerSecond]}>
                     <CustomText title={"Guests"} textStyle={styles.HeaderTitle} />
+                    <TouchableOpacity onPress={handleGuest}>
+                        <CustomText title={"24 hours"} textStyle={{}} />
+                    </TouchableOpacity>
                 </View> :
                 <View style={styles.ScrolContainer}>
                     <CustomText title={""} />
                     <CustomText title={"Guests"} textStyle={styles.ScrolGuests} />
-                    <TouchableOpacity>
-                        <CustomText title={"24 hours"} textStyle={{ fontSize: 20 }} />
-                    </TouchableOpacity>
+                    <CustomText title={"24 hours"} textStyle={{ fontSize: 20 }} />
                 </View>
             }
             <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
                 <Search value={searchText} onChange={setSearchText} onPress={handleSearch} />
-
                 {loading ? <ActivityIndicator color={Colors.primary} size={'small'} style={{ marginTop: 50 }} /> :
-
                     <FlatList
                         data={searchGuestList}
                         contentContainerStyle={{ marginTop: 10, }}
@@ -301,7 +297,6 @@ const Guests = () => {
                         </View>
                     </View>
                 </Modal>
-                {/* <View /> */}
             </ScrollView>
         </View>
     )

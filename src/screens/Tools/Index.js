@@ -95,8 +95,8 @@ const Index = () => {
                 <CustomText title={"Tools"} textStyle={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }} />
             </View>
             <View style={{ justifyContent: 'center', flex: 1 }}>
-                {loading ? <ActivityIndicator size={"small"} style={{}} /> :
-                    <View>
+                {loading ? <ActivityIndicator size={"small"} /> :
+                    <View style={styles.ButtonCenter}>
                         <TouchableOpacity
                             style={styles.buttonsContainer}
                             onPress={() => shareCSVFile(activeVoucher)}

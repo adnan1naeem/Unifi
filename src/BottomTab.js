@@ -20,13 +20,13 @@ const BottomTab = () => {
                 tabBarInactiveTintColor: Colors.blur,
                 tabBarActiveTintColor: Colors.white,
                 tabBarStyle: {
-                    height: Platform.OS === "ios" ? 70 : 60,
+                    height: Platform.OS === "ios" ? 80 : 60,
                     paddingHorizontal: 5,
                     paddingTop: 5,
                     backgroundColor: Colors.primary,
                     position: 'absolute',
                     borderTopWidth: 0,
-                    paddingBottom: 15
+                    paddingBottom: Platform.OS === 'android' ? 10 : 20
                 },
 
             })}

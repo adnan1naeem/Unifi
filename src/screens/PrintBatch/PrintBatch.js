@@ -56,7 +56,9 @@ const PrintBatch = ({ route, }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <CustomText title={"Cancel"} textStyle={styles.text1} />
         </TouchableOpacity>
-        <CustomText numberOfLines={1} title={siteName} textStyle={styles.siteTitle} />
+        <Text numberOfLines={1} style={styles.siteTitle}>{siteName}</Text>
+        <CustomText title={' '} />
+
       </View>
 
       <View style={{ marginTop: 55 }}></View>
@@ -79,15 +81,17 @@ const styles = StyleSheet.create({
 
   },
   CreateVoucher: {
-    width: Width,
+    // width: Width,
     backgroundColor: Colors.primary,
     paddingTop: Platform.OS === 'android' ? "5%" : 60,
     paddingBottom: "5%",
     flexDirection: "row",
-    gap: 90,
-    paddingLeft: 15,
-    paddingRight: 15,
-    alignItems: 'center'
+    // gap: 90,
+    // paddingLeft: 15,
+    // paddingRight: 15,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20
   },
   text1: {
     color: Colors.white,
@@ -99,6 +103,7 @@ const styles = StyleSheet.create({
     width: 130,
     fontWeight: 'bold',
     fontSize: 24,
-    color: Colors.white
+    color: Colors.white,
+    paddingRight: 10
   },
 });

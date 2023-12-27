@@ -17,8 +17,8 @@ const Search = ({ value, onChange, onPress }) => {
                     value={value}
                 />
             </View>
-            <TouchableOpacity onPress={onPress} style={{ marginHorizontal: 10, justifyContent: 'center', backgroundColor: Colors.primary, padding: 5, borderRadius: 5, paddingHorizontal: 10 }}>
-                <EvilIcons name="search" size={24} color={Colors.white} />
+            <TouchableOpacity onPress={onPress} style={{ backgroundColor: Colors.primary, padding: 10, borderRadius: 5, marginHorizontal: 10, }}>
+                <EvilIcons name="search" size={26} color={Colors.white} />
             </TouchableOpacity>
         </View>
     )
