@@ -26,7 +26,7 @@ const BottomTab = () => {
                     backgroundColor: Colors.primary,
                     position: 'absolute',
                     borderTopWidth: 0,
-                    paddingBottom: 20
+                    paddingBottom: Platform.OS === 'android' ? 10 : 20
                 },
 
             })}
