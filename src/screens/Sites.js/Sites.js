@@ -26,6 +26,7 @@ const Sites = ({ navigation }) => {
     const [siteLoading, setSiteLoading] = useState(false);
     const [siteIndex, setSiteIndex] = useState(0);
     const [disable, setDisable] = useState(false);
+    const [subscribe, isSubscribe] = useState(false);
     const [showSubscription, setShowSubscription] = useState(false);
     const [availablePakages, setAvailablePakages] = useState([])
     const [showModal, setShowModal] = useState(false);
@@ -39,22 +40,30 @@ const Sites = ({ navigation }) => {
 
     useEffect(() => {
         (async () => {
-            Purchases.configure({
+            await Purchases.configure({
                 apiKey: Platform.OS === "ios" ? APIKeys.apple : APIKeys.google,
             });
-            Purchases.getOfferings()
-                .then((offerings) => {
-                    const activeEntitlement = offerings.current.active;
-                    if (activeEntitlement) {
-                        setDisable(false);
-                        // User is subscribed
-                        setShowSubscription(false);
-                    } else {
-                        // User is not subscribed
-                        setLoading(false);
-                        setAvailablePakages(offerings?.current?.availablePackages);
-                        setShowSubscription(true);
-                    }
+            await Purchases.getOfferings()
+                .then(async (offerings) => {
+                    await Purchases.getCustomerInfo().then((purchaserInfo) => {
+                        if (purchaserInfo?.allPurchasedProductIdentifiers?.includes("unifi_monthly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("unifi_yearly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("monthly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("yearly_subscription_id")) {
+                            if (purchaserInfo?.entitlements?.active) {
+                                setDisable(false);
+                                isSubscribe(true);
+                                setShowSubscription(false);
+                            } else {
+                                isSubscribe(false);
+                                setLoading(false);
+                                setAvailablePakages(offerings?.current?.availablePackages);
+                                setShowSubscription(true);
+                            }
+                        } else {
+                            setLoading(false);
+                            isSubscribe(false);
+                            setAvailablePakages(offerings?.current?.availablePackages);
+                            setShowSubscription(true);
+                        }
+                    });
                 })
                 .catch((error) => {
                     setDisable(true);
@@ -192,9 +201,9 @@ const Sites = ({ navigation }) => {
         });
         let port = item?.portNumber === '8443' || item["Port Number"] === '8443'
         let urlEndPoint;
-        if(port){
+        if (port) {
             urlEndPoint = 'api/login'
-        }else{
+        } else {
             urlEndPoint = 'api/auth/login'
         }
 
@@ -209,7 +218,7 @@ const Sites = ({ navigation }) => {
         };
 
         axios.request(config).then(async (item) => {
-            if(!port){
+            if (!port) {
                 await AsyncStorage.setItem('CSRF-TOKEN', item?.headers['x-csrf-token']);
             }
             const cookieString = item?.headers["set-cookie"][0];
@@ -263,8 +272,12 @@ const Sites = ({ navigation }) => {
                     text: 'Okay',
                     onPress: async () => {
                         await Purchases?.purchasePackage(item).then((item) => {
+                            console.log(JSON.stringify(item.null, 2));
+                            setShowSubscription(false);
                             setDisable(true);
-                        }).catch(() => {
+                            isSubscribe(true);
+                        }).catch((error) => {
+                            console.log(JSON.stringify(error.null, 2));
                             setYearly(false);
                             setMonthly(false);
                         });
@@ -306,7 +319,11 @@ const Sites = ({ navigation }) => {
     }
 
     const editSite = async (item, index) => {
-        navigation.navigate("Login", { site: item, index: index });
+        if(searchSitesList?.length >= 1 && !subscribe){
+            alert("You need to subscribe for adding another site!")
+        }else{
+            navigation.navigate("Login", { site: item, index: index });
+        }
     }
 
 
@@ -380,14 +397,19 @@ const Sites = ({ navigation }) => {
     );
 
 
-
-
     if (loading) {
         return (
             <ActivityIndicator color={'black'} size={'small'} style={{ justifyContent: 'center', flex: 1 }} />
         );
     }
 
+    const handleAddButton = () => {
+        if(searchSitesList?.length >= 1 && !subscribe){
+            alert("You need to subscribe for adding another site!")
+        }else{
+            navigation.navigate("Login")
+        }
+    }
 
 
     return (
@@ -399,7 +421,7 @@ const Sites = ({ navigation }) => {
                 <View>
                     <Image source={require('../../../assets/frglogo.png')} style={styles.HeaderIcon} />
                 </View>
-                <TouchableOpacity style={styles.iconStyle} onPress={() => navigation.navigate("Login")}>
+                <TouchableOpacity style={styles.iconStyle} onPress={handleAddButton}>
                     <SimpleLineIcons name="plus" style={styles.backButton} />
                 </TouchableOpacity>
             </View>
