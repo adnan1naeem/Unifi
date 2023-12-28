@@ -98,14 +98,27 @@ const CreateVoucher = ({ navigation }) => {
 
       const userUrl = await AsyncStorage.getItem("SITE_URL");
       let siteId = await AsyncStorage.getItem('SITE_ID');
+      const port = await AsyncStorage.getItem("PORT");
+
+      let csrf = '';
+      let urlEndPoint;
+      if (port === 8443 || port === '8443') {
+        urlEndPoint = ''
+      } else {
+        csrf = await AsyncStorage.getItem("CSRF-TOKEN");
+        urlEndPoint = 'proxy/network/'
+      }
       let config = {
         method: 'post',
-        url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
+        url: `${prefix_url}?url=${userUrl}/${urlEndPoint}api/s/${siteId}/cmd/hotspot&method=post`,
         headers: {
           'Content-Type': 'application/json',
         },
         data
       };
+      if (csrf !== '') {
+        config.headers['x-csrf-token'] = csrf;
+      }
 
       const response = await axios.request(config);
 

@@ -27,10 +27,18 @@ const Index = () => {
     const handleGuest = async () => {
         const userUrl = await AsyncStorage.getItem("SITE_URL");
         let siteId = await AsyncStorage.getItem('SITE_ID');
+        const port = await AsyncStorage.getItem("PORT");
+
+        let urlEndPoint;
+        if(port === 8443 || port === '8443'){
+            urlEndPoint = ''
+        }else{
+            urlEndPoint = 'proxy/network/'
+        }
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}/?url=${userUrl}/api/s/${siteId}/stat/guest?within=24&method=get`,
+            url: `${prefix_url}/?url=${userUrl}/${urlEndPoint}api/s/${siteId}/stat/guest?within=24&method=get`,
             headers: {
                 'Content-Type': 'application/json',
             }
@@ -48,9 +56,17 @@ const Index = () => {
         setLoading(true);
         const userUrl = await AsyncStorage.getItem("SITE_URL");
         let siteId = await AsyncStorage.getItem('SITE_ID');
+        const port = await AsyncStorage.getItem("PORT");
+
+        let urlEndPoint;
+        if(port === 8443 || port === '8443'){
+            urlEndPoint = ''
+        }else{
+            urlEndPoint = 'proxy/network/'
+        }
         let config = {
             method: 'post',
-            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/voucher&method=get`,
+            url: `${prefix_url}?url=${userUrl}/${urlEndPoint}api/s/${siteId}/stat/voucher&method=get`,
             headers: {
                 'Content-Type': 'application/json',
             },

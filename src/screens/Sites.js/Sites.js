@@ -171,6 +171,7 @@ const Sites = ({ navigation }) => {
 
 
     const handlesubmit = async (item, index) => {
+        console.log(JSON.stringify(item, null,2));
         if (disable === true) {
             alert("Please Choose Your plan before selecting the sites, \nThanks")
             return
@@ -180,6 +181,7 @@ const Sites = ({ navigation }) => {
 
         await AsyncStorage.setItem("SUBSCRIPTION", 'YES');
         await AsyncStorage.setItem('SITE', item?.siteName || item["Site Name"]);
+        await AsyncStorage.setItem('PORT', item?.portNumber || item["Port Number"]);
         await AsyncStorage.setItem('SITE_ID', item?.siteId || item["Site ID"]);
         await AsyncStorage.setItem('SITE_URL', item?.url || item["URL"]);
 
@@ -191,11 +193,18 @@ const Sites = ({ navigation }) => {
             remember: false,
             site_name: item?.siteId || item["Site ID"]
         });
+        let port = item?.portNumber === '8443' || item["Port Number"] === '8443'
+        let urlEndPoint;
+        if(port){
+            urlEndPoint = 'api/login'
+        }else{
+            urlEndPoint = 'api/auth/login'
+        }
 
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}?url=${item?.url || item["URL"]}/api/login&method=post`,
+            url: `${prefix_url}?url=${item?.url || item["URL"]}/${urlEndPoint}&method=post`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -205,6 +214,9 @@ const Sites = ({ navigation }) => {
         console.log(JSON.stringify(config, null,2));
 
         axios.request(config).then(async (item) => {
+            if(!port){
+                await AsyncStorage.setItem('CSRF-TOKEN', item?.headers['x-csrf-token']);
+            }
             const cookieString = item?.headers["set-cookie"][0];
             const cookieValue = cookieString.split('=')[1].split(';')[0];
             if (cookieValue) {

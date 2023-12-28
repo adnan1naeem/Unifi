@@ -116,11 +116,18 @@ const Home = ({ navigation }) => {
         date.setDate(date.getDate() + 1);
         let startDate = returnExpectedDate(startDateIs);
         let endDate = returnExpectedDate(date);
+        const port = await AsyncStorage.getItem("PORT");
 
+        let urlEndPoint;
+        if(port === 8443 || port === '8443'){
+            urlEndPoint = ''
+        }else{
+            urlEndPoint = 'proxy/network/'
+        }
         let config = {
             method: 'post',
             maxBodyLength: Infinity,
-            url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/guest?start=${parseInt(startDate)}%26end=${parseInt(endDate)}&method=get`,
+            url: `${prefix_url}?url=${userUrl}/${urlEndPoint}api/s/${siteId}/stat/guest?start=${parseInt(startDate)}%26end=${parseInt(endDate)}&method=get`,
             headers: {
                 'Content-Type': 'application/json',
             }

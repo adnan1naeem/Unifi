@@ -52,13 +52,25 @@ const Vouchers = ({ navigation }) => {
     setLoading(true);
     const userUrl = await AsyncStorage.getItem("SITE_URL");
     let siteId = await AsyncStorage.getItem('SITE_ID');
+    const port = await AsyncStorage.getItem("PORT");
+    let csrf = '';
+    let urlEndPoint;
+    if (port === 8443 || port === '8443') {
+      urlEndPoint = ''
+    } else {
+      csrf = await AsyncStorage.getItem("CSRF-TOKEN");
+      urlEndPoint = 'proxy/network/'
+    }
     let config = {
       method: 'post',
-      url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/stat/voucher&method=get`,
+      url: `${prefix_url}?url=${userUrl}/${urlEndPoint}api/s/${siteId}/stat/voucher&method=get`,
       headers: {
         'Content-Type': 'application/json',
       },
     };
+    if (csrf !== '') {
+      config.headers['x-csrf-token'] = csrf;
+    }
 
     axios.request(config)
       .then((response) => {
@@ -97,18 +109,29 @@ const Vouchers = ({ navigation }) => {
     setDeleteLoading(true);
     const userUrl = await AsyncStorage.getItem("SITE_URL");
     let siteId = await AsyncStorage.getItem('SITE_ID');
+    const port = await AsyncStorage.getItem("PORT");
 
     let data = { "_id": item?._id, "cmd": "delete-voucher" };
-
+    let urlEndPoint;
+    let csrf = '';
+    if (port === 8443 || port === '8443') {
+      urlEndPoint = ''
+    } else {
+      csrf = await AsyncStorage.getItem("CSRF-TOKEN");
+      urlEndPoint = 'proxy/network/'
+    }
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: `${prefix_url}?url=${userUrl}/api/s/${siteId}/cmd/hotspot&method=post`,
+      url: `${prefix_url}?url=${userUrl}/${urlEndPoint}api/s/${siteId}/cmd/hotspot&method=post`,
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
       data: data
     };
+    if (csrf !== '') {
+      config.headers['x-csrf-token'] = csrf;
+    }
 
     axios.request(config)
       .then((response) => {
