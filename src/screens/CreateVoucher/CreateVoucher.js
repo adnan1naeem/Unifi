@@ -102,7 +102,7 @@ const CreateVoucher = ({ navigation }) => {
 
       let csrf = '';
       let urlEndPoint;
-      if (port === 8443 || port === '8443') {
+      if (port === '8443') {
         urlEndPoint = ''
       } else {
         csrf = await AsyncStorage.getItem("CSRF-TOKEN");
@@ -120,12 +120,10 @@ const CreateVoucher = ({ navigation }) => {
         config.headers['x-csrf-token'] = csrf;
       }
 
-      const response = await axios.request(config);
+      await axios.request(config);
 
-      console.log(JSON.stringify(response.data));
       navigation.goBack();
     } catch (error) {
-      console.log(JSON.stringify(error, null, 2), "error");
     } finally {
       setLoading(false);
     }

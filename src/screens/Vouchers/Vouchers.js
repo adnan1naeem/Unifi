@@ -55,7 +55,7 @@ const Vouchers = ({ navigation }) => {
     const port = await AsyncStorage.getItem("PORT");
     let csrf = '';
     let urlEndPoint;
-    if (port === 8443 || port === '8443') {
+    if (port === '8443') {
       urlEndPoint = ''
     } else {
       csrf = await AsyncStorage.getItem("CSRF-TOKEN");
@@ -114,7 +114,7 @@ const Vouchers = ({ navigation }) => {
     let data = { "_id": item?._id, "cmd": "delete-voucher" };
     let urlEndPoint;
     let csrf = '';
-    if (port === 8443 || port === '8443') {
+    if (port === '8443') {
       urlEndPoint = ''
     } else {
       csrf = await AsyncStorage.getItem("CSRF-TOKEN");

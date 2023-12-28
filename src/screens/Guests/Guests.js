@@ -37,7 +37,7 @@ const Guests = () => {
             });
             let urlEndPoint;
             let csrf = '';
-            if (port === 8443 || port === '8443') {
+            if (port === '8443') {
                 urlEndPoint = ''
             } else {
                 csrf = await AsyncStorage.getItem("CSRF-TOKEN");
@@ -69,7 +69,6 @@ const Guests = () => {
                     }, 1000);
                 })
                 .catch((error) => {
-                    console.log(JSON.stringify(error, null, 2))
                     if (error?.message === "Request failed with status code 429") {
                         alert("Too many attempts!\n Please try again after few minutes");
                     }
@@ -94,7 +93,7 @@ const Guests = () => {
             });
             let csrf = '';
             let urlEndPoint;
-            if (port === 8443 || port === '8443') {
+            if (port === '8443') {
                 urlEndPoint = ''
             } else {
                 csrf = await AsyncStorage.getItem("CSRF-TOKEN");
@@ -126,7 +125,6 @@ const Guests = () => {
                     }, 1000);
                 })
                 .catch((error) => {
-                    console.log(JSON.stringify(error, null, 2))
                     if (error?.message === "Request failed with status code 429") {
                         alert("Too many attempts!\n Please try again after few minutes");
                     }
@@ -152,7 +150,7 @@ const Guests = () => {
         const port = await AsyncStorage.getItem("PORT");
         let urlEndPoint;
         let csrf = '';
-        if (port === 8443 || port === '8443') {
+        if (port === '8443') {
             urlEndPoint = ''
         } else {
             csrf = await AsyncStorage.getItem("CSRF-TOKEN");
@@ -178,7 +176,6 @@ const Guests = () => {
             })
             .catch((error) => {
                 setLoading(false);
-                console.log(JSON.stringify(error,));
             });
     };
 

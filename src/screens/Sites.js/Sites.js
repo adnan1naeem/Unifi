@@ -72,7 +72,6 @@ const Sites = ({ navigation }) => {
         setLoading(true);
         let siteList = await AsyncStorage.getItem("SITE_LIST");
         siteList = JSON.parse(siteList);
-        console.log(JSON.stringify(siteList, null, 2));
         setSites(siteList);
         setsearchSitesList(siteList)
 
@@ -116,7 +115,6 @@ const Sites = ({ navigation }) => {
 
             }
         } catch (error) {
-            console.log(JSON.stringify(error, null, 2), " errorerror");
             if (DocumentPicker.isCancel(error)) {
                 // User cancelled the picker
             } else {
@@ -171,7 +169,6 @@ const Sites = ({ navigation }) => {
 
 
     const handlesubmit = async (item, index) => {
-        console.log(JSON.stringify(item, null,2));
         if (disable === true) {
             alert("Please Choose Your plan before selecting the sites, \nThanks")
             return
@@ -211,8 +208,6 @@ const Sites = ({ navigation }) => {
             data: data
         };
 
-        console.log(JSON.stringify(config, null,2));
-
         axios.request(config).then(async (item) => {
             if(!port){
                 await AsyncStorage.setItem('CSRF-TOKEN', item?.headers['x-csrf-token']);
@@ -225,7 +220,6 @@ const Sites = ({ navigation }) => {
             }
             setSiteLoading(false);
         }).catch((error) => {
-            console.log(JSON.stringify(error, null, 2));
             if (error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 500" || error?.message === "Request failed with status code 504") {
                 alert('The provided credentials for this site are not valid!')
             }

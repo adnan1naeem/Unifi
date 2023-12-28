@@ -30,7 +30,7 @@ const Index = () => {
         const port = await AsyncStorage.getItem("PORT");
 
         let urlEndPoint;
-        if(port === 8443 || port === '8443'){
+        if(port === '8443'){
             urlEndPoint = ''
         }else{
             urlEndPoint = 'proxy/network/'
@@ -59,7 +59,7 @@ const Index = () => {
         const port = await AsyncStorage.getItem("PORT");
 
         let urlEndPoint;
-        if(port === 8443 || port === '8443'){
+        if(port === '8443'){
             urlEndPoint = ''
         }else{
             urlEndPoint = 'proxy/network/'
@@ -80,7 +80,6 @@ const Index = () => {
                 }
             })
             .catch((error) => {
-                console.log(JSON.stringify(error, null, 2));
                 setLoading(false);
             });
     };
