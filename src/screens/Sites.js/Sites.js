@@ -46,7 +46,7 @@ const Sites = ({ navigation }) => {
             await Purchases.getOfferings()
                 .then(async (offerings) => {
                     await Purchases.getCustomerInfo().then((purchaserInfo) => {
-                        if (purchaserInfo?.allPurchasedProductIdentifiers?.includes("unifi_monthly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("unifi_yearly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("monthly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("yearly_subscription_id")) {
+                        if (purchaserInfo?.allPurchasedProductIdentifiers?.includes("non_consumable_monthly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("non_consumable_yearly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("monthly_subscription_id") || purchaserInfo?.allPurchasedProductIdentifiers?.includes("yearly_subscription_id")) {
                             if (purchaserInfo?.entitlements?.active) {
                                 setDisable(false);
                                 isSubscribe(true);
