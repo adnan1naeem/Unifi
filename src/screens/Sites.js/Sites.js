@@ -229,7 +229,7 @@ const Sites = ({ navigation }) => {
             }
             setSiteLoading(false);
         }).catch((error) => {
-            if (error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 500" || error?.message === "Request failed with status code 504") {
+            if (error?.message === "Request failed with status code 400" || error?.message === "Request failed with status code 403" || error?.message === "Request failed with status code 500" || error?.message === "Request failed with status code 504") {
                 alert('The provided credentials for this site are not valid!')
             }
             if (error?.message === "Request failed with status code 404") {
