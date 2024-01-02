@@ -3,11 +3,11 @@ import React from "react";
 import { Colors } from "../Utils/Colors";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-const CustomButton = ({ title, onPress, navigation, icon, customContainer, disabled }) => {
+const CustomButton = ({ title, onPress, textStyle, navigation, icon, customContainer, disabled }) => {
     return (
-        <TouchableOpacity disabled={disabled} style={customContainer ? customContainer : styles.buttonContainer} onPress={onPress}>
+        <TouchableOpacity disabled={disabled} style={[styles.buttonContainer,customContainer]} onPress={onPress}>
             {icon && <FontAwesome name="magic" style={styles.magicIcon} />}
-            <Text style={styles.buttonText}>{title}</Text>
+            <Text style={[styles.buttonText,textStyle]}>{title}</Text>
         </TouchableOpacity>
     );
 };
@@ -17,11 +17,9 @@ export default CustomButton;
 const styles = StyleSheet.create({
     buttonContainer: {
         borderRadius: 20,
-        overflow: "hidden",
         backgroundColor: "#0c84ff",
         width: "90%",
         flexDirection: "row",
-        flex: 1,
         justifyContent: "center",
         alignItems: "center",
         height: 50,

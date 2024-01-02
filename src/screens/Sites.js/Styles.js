@@ -14,6 +14,12 @@ export const styles = StyleSheet.create({
     mainFlatContainer: {
 
     },
+    restoreButton:{
+        marginTop: 20,
+        alignSelf:'center',
+        backgroundColor: "transperent",
+    },
+    textStyle:{color:Colors.primary},
     modalOuterContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
     modalContainer: { backgroundColor: 'white', padding: 20, borderRadius: 10, marginHorizontal: 20 },
     ForwordArrow: {

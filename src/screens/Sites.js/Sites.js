@@ -17,6 +17,7 @@ import Papa from 'papaparse';
 import { ios } from '../../../app.config'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Search from '../../Components/Search'
+import CustomButton from '../../Components/CustomButton'
 
 const Sites = ({ navigation }) => {
     const [monthly, setMonthly] = useState(false);
@@ -276,6 +277,7 @@ const Sites = ({ navigation }) => {
                             setShowSubscription(false);
                             setDisable(true);
                             isSubscribe(true);
+                            setAvailablePakages([]);
                         }).catch((error) => {
                             console.log(JSON.stringify(error.null, 2));
                             setYearly(false);
@@ -319,9 +321,9 @@ const Sites = ({ navigation }) => {
     }
 
     const editSite = async (item, index) => {
-        if(searchSitesList?.length >= 1 && !subscribe){
+        if (searchSitesList?.length >= 1 && !subscribe) {
             alert("You need to subscribe for adding another site!")
-        }else{
+        } else {
             navigation.navigate("Login", { site: item, index: index });
         }
     }
@@ -363,9 +365,39 @@ const Sites = ({ navigation }) => {
             </View>)
     };
 
+    const handleRestore = async () => {
+        try {
+            await Purchases.restorePurchases().then(async (item) => {
+                if (item?.allPurchasedProductIdentifiers?.includes("non_consumable_monthly_subscription_id") || item?.allPurchasedProductIdentifiers?.includes("non_consumable_yearly_subscription_id") || item?.allPurchasedProductIdentifiers?.includes("monthly_subscription_id") || item?.allPurchasedProductIdentifiers?.includes("yearly_subscription_id")) {
+                    await Purchases?.purchasePackage(item).then((item) => {
+                        console.log(JSON.stringify(item.null, 2));
+                        setShowSubscription(false);
+                        setDisable(true);
+                        isSubscribe(true);
+                    }).catch((error) => {
+                        console.log(JSON.stringify(error.null, 2));
+                        setYearly(false);
+                        setMonthly(false);
+                    });
+                }else{
+                    alert("Purchase Alert!\nFirst you have to subscribe for a specific plan.");
+                }
+            }).catch((error) => {
+                alert("Purchase Alert!\nFirst you have to subscribe for a specific plan.");
+                setYearly(false);
+                setMonthly(false);
+            });
+        } catch (error) {
+            setYearly(false);
+            setMonthly(false);
+        }
+    }
+
     const renderFooter = () => (
         <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+            {availablePakages?.length > 0 &&
+                <Text style={styles.modalTitle}>Select Your Subscription Plan</Text>
+            }
             {availablePakages?.map((item, index) => (
                 <View key={index} style={{ marginHorizontal: 15 }}>
                     <View style={styles.toggleContainer}>
@@ -393,6 +425,9 @@ const Sites = ({ navigation }) => {
                     </View>
                 </View>
             ))}
+            {availablePakages?.length > 0 &&
+                <CustomButton textStyle={styles.textStyle} customContainer={styles.restoreButton} title={"Restore Purchase"} onPress={handleRestore} />
+            }
         </View>
     );
 
@@ -404,9 +439,9 @@ const Sites = ({ navigation }) => {
     }
 
     const handleAddButton = () => {
-        if(searchSitesList?.length >= 1 && !subscribe){
+        if (searchSitesList?.length >= 1 && !subscribe) {
             alert("You need to subscribe for adding another site!")
-        }else{
+        } else {
             navigation.navigate("Login")
         }
     }
@@ -435,7 +470,7 @@ const Sites = ({ navigation }) => {
                     <FlatList
                         data={searchSitesList}
                         renderItem={renderItem}
-                        ListFooterComponent={showSubscription && renderFooter}
+                        ListFooterComponent={renderFooter}
                         keyExtractor={(item) => item?._id}
                     />
                 </View>
